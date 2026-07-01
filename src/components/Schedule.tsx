@@ -69,6 +69,11 @@ function ClassCard({
         <div className="font-display text-sm uppercase tracking-tight text-canvas leading-tight">
           {disciplineName}
         </div>
+        {session.note && (
+          <div className="font-mono text-[9px] mt-0.5 leading-none" style={{ color: '#6E6560' }}>
+            {session.note}
+          </div>
+        )}
         <div className="flex items-center gap-1.5 mt-1 flex-wrap">
           {levelLabel && (
             <span
@@ -135,8 +140,13 @@ function ClassCard({
               <div className="font-display text-xl uppercase tracking-tight text-canvas leading-none">
                 {disciplineName}
               </div>
+              {session.note && (
+                <div className="font-mono text-xs mt-1 leading-snug" style={{ color: '#C09A3C' }}>
+                  {session.note}
+                </div>
+              )}
               {session.coach && (
-                <div className="font-mono text-xs mt-1.5" style={{ color: '#6E6560' }}>
+                <div className="font-mono text-xs mt-1" style={{ color: '#6E6560' }}>
                   {session.coach}
                 </div>
               )}
@@ -237,12 +247,13 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
 
   function getLevelLabel(level?: string): string {
     switch (level) {
-      case 'fundamentals': return 'Fundamentals';
-      case 'advanced':     return 'Advanced';
-      case 'competition':  return 'Competition';
+      case 'beginner':     return 'Beginner';
+      case 'intermediate': return 'Int–Adv';
+      case 'all':          return 'All Levels';
+      case 'womens':       return "Women's Only";
       case 'kids':         return 'Kids';
-      case 'womens':       return "Women's";
-      case 'all':          return '';
+      case 'teens':        return 'Teens 12+';
+      case 'competition':  return 'Competition';
       default:             return '';
     }
   }
