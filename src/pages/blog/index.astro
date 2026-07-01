@@ -1,0 +1,33 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+const posts = (await getCollection('blog')).filter(p => !p.data.draft).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+
+<Base title="Blog" description="Training tips, martial arts guides, and gym news from Lions MMA Vancouver.">
+  <div class="pt-32 pb-24 max-w-7xl mx-auto px-6">
+    <p class="font-mono text-xs tracking-widest uppercase text-smoke mb-2">FROM THE GYM</p>
+    <h1 class="font-display text-7xl md:text-9xl uppercase tracking-tight text-canvas leading-none mb-16">BLOG.</h1>
+
+    {posts.length === 0 ? (
+      <div class="border border-iron p-12 text-center">
+        <p class="font-mono text-sm text-smoke">No posts yet. Check back soon.</p>
+      </div>
+    ) : (
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-iron">
+        {posts.map(post => (
+          <a href={`/blog/${post.slug}`} class="bg-vault hover:bg-void transition-colors duration-300 p-8 group block">
+            <p class="font-mono text-xs text-smoke mb-4">{post.data.pubDate.toLocaleDateString('en-CA', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+            {post.data.category && <p class="font-mono text-xs text-brass tracking-widest uppercase mb-2">{post.data.category}</p>}
+            <h2 class="font-display text-2xl uppercase tracking-tight text-canvas group-hover:text-brass transition-colors leading-tight">{post.data.title}</h2>
+            <p class="font-body text-sm text-canvas/50 mt-4 leading-relaxed">{post.data.description}</p>
+            <p class="font-mono text-xs text-brass mt-6 group-hover:text-canvas transition-colors tracking-wider">READ →</p>
+          </a>
+        ))}
+      </div>
+    )}
+  </div>
+</Base>

@@ -1,0 +1,63 @@
+---
+import Base from '../../layouts/Base.astro';
+import Schedule from '../../components/Schedule';
+---
+
+<Base title="MMA" description="MMA classes at Lions MMA Vancouver. Striking into grappling, grappling into striking. Led by Amir Ghassemi and Rodrigo Sezinando.">
+
+  <!-- Header -->
+  <div class="pt-32 pb-0 max-w-7xl mx-auto px-6">
+    <p class="font-mono text-xs tracking-widest uppercase text-smoke mb-3">TRAIN LIKE A PRO</p>
+    <h1 class="font-display text-7xl md:text-9xl uppercase tracking-tight text-canvas leading-none">MMA.</h1>
+    <div class="w-full aspect-video bg-vault border-t border-brass mt-8 flex items-center justify-center">
+      <p class="font-mono text-xs text-smoke">PHOTO / VIDEO COMING SOON</p>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="py-24 max-w-4xl mx-auto px-6">
+
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHAT IT IS</p>
+      <div class="space-y-6 font-body text-canvas/80 leading-relaxed">
+        <p>Mixed Martial Arts is what happens when every discipline matters. You train Muay Thai, you train BJJ, you train wrestling — and then you put them in the same round and figure out how they talk to each other. The striking threat sets up the takedown. The takedown threat opens the striking. The guard becomes a weapon. Every transition is both a danger and an opportunity.</p>
+        <p>MMA classes at Lions are led by Amir Ghassemi and Rodrigo Sezinando — a striking specialist and a BJJ black belt with deep MMA coaching experience, respectively. The curriculum is built around the transitions: striking to clinch, clinch to takedown, takedown defense into counters, top control into ground-and-pound. Students who come in with a solid base in one area learn how to use it in a complete fighting context.</p>
+        <p>MMA classes are not beginner classes. Students are expected to have a working foundation in at least one discipline — striking or grappling — before stepping into MMA-specific training. The gym is happy to help you build that foundation first. When you are ready, this is where the full picture comes together.</p>
+      </div>
+    </div>
+
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHO IT IS FOR</p>
+      <ul class="space-y-3 font-body text-canvas/80 leading-relaxed">
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Strikers who want to understand what happens once a fight hits the ground</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Grapplers who need to defend strikes and create takedowns off the cage</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Fighters preparing for amateur or professional MMA competition</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Athletes who want to train with a complete, cohesive game in mind</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Students who have built a base in striking and grappling and are ready to combine them</span></li>
+      </ul>
+    </div>
+
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHAT A CLASS LOOKS LIKE</p>
+      <p class="font-body text-canvas/80 leading-relaxed">MMA classes are structured around one transition or scenario per session — for example, the clinch entry off a jab, or takedown defense into a counter-attack sequence. Warm-ups involve combinations that span striking and movement. Drilling covers the technical sequence at progressive speed. Classes close with MMA-specific sparring: standing exchanges, clinch work, and ground scenarios as appropriate for the group. The pace is high. The learning density is higher.</p>
+    </div>
+
+    <!-- Schedule -->
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">CLASS SCHEDULE</p>
+      <Schedule client:load filterDiscipline="mma" compact={true} />
+    </div>
+
+    <!-- CTA -->
+    <div class="border border-iron p-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+      <div>
+        <p class="font-display text-2xl uppercase text-canvas">Try it free.</p>
+        <p class="font-mono text-xs text-smoke mt-1">7 days. No commitment.</p>
+      </div>
+      <a href="/free-trial" class="inline-block bg-brass text-void font-mono text-xs tracking-widest uppercase px-8 py-4 hover:bg-canvas transition-colors duration-200">
+        CLAIM FREE TRIAL
+      </a>
+    </div>
+
+  </div>
+</Base>

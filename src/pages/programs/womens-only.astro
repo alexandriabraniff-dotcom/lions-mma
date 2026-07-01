@@ -1,0 +1,63 @@
+---
+import Base from '../../layouts/Base.astro';
+import Schedule from '../../components/Schedule';
+---
+
+<Base title="Women's Only" description="Women's Only Muay Thai, BJJ, and No-Gi classes at Lions MMA Vancouver. Taught by female instructors. Led by Jessica Wilson.">
+
+  <!-- Header -->
+  <div class="pt-32 pb-0 max-w-7xl mx-auto px-6">
+    <p class="font-mono text-xs tracking-widest uppercase text-smoke mb-3">SAFE, INCLUSIVE, EMPOWERING</p>
+    <h1 class="font-display text-7xl md:text-9xl uppercase tracking-tight text-canvas leading-none">WOMEN'S ONLY.</h1>
+    <div class="w-full aspect-video bg-vault border-t border-brass mt-8 flex items-center justify-center">
+      <p class="font-mono text-xs text-smoke">PHOTO / VIDEO COMING SOON</p>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="py-24 max-w-4xl mx-auto px-6">
+
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHAT IT IS</p>
+      <div class="space-y-6 font-body text-canvas/80 leading-relaxed">
+        <p>The Women's Only program at Lions runs all-female classes in Muay Thai, BJJ, and No-Gi. Classes are taught by female instructors. The same technical standards apply as every other class in the gym. The difference is the environment — purpose-built for women, with no performance anxiety around training alongside men for the first time.</p>
+        <p>Jessica Wilson runs the program with genuine investment in the students who come through it. She has trained Muay Thai for years, competes, and understands the specific experience of being a woman navigating a historically male-dominated space. Her classes are technically demanding, supportive, and designed to develop real skill — not a modified version of it.</p>
+        <p>The program is one of the most active in the gym. Students range from complete beginners who have never trained any martial art, to experienced grapplers who prefer an all-female training environment for at least part of their week. Both are equally welcome. The program has produced competitors and built a community that extends well beyond the mats.</p>
+      </div>
+    </div>
+
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHO IT IS FOR</p>
+      <ul class="space-y-3 font-body text-canvas/80 leading-relaxed">
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Women who are new to martial arts and want a lower-pressure starting point</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Experienced training partners who prefer an all-female class environment</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Anyone who has had a negative experience in mixed martial arts settings before</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Women interested in self-defense through real, functional technique</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Athletes who want to cross-train across Muay Thai, BJJ, and No-Gi in one program</span></li>
+      </ul>
+    </div>
+
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHAT A CLASS LOOKS LIKE</p>
+      <p class="font-body text-canvas/80 leading-relaxed">Class format mirrors the standard program for each discipline: warm-up, technique instruction, drilling, and live work or controlled sparring. The environment is direct, encouraging, and holds the same technical standard as any other class. New students are introduced to the basics at an appropriate pace. There is no dumbing-down of the material and no tolerance for condescension from anyone on the floor.</p>
+    </div>
+
+    <!-- Schedule -->
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">CLASS SCHEDULE</p>
+      <Schedule client:load filterDiscipline="womens" compact={true} />
+    </div>
+
+    <!-- CTA -->
+    <div class="border border-iron p-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+      <div>
+        <p class="font-display text-2xl uppercase text-canvas">Try it free.</p>
+        <p class="font-mono text-xs text-smoke mt-1">7 days. No commitment.</p>
+      </div>
+      <a href="/free-trial" class="inline-block bg-brass text-void font-mono text-xs tracking-widest uppercase px-8 py-4 hover:bg-canvas transition-colors duration-200">
+        CLAIM FREE TRIAL
+      </a>
+    </div>
+
+  </div>
+</Base>

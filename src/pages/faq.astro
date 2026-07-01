@@ -1,0 +1,41 @@
+---
+import Base from '../layouts/Base.astro';
+import { faq } from '../data/faq';
+---
+
+<Base title="FAQ" description="Frequently asked questions about Lions MMA Vancouver. Getting started, training, membership, and gym culture.">
+  <div class="pt-32 pb-24 max-w-4xl mx-auto px-6">
+
+    <!-- Page header -->
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke mb-2">FAQ</p>
+      <h1 class="font-display text-6xl md:text-8xl uppercase tracking-tight text-canvas leading-none">QUESTIONS.</h1>
+    </div>
+
+    <!-- FAQ categories -->
+    {faq.map(section => (
+      <section class="mb-14">
+        <h2 class="font-display text-3xl md:text-4xl uppercase tracking-tight text-canvas mb-8">{section.category}</h2>
+        <div>
+          {section.items.map(item => (
+            <details class="border-b border-iron group">
+              <summary class="font-body text-lg text-canvas cursor-pointer py-5 flex items-start justify-between gap-4 hover:text-brass transition-colors list-none">
+                <span>{item.q}</span>
+                <span class="font-mono text-xl leading-none shrink-0 mt-0.5 select-none group-open:hidden">+</span>
+                <span class="font-mono text-xl leading-none shrink-0 mt-0.5 select-none hidden group-open:block">&#8722;</span>
+              </summary>
+              <p class="font-body text-canvas/60 leading-relaxed pt-2 pb-6 max-w-2xl">{item.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+    ))}
+
+  </div>
+</Base>
+
+<style>
+  details[open] > summary {
+    color: var(--color-brass, #c9a84c);
+  }
+</style>

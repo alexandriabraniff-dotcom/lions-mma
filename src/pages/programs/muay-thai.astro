@@ -1,0 +1,63 @@
+---
+import Base from '../../layouts/Base.astro';
+import Schedule from '../../components/Schedule';
+---
+
+<Base title="Muay Thai" description="Muay Thai classes at Lions MMA Vancouver. Eight weapons, real technique, all levels. Led by Amir Ghassemi and Adam Karse.">
+
+  <!-- Header -->
+  <div class="pt-32 pb-0 max-w-7xl mx-auto px-6">
+    <p class="font-mono text-xs tracking-widest uppercase text-smoke mb-3">THE ART OF 8 LIMBS</p>
+    <h1 class="font-display text-7xl md:text-9xl uppercase tracking-tight text-canvas leading-none">MUAY THAI.</h1>
+    <div class="w-full aspect-video bg-vault border-t border-brass mt-8 flex items-center justify-center">
+      <p class="font-mono text-xs text-smoke">PHOTO / VIDEO COMING SOON</p>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="py-24 max-w-4xl mx-auto px-6">
+
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHAT IT IS</p>
+      <div class="space-y-6 font-body text-canvas/80 leading-relaxed">
+        <p>Muay Thai is the national sport of Thailand and the most complete striking system in existence. It uses fists, elbows, knees, and kicks — eight points of contact — which is why every serious striker eventually finds their way to it. There is no other discipline that develops range management, clinch control, and knockout power in a single system.</p>
+        <p>At Lions, Muay Thai is the foundation of our striking curriculum. Whether you are brand new to combat sports or training for competition, the principles are the same: clean technique first, power follows. Instructors Amir Ghassemi and Adam Karse both carry competitive backgrounds and have produced fighters at every level out of this gym.</p>
+        <p>Classes run at both locations and across multiple skill levels. Beginners start with stance, movement, and the basic eight strikes. Intermediate and advanced classes build combinations, timing, and live sparring. The gym culture rewards effort and respects the craft. Ego gets checked at the door.</p>
+      </div>
+    </div>
+
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHO IT IS FOR</p>
+      <ul class="space-y-3 font-body text-canvas/80 leading-relaxed">
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Complete beginners who want to learn striking from the ground up</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Boxers and kickboxers looking to add elbows, knees, and clinch</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>MMA athletes who need a complete stand-up game</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Anyone who wants functional fitness built through actual skill work</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Competitive fighters preparing for Muay Thai or kickboxing bouts</span></li>
+      </ul>
+    </div>
+
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHAT A CLASS LOOKS LIKE</p>
+      <p class="font-body text-canvas/80 leading-relaxed">Classes open with a warm-up built around footwork and fundamental movement, then move into technique instruction on pads or bags. The second half of class focuses on combination drilling and, for intermediate and advanced students, controlled sparring. Expect to sweat. Expect to be corrected. Expect to get better every session if you show up consistently.</p>
+    </div>
+
+    <!-- Schedule -->
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">CLASS SCHEDULE</p>
+      <Schedule client:load filterDiscipline="muay-thai" compact={true} />
+    </div>
+
+    <!-- CTA -->
+    <div class="border border-iron p-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+      <div>
+        <p class="font-display text-2xl uppercase text-canvas">Try it free.</p>
+        <p class="font-mono text-xs text-smoke mt-1">7 days. No commitment.</p>
+      </div>
+      <a href="/free-trial" class="inline-block bg-brass text-void font-mono text-xs tracking-widest uppercase px-8 py-4 hover:bg-canvas transition-colors duration-200">
+        CLAIM FREE TRIAL
+      </a>
+    </div>
+
+  </div>
+</Base>

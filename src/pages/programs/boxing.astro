@@ -1,0 +1,63 @@
+---
+import Base from '../../layouts/Base.astro';
+import Schedule from '../../components/Schedule';
+---
+
+<Base title="Boxing" description="Boxing classes at Lions MMA Vancouver. Punching, defense, footwork, counters. Led by Amir Ghassemi and Adam Karse.">
+
+  <!-- Header -->
+  <div class="pt-32 pb-0 max-w-7xl mx-auto px-6">
+    <p class="font-mono text-xs tracking-widest uppercase text-smoke mb-3">THE SWEET SCIENCE</p>
+    <h1 class="font-display text-7xl md:text-9xl uppercase tracking-tight text-canvas leading-none">BOXING.</h1>
+    <div class="w-full aspect-video bg-vault border-t border-brass mt-8 flex items-center justify-center">
+      <p class="font-mono text-xs text-smoke">PHOTO / VIDEO COMING SOON</p>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="py-24 max-w-4xl mx-auto px-6">
+
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHAT IT IS</p>
+      <div class="space-y-6 font-body text-canvas/80 leading-relaxed">
+        <p>Boxing is four things: punching, defense, footwork, and counters. That simplicity is deceptive. There is more technical depth in a single round of quality boxing than in most sports' entire rulebooks. Learning to move correctly, defend without panicking, and find your shots while under pressure is a years-long process — and one of the most rewarding things you can do in a gym.</p>
+        <p>Amir Ghassemi and Adam Karse run the boxing program at Lions with a clear technical framework and genuine coaching standards. The focus is on fundamentals first. Stance, guard, jab mechanics, footwork angles. Everything else builds from there. Students who stay consistent come out of Lions boxing classes with hand skills that hold up under pressure.</p>
+        <p>Boxing at Lions is also the most accessible entry point for new members. No experience needed. The learning curve is real, but the first few months of consistent training produce noticeable results in movement, coordination, and confidence.</p>
+      </div>
+    </div>
+
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHO IT IS FOR</p>
+      <ul class="space-y-3 font-body text-canvas/80 leading-relaxed">
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Beginners with no prior striking background</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Muay Thai and MMA athletes wanting sharper hand technique</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Anyone training for fitness who wants to learn something real</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Competitive fighters building a complete stand-up game</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Students who want structured, technically demanding instruction</span></li>
+      </ul>
+    </div>
+
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHAT A CLASS LOOKS LIKE</p>
+      <p class="font-body text-canvas/80 leading-relaxed">Classes begin with movement and shadow boxing, warming up the mechanics before adding resistance. Technique work covers the day's focus — a specific combination, defensive concept, or footwork pattern — drilled on the mitts and bags. Intermediate and advanced classes close with controlled sparring. Beginners work at their own pace until they are ready to step up.</p>
+    </div>
+
+    <!-- Schedule -->
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">CLASS SCHEDULE</p>
+      <Schedule client:load filterDiscipline="boxing" compact={true} />
+    </div>
+
+    <!-- CTA -->
+    <div class="border border-iron p-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+      <div>
+        <p class="font-display text-2xl uppercase text-canvas">Try it free.</p>
+        <p class="font-mono text-xs text-smoke mt-1">7 days. No commitment.</p>
+      </div>
+      <a href="/free-trial" class="inline-block bg-brass text-void font-mono text-xs tracking-widest uppercase px-8 py-4 hover:bg-canvas transition-colors duration-200">
+        CLAIM FREE TRIAL
+      </a>
+    </div>
+
+  </div>
+</Base>

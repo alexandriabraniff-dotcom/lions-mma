@@ -1,0 +1,63 @@
+---
+import Base from '../../layouts/Base.astro';
+import Schedule from '../../components/Schedule';
+---
+
+<Base title="Kids" description="Kids martial arts classes at Lions MMA Vancouver. Ages 4 and up. Confidence, character, anti-bullying values. Led by Alex Coles and Emma Stecklov.">
+
+  <!-- Header -->
+  <div class="pt-32 pb-0 max-w-7xl mx-auto px-6">
+    <p class="font-mono text-xs tracking-widest uppercase text-smoke mb-3">ANTI-BULLYING, RESPECT, VALUES</p>
+    <h1 class="font-display text-7xl md:text-9xl uppercase tracking-tight text-canvas leading-none">KIDS.</h1>
+    <div class="w-full aspect-video bg-vault border-t border-brass mt-8 flex items-center justify-center">
+      <p class="font-mono text-xs text-smoke">PHOTO / VIDEO COMING SOON</p>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="py-24 max-w-4xl mx-auto px-6">
+
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHAT IT IS</p>
+      <div class="space-y-6 font-body text-canvas/80 leading-relaxed">
+        <p>The Kids program at Lions teaches martial arts the right way: with genuine technical instruction, real values, and no tolerance for ego — from children or from adults. Classes are for ages 4 and up and cover the fundamentals of Muay Thai and BJJ adapted for young students. The goal is not to produce child fighters. The goal is to develop confident, disciplined, capable young people who know how to handle themselves and treat others with respect.</p>
+        <p>Alex Coles built the program from the ground up and remains its primary driver. His approach is direct and effective: high standards, consistent expectations, and the kind of encouragement that produces genuine results rather than empty praise. Emma Stecklov brings the same level of patience and precision to her classes and is a favourite among the younger students in the program.</p>
+        <p>Anti-bullying is a specific and deliberate focus. Students learn how to de-escalate, when to walk away, and what to do if they cannot. They also learn the physical skills to back that up. The combination builds a quiet confidence that shows up in school, at home, and in every room they walk into.</p>
+      </div>
+    </div>
+
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHO IT IS FOR</p>
+      <ul class="space-y-3 font-body text-canvas/80 leading-relaxed">
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Children ages 4 and up with no prior martial arts experience</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Kids dealing with confidence issues, social anxiety, or bullying situations</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Young athletes looking for a structured, demanding physical outlet</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Families who want their children trained in a respectful, well-run environment</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Kids who want to compete at the youth level when they are ready</span></li>
+      </ul>
+    </div>
+
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHAT A CLASS LOOKS LIKE</p>
+      <p class="font-body text-canvas/80 leading-relaxed">Kids classes are structured, active, and age-appropriate. Warm-ups involve games and movement challenges that build coordination. Technique instruction is clear, hands-on, and reinforced through fun drills that keep younger students engaged without compromising the material. Classes close with controlled partner work and positive reinforcement. Parents are welcome to watch from the viewing area. No phones on the mat, no exceptions.</p>
+    </div>
+
+    <!-- Schedule -->
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">CLASS SCHEDULE</p>
+      <Schedule client:load filterDiscipline="kids" compact={true} />
+    </div>
+
+    <!-- CTA -->
+    <div class="border border-iron p-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+      <div>
+        <p class="font-display text-2xl uppercase text-canvas">Try it free.</p>
+        <p class="font-mono text-xs text-smoke mt-1">7 days. No commitment.</p>
+      </div>
+      <a href="/free-trial" class="inline-block bg-brass text-void font-mono text-xs tracking-widest uppercase px-8 py-4 hover:bg-canvas transition-colors duration-200">
+        CLAIM FREE TRIAL
+      </a>
+    </div>
+
+  </div>
+</Base>

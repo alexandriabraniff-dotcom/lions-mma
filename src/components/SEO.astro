@@ -1,0 +1,76 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  ogImage?: string;
+  noindex?: boolean;
+}
+
+const { title, description, ogImage, noindex = false } = Astro.props;
+
+const siteTitle = title.includes("Lions MMA") ? title : `${title} — Lions MMA`;
+const canonicalURL = Astro.url;
+const ogImageURL = ogImage ?? "/og-default.jpg";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SportsActivityLocation",
+  "name": "Lions MMA",
+  "url": "https://lionsmma.ca",
+  "telephone": "+16046840991",
+  "sameAs": [
+    "https://www.instagram.com/lionsmma",
+    "https://www.facebook.com/lionsmma",
+    "https://twitter.com/lionsmma"
+  ],
+  "location": [
+    {
+      "@type": "Place",
+      "name": "Lions MMA — Downtown Vancouver",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "798 Helmcken St",
+        "addressLocality": "Vancouver",
+        "addressRegion": "BC",
+        "postalCode": "V6Z 1B4",
+        "addressCountry": "CA"
+      }
+    },
+    {
+      "@type": "Place",
+      "name": "Lions MMA — East Vancouver",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "2301 Kingsway",
+        "addressLocality": "Vancouver",
+        "addressRegion": "BC",
+        "postalCode": "V5R 5J6",
+        "addressCountry": "CA"
+      }
+    }
+  ]
+};
+---
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>{siteTitle}</title>
+<meta name="description" content={description} />
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+<link rel="canonical" href={canonicalURL} />
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content={siteTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={ogImageURL} />
+<meta property="og:url" content={canonicalURL} />
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={siteTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImageURL} />
+
+<!-- JSON-LD Structured Data -->
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />

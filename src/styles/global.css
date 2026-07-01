@@ -1,0 +1,110 @@
+@import "tailwindcss";
+
+@theme {
+  --color-void: #0D0B09;
+  --color-vault: #1A1714;
+  --color-iron: #2C2824;
+  --color-smoke: #6E6560;
+  --color-canvas: #EEE8DC;
+  --color-brass: #C09A3C;
+
+  --font-display: 'Big Shoulders Display', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #0D0B09;
+  color: #EEE8DC;
+  font-family: 'DM Sans', sans-serif;
+}
+
+::selection {
+  background: #C09A3C;
+  color: #0D0B09;
+}
+
+:focus-visible {
+  outline: 2px solid #C09A3C;
+  outline-offset: 3px;
+}
+
+/* Grain overlay — subtle film grain via SVG feTurbulence */
+.grain::before {
+  content: '';
+  position: fixed;
+  inset: -200%;
+  width: 400%;
+  height: 400%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23grain)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Mask wipe — headline reveal */
+@keyframes maskWipe {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0% 0 0);
+  }
+}
+
+.mask-wipe {
+  animation: maskWipe 0.8s ease forwards;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .mask-wipe {
+    animation: none;
+    clip-path: none;
+  }
+
+  .grain::before {
+    display: none;
+  }
+}
+
+/* Scrollbar — webkit */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0D0B09;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C09A3C;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d4af55;
+}

@@ -1,0 +1,63 @@
+---
+import Base from '../../layouts/Base.astro';
+import Schedule from '../../components/Schedule';
+---
+
+<Base title="BJJ (Gi)" description="Brazilian Jiu-Jitsu Gi classes at Lions MMA Vancouver. Led by black belts Guilherme Falcao, Gabrielle Stan, Alberto Garcia, and Lucio Tavares.">
+
+  <!-- Header -->
+  <div class="pt-32 pb-0 max-w-7xl mx-auto px-6">
+    <p class="font-mono text-xs tracking-widest uppercase text-smoke mb-3">THE GENTLE ART</p>
+    <h1 class="font-display text-7xl md:text-9xl uppercase tracking-tight text-canvas leading-none">BJJ (GI).</h1>
+    <div class="w-full aspect-video bg-vault border-t border-brass mt-8 flex items-center justify-center">
+      <p class="font-mono text-xs text-smoke">PHOTO / VIDEO COMING SOON</p>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="py-24 max-w-4xl mx-auto px-6">
+
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHAT IT IS</p>
+      <div class="space-y-6 font-body text-canvas/80 leading-relaxed">
+        <p>Brazilian Jiu-Jitsu is a ground fighting system built on one premise: technique neutralizes size. A well-trained smaller person can control, submit, and survive against a much larger untrained opponent. That is not marketing copy. It is the central truth that makes BJJ unique among martial arts, and the reason it has become the foundation of every serious combat sport competitor's game.</p>
+        <p>Gi BJJ adds a layer of complexity through the use of the traditional kimono. Grips on the collar, lapels, and sleeves create control options and submission setups that do not exist in No-Gi. It rewards patience, precision, and a deep understanding of leverage. The Gi slows things down enough that the technical gaps become impossible to ignore — which makes it the best classroom for learning the art properly.</p>
+        <p>The grappling staff at Lions is among the strongest in Vancouver. Guilherme Falcao (Black Belt, 1st Degree), Gabrielle Stan (Black Belt), Alberto Garcia (Black Belt), and Lucio Tavares (Black Belt) collectively represent decades of high-level BJJ experience. Fundamentals classes are available for beginners. Competition-prep tracks are available for those who want them.</p>
+      </div>
+    </div>
+
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHO IT IS FOR</p>
+      <ul class="space-y-3 font-body text-canvas/80 leading-relaxed">
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Complete beginners who have never been on a mat</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Grapplers from wrestling or judo backgrounds adding submission skills</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>MMA athletes building a ground game they can rely on</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Competition-focused students working toward regional and national events</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Anyone who wants a long-term practice with measurable, belt-tracked progress</span></li>
+      </ul>
+    </div>
+
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHAT A CLASS LOOKS LIKE</p>
+      <p class="font-body text-canvas/80 leading-relaxed">A typical Gi class opens with a warm-up using BJJ-specific movement drills — shrimping, bridging, technical stand-ups. The instructor then covers one to two techniques in detail, building them from basic to contextual. Positional drilling follows, where students train specific scenarios with a partner at controlled resistance. Classes close with live rolling. White belts in fundamentals classes are eased in gradually. Advanced classes roll hard.</p>
+    </div>
+
+    <!-- Schedule -->
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">CLASS SCHEDULE</p>
+      <Schedule client:load filterDiscipline="bjj-gi" compact={true} />
+    </div>
+
+    <!-- CTA -->
+    <div class="border border-iron p-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+      <div>
+        <p class="font-display text-2xl uppercase text-canvas">Try it free.</p>
+        <p class="font-mono text-xs text-smoke mt-1">7 days. No commitment.</p>
+      </div>
+      <a href="/free-trial" class="inline-block bg-brass text-void font-mono text-xs tracking-widest uppercase px-8 py-4 hover:bg-canvas transition-colors duration-200">
+        CLAIM FREE TRIAL
+      </a>
+    </div>
+
+  </div>
+</Base>

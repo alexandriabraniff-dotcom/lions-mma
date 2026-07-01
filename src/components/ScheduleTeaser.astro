@@ -1,0 +1,96 @@
+---
+import { schedule, DAY_LABELS, type Day } from '../data/schedule';
+import { disciplines } from '../data/disciplines';
+
+// Determine today's day key
+const jsDay = new Date().getDay(); // 0=Sun, 1=Mon, ...
+const dayMap: Day[] = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+const todayKey: Day = dayMap[jsDay];
+const todayLabel = DAY_LABELS[todayKey];
+
+// Get today's sessions sorted by start time
+const todaySessions = schedule
+  .filter((s) => s.day === todayKey)
+  .sort((a, b) => a.start.localeCompare(b.start));
+
+// Helper: convert "HH:MM" 24h to "H:MM AM/PM"
+function fmt12h(time: string): string {
+  const [hStr, mStr] = time.split(':');
+  const h = parseInt(hStr, 10);
+  const m = mStr;
+  const period = h >= 12 ? 'PM' : 'AM';
+  const h12 = h % 12 === 0 ? 12 : h % 12;
+  return `${h12}:${m} ${period}`;
+}
+
+// Build a discipline lookup map
+const disciplineMap = Object.fromEntries(disciplines.map((d) => [d.id, d]));
+
+// Level badge labels
+const levelLabels: Record<string, string> = {
+  all: 'ALL LEVELS',
+  fundamentals: 'FUNDAMENTALS',
+  advanced: 'ADVANCED',
+  competition: 'COMPETITION',
+  kids: 'KIDS',
+  womens: "WOMEN'S",
+};
+---
+
+<section class="py-24 bg-vault" id="schedule-preview">
+  <div class="px-6 md:px-12 lg:px-20 max-w-7xl mx-auto">
+
+    <!-- Header -->
+    <h2 class="font-display text-5xl text-canvas mb-2">ON TODAY.</h2>
+    <p class="font-mono text-sm text-smoke mb-12">{todayLabel.toUpperCase()}</p>
+
+    {todaySessions.length === 0 ? (
+      <p class="font-body text-canvas/60">
+        No classes scheduled today.{' '}
+        <a href="/schedule" class="text-brass hover:text-canvas transition-colors">
+          See the full week &rarr;
+        </a>
+      </p>
+    ) : (
+      <ul class="max-w-2xl divide-y divide-iron border-t border-iron">
+        {todaySessions.map((session) => {
+          const discipline = disciplineMap[session.discipline];
+          return (
+            <li class="flex items-center gap-6 py-4">
+              <!-- Time -->
+              <span class="font-mono text-sm text-canvas w-24 shrink-0">
+                {fmt12h(session.start)}
+              </span>
+
+              <!-- Discipline name -->
+              <span class="font-display text-xl uppercase text-canvas">
+                {discipline?.name ?? session.discipline}
+              </span>
+
+              <!-- Level badge -->
+              {session.level && session.level !== 'all' && (
+                <span class="font-mono text-xs border border-iron text-smoke px-2 py-0.5 rounded-none shrink-0">
+                  {levelLabels[session.level] ?? session.level.toUpperCase()}
+                </span>
+              )}
+
+              <!-- Location tag -->
+              <span class="font-mono text-xs text-brass ml-auto shrink-0">
+                {session.location} GRANVILLE
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+    )}
+
+    <!-- Full schedule link -->
+    <a
+      href="/schedule"
+      class="mt-8 inline-block font-mono text-sm text-brass hover:text-canvas tracking-widest uppercase transition-colors"
+    >
+      SEE FULL SCHEDULE &rarr;
+    </a>
+
+  </div>
+</section>

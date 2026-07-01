@@ -1,0 +1,63 @@
+---
+import Base from '../../layouts/Base.astro';
+import Schedule from '../../components/Schedule';
+---
+
+<Base title="Wrestling" description="Wrestling classes at Lions MMA Vancouver. Takedowns, scrambles, conditioning. Led by Rodrigo Sezinando and Daniel Osario.">
+
+  <!-- Header -->
+  <div class="pt-32 pb-0 max-w-7xl mx-auto px-6">
+    <p class="font-mono text-xs tracking-widest uppercase text-smoke mb-3">HARDEST SPORT IN THE WORLD</p>
+    <h1 class="font-display text-7xl md:text-9xl uppercase tracking-tight text-canvas leading-none">WRESTLING.</h1>
+    <div class="w-full aspect-video bg-vault border-t border-brass mt-8 flex items-center justify-center">
+      <p class="font-mono text-xs text-smoke">PHOTO / VIDEO COMING SOON</p>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="py-24 max-w-4xl mx-auto px-6">
+
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHAT IT IS</p>
+      <div class="space-y-6 font-body text-canvas/80 leading-relaxed">
+        <p>Wrestling is the oldest combat sport in recorded history and the most athletically demanding discipline in this gym. It is built around controlling where the fight happens — taking opponents down, holding them there, and turning physical dominance into points, position, or submission setups. In a grappling context, the person who controls the takedown largely controls the match.</p>
+        <p>The wrestling curriculum at Lions is coached by Rodrigo Sezinando and Daniel Osario. It covers single legs, double legs, and high-crotch attacks from the tie-up and open stance; sprawl and scramble defense; and the chain wrestling that connects one attack to the next. The conditioning demands are real. Wrestling fitness is its own category and it will expose any gaps in your base.</p>
+        <p>For BJJ and No-Gi grapplers, wrestling solves the takedown problem — the gap in most ground fighters' games that becomes obvious the moment they face a wrestler. For MMA athletes, it provides cage control, takedowns, and the ability to dictate where every round goes. As a standalone discipline it is extraordinarily demanding and one of the most effective physical development tools on the floor.</p>
+      </div>
+    </div>
+
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHO IT IS FOR</p>
+      <ul class="space-y-3 font-body text-canvas/80 leading-relaxed">
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>BJJ and No-Gi grapplers who need to solve the takedown gap</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>MMA fighters building cage control and fight dictation skills</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Athletes looking for serious conditioning built through real sport movement</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Beginners who want to build a grappling base from the floor up</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Competitors in any grappling format who want more dominance in scrambles</span></li>
+      </ul>
+    </div>
+
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHAT A CLASS LOOKS LIKE</p>
+      <p class="font-body text-canvas/80 leading-relaxed">Wrestling classes start with a demanding warm-up: level changes, penetration steps, sprawls, and movement patterns that build the athleticism the sport requires. Technique work covers the day's attack or defensive sequence, drilled at progressive speed with a partner. Classes close with live wrestling in timed rounds. Expect the hardest cardio session in the gym. Expect to learn something every single time.</p>
+    </div>
+
+    <!-- Schedule -->
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">CLASS SCHEDULE</p>
+      <Schedule client:load filterDiscipline="wrestling" compact={true} />
+    </div>
+
+    <!-- CTA -->
+    <div class="border border-iron p-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+      <div>
+        <p class="font-display text-2xl uppercase text-canvas">Try it free.</p>
+        <p class="font-mono text-xs text-smoke mt-1">7 days. No commitment.</p>
+      </div>
+      <a href="/free-trial" class="inline-block bg-brass text-void font-mono text-xs tracking-widest uppercase px-8 py-4 hover:bg-canvas transition-colors duration-200">
+        CLAIM FREE TRIAL
+      </a>
+    </div>
+
+  </div>
+</Base>

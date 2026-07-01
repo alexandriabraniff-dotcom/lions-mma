@@ -1,0 +1,127 @@
+import type { DisciplineId } from './disciplines';
+
+export type Coach = {
+  id: string;
+  name: string;
+  role: string;
+  credentials?: string;
+  bio: string;
+  disciplines: DisciplineId[];
+  photoPlaceholder: true;
+};
+
+export const team: Coach[] = [
+  {
+    id: 'amir-ghassemi',
+    name: 'Amir Ghassemi',
+    role: 'Head Instructor, Striking / General Manager',
+    bio: 'Amir has spent over two decades building Lions MMA into one of Vancouver\'s most respected combat sports gyms. A veteran striking coach with a competitive background in Muay Thai and boxing, he sets the standard for technical precision on the gym floor. He runs the day-to-day operation with the same intensity he brings to every class.',
+    disciplines: ['muay-thai', 'boxing', 'mma'],
+    photoPlaceholder: true,
+  },
+  {
+    id: 'guilherme-falcao',
+    name: 'Guilherme Falcao',
+    role: 'Head Instructor, Grappling',
+    credentials: 'BJJ Black Belt, 1st Degree',
+    bio: 'Guilherme holds a first-degree black belt in Brazilian Jiu-Jitsu and has been competing and coaching at the highest level for over fifteen years. His classes are known for sharp technical instruction and a culture that pushes students from white belt fundamentals to competition-ready skill. He leads both the Gi and No-Gi programs at Lions.',
+    disciplines: ['bjj-gi', 'nogi'],
+    photoPlaceholder: true,
+  },
+  {
+    id: 'alex-coles',
+    name: 'Alex Coles',
+    role: 'Head Instructor, Kids / Sales Manager',
+    bio: 'Alex built the Lions Kids program from the ground up with a focus on confidence, respect, and anti-bullying values. He has a rare ability to make martial arts accessible and fun for young students while holding high standards for discipline. Off the mats, he manages membership and ensures every new member finds the right fit.',
+    disciplines: ['kids'],
+    photoPlaceholder: true,
+  },
+  {
+    id: 'gabrielle-stan',
+    name: 'Gabrielle Stan',
+    role: 'BJJ Instructor',
+    credentials: 'BJJ Black Belt',
+    bio: 'Gabrielle is one of the most technically polished grapplers on the Lions coaching staff. Competing across Canada and internationally, she brings a competition mindset to every class she teaches. Her sessions are structured, detailed, and demanding in the best way.',
+    disciplines: ['bjj-gi', 'nogi'],
+    photoPlaceholder: true,
+  },
+  {
+    id: 'alberto-garcia',
+    name: 'Alberto Garcia',
+    role: 'BJJ Instructor',
+    credentials: 'BJJ Black Belt',
+    bio: 'Alberto has dedicated over a decade to mastering the guard game and positional control. His coaching style balances patience with precision, making him especially effective with students transitioning from fundamentals to advanced training. A reliable presence on the mats at both Lions locations.',
+    disciplines: ['bjj-gi', 'nogi'],
+    photoPlaceholder: true,
+  },
+  {
+    id: 'jessica-wilson',
+    name: 'Jessica Wilson',
+    role: "Women's Only Program Instructor",
+    bio: 'Jessica runs the Women\'s Only program at Lions with the belief that every woman deserves access to high-quality martial arts training in a space built for them. She has trained in Muay Thai for years and brings both technical skill and genuine care to her classes. The program she leads is one of the most active in the gym.',
+    disciplines: ['womens', 'muay-thai'],
+    photoPlaceholder: true,
+  },
+  {
+    id: 'adam-karse',
+    name: 'Adam Karse',
+    role: 'Striking Instructor',
+    bio: 'Adam is a sharp, experienced striking coach with a background in Muay Thai and combat sports competition. His classes are fast-paced and technically demanding, with a particular focus on combination work and footwork. He coaches across both beginner and advanced levels and has produced several competitive fighters from Lions.',
+    disciplines: ['muay-thai', 'boxing'],
+    photoPlaceholder: true,
+  },
+  {
+    id: 'rodrigo-sezinando',
+    name: 'Rodrigo Sezinando',
+    role: 'Striking & Grappling Instructor',
+    credentials: 'BJJ Black Belt',
+    bio: 'Rodrigo is a complete martial artist with black belt credentials in BJJ and deep experience in striking. He bridges the stand-up and grappling worlds in his MMA classes, giving students a realistic picture of how the disciplines connect. His sessions are intense, purposeful, and technically rich.',
+    disciplines: ['mma', 'bjj-gi'],
+    photoPlaceholder: true,
+  },
+  {
+    id: 'merck-milne',
+    name: 'Merck Milne',
+    role: 'BJJ Instructor',
+    credentials: 'BJJ Brown Belt',
+    bio: 'Merck brings energy and attention to detail to every class he runs. With a brown belt in BJJ and a background in competitive No-Gi, he is a trusted instructor for students at all stages of their grappling development. He is known for clear explanations and a training-floor presence that keeps the room focused.',
+    disciplines: ['bjj-gi', 'nogi'],
+    photoPlaceholder: true,
+  },
+  {
+    id: 'lucio-tavares',
+    name: 'Lucio Tavares',
+    role: 'BJJ Instructor',
+    credentials: 'BJJ Black Belt',
+    bio: 'Lucio holds a black belt in Brazilian Jiu-Jitsu and has spent years refining his instructional approach to suit all skill levels. His Gi classes are built on sound fundamentals and effective positional strategy. A respected name in the Vancouver BJJ community.',
+    disciplines: ['bjj-gi'],
+    photoPlaceholder: true,
+  },
+  {
+    id: 'daniel-osario',
+    name: 'Daniel Osario',
+    role: 'Striking & Grappling Instructor',
+    credentials: 'BJJ Purple Belt',
+    bio: 'Daniel is a versatile instructor who moves comfortably between the striking and grappling worlds. His MMA classes put both skill sets in context, preparing students for the unpredictability of real combat sports. He holds a purple belt in BJJ and continues to compete regularly.',
+    disciplines: ['mma', 'bjj-gi'],
+    photoPlaceholder: true,
+  },
+  {
+    id: 'daria-preradovic',
+    name: 'Daria Preradovic',
+    role: 'Strength & Conditioning Coach',
+    bio: 'Daria designs and delivers the strength and conditioning program at Lions with a focus on athletic performance specific to combat sports. Her sessions complement technical training by building the base of power, endurance, and resilience that separates good fighters from great ones.',
+    disciplines: ['mma'],
+    photoPlaceholder: true,
+  },
+  {
+    id: 'emma-stecklov',
+    name: 'Emma Stecklov',
+    role: 'Kids Martial Arts Instructor / Office Manager',
+    bio: 'Emma manages both the front desk and the kids program with the same steady professionalism. In class she is patient, encouraging, and consistent, qualities that make her a favourite among the younger students and their parents. Behind the scenes she keeps the gym running smoothly every day.',
+    disciplines: ['kids'],
+    photoPlaceholder: true,
+  },
+];
+
+export default team;

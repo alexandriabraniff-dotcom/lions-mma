@@ -1,0 +1,116 @@
+---
+import Base from '../layouts/Base.astro';
+import { pricingPlans, addOns } from '../data/pricing';
+
+const unlimited = pricingPlans.filter(p => p.name === 'Unlimited');
+const twoDays = pricingPlans.filter(p => p.name === '2 Days / Week');
+---
+
+<Base title="Membership Pricing" description="Lions MMA Vancouver membership pricing. Unlimited and 2-day plans. Gear included. Two locations on Granville Street.">
+  <div class="pt-32 pb-24 px-6 max-w-7xl mx-auto">
+
+    <!-- Page header -->
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke mb-2">MEMBERSHIP</p>
+      <h1 class="font-display text-6xl md:text-8xl uppercase tracking-tight text-canvas leading-none">TRAIN HERE.</h1>
+      <p class="font-body text-canvas/60 mt-4 max-w-xl text-lg">Two locations. Every discipline. Gear included. Pick your commitment.</p>
+    </div>
+
+    <!-- Memberships -->
+    <div class="mb-20">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke mb-8">MEMBERSHIPS</p>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+
+        <!-- Unlimited column -->
+        <div>
+          <p class="font-display text-2xl uppercase tracking-tight text-canvas mb-6">UNLIMITED</p>
+          <div class="flex flex-col gap-4">
+            {unlimited.map(plan => (
+              <div class={`p-8 border transition-colors ${plan.highlight ? 'bg-vault border-brass' : 'bg-vault border-iron'} relative`}>
+                {plan.highlight && (
+                  <span class="absolute top-4 right-4 font-mono text-xs tracking-widest uppercase text-brass border border-brass px-2 py-0.5">MOST POPULAR</span>
+                )}
+                <p class="font-mono text-xs tracking-widest uppercase text-smoke">{plan.commitment}</p>
+                <div class="flex items-baseline gap-2 mt-2">
+                  <span class={`font-display text-6xl leading-none ${plan.highlight ? 'text-brass' : 'text-canvas'}`}>${plan.price}</span>
+                  <span class="font-body text-sm text-smoke">/mo</span>
+                </div>
+                <p class="font-body text-sm text-canvas/60 mt-2">{plan.access}</p>
+                <p class="font-mono text-xs text-brass mt-4">&#10003; {plan.includes}</p>
+                <a
+                  href="/free-trial"
+                  class={`mt-6 block w-full text-center font-display tracking-wider uppercase py-3 text-sm transition-colors ${plan.highlight ? 'bg-brass text-void hover:bg-canvas' : 'border border-iron text-canvas hover:border-brass'}`}
+                >
+                  START FREE TRIAL
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- 2 Days / Week column -->
+        <div>
+          <p class="font-display text-2xl uppercase tracking-tight text-canvas mb-6">2 DAYS / WEEK</p>
+          <div class="flex flex-col gap-4">
+            {twoDays.map(plan => (
+              <div class="p-8 bg-vault border border-iron">
+                <p class="font-mono text-xs tracking-widest uppercase text-smoke">{plan.commitment}</p>
+                <div class="flex items-baseline gap-2 mt-2">
+                  <span class="font-display text-6xl leading-none text-canvas">${plan.price}</span>
+                  <span class="font-body text-sm text-smoke">/mo</span>
+                </div>
+                <p class="font-body text-sm text-canvas/60 mt-2">{plan.access}</p>
+                <p class="font-mono text-xs text-brass mt-4">&#10003; {plan.includes}</p>
+                <a
+                  href="/free-trial"
+                  class="mt-6 block w-full text-center font-display tracking-wider uppercase py-3 text-sm border border-iron text-canvas hover:border-brass transition-colors"
+                >
+                  START FREE TRIAL
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Add-ons -->
+    <div class="mb-20">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke mb-6">ADD-ONS</p>
+      <div class="border-t border-iron">
+        {addOns.map(addon => (
+          <div class="flex items-center justify-between py-5 border-b border-iron gap-6">
+            <div>
+              <p class="font-body text-canvas font-medium">{addon.name}</p>
+              {addon.description && (
+                <p class="font-body text-sm text-canvas/50 mt-0.5">{addon.description}</p>
+              )}
+            </div>
+            <p class="font-mono text-sm text-brass whitespace-nowrap">+${addon.price}/mo</p>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Kids note -->
+    <div class="mb-20 p-8 bg-vault border border-iron">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke mb-2">KIDS MARTIAL ARTS</p>
+      <p class="font-body text-canvas/60">Kids Martial Arts pricing varies by age and program. Contact us for details.</p>
+      <a href="/contact" class="font-mono text-xs tracking-widest uppercase text-brass mt-4 inline-block hover:underline">CONTACT THE GYM</a>
+    </div>
+
+  </div>
+
+  <!-- Bottom CTA -->
+  <div class="bg-brass px-6 py-20 text-center">
+    <h2 class="font-display text-5xl md:text-7xl uppercase tracking-tight text-void leading-none mb-4">7 DAYS FREE.</h2>
+    <p class="font-body text-void/70 text-lg mb-8">Walk in. Mention your name. No card required.</p>
+    <a
+      href="/free-trial"
+      class="inline-block bg-void text-canvas font-display tracking-wider uppercase px-10 py-4 text-sm hover:bg-iron transition-colors"
+    >
+      CLAIM YOUR TRIAL
+    </a>
+  </div>
+</Base>

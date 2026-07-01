@@ -1,0 +1,59 @@
+---
+import Base from './Base.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  author?: string;
+  category?: string;
+}
+
+const { title, description, pubDate, author, category } = Astro.props;
+---
+
+<Base title={title} description={description}>
+  <div class="pt-32 pb-24 max-w-3xl mx-auto px-6">
+
+    <a href="/blog" class="font-mono text-xs text-smoke hover:text-canvas tracking-wider transition-colors">← BLOG</a>
+
+    <div class="mt-10">
+      {category && (
+        <p class="font-mono text-xs text-brass tracking-widest uppercase mb-3">{category}</p>
+      )}
+      <p class="font-mono text-xs text-smoke mb-6">
+        {pubDate.toLocaleDateString('en-CA', { year: 'numeric', month: 'long', day: 'numeric' })}
+      </p>
+      <h1 class="font-display text-5xl md:text-7xl uppercase tracking-tight text-canvas leading-none">{title}</h1>
+      {author && (
+        <p class="font-mono text-xs text-smoke mt-4">BY {author.toUpperCase()}</p>
+      )}
+    </div>
+
+    <hr class="border-brass mt-10 mb-0" />
+
+    <div class="prose prose-invert max-w-none mt-12
+      [&>p]:font-body [&>p]:text-canvas/80 [&>p]:leading-relaxed [&>p]:mb-6
+      [&>h2]:font-display [&>h2]:uppercase [&>h2]:tracking-tight [&>h2]:text-canvas [&>h2]:text-3xl [&>h2]:mt-12 [&>h2]:mb-4
+      [&>h3]:font-display [&>h3]:uppercase [&>h3]:tracking-tight [&>h3]:text-canvas [&>h3]:text-2xl [&>h3]:mt-8 [&>h3]:mb-3
+      [&>ul]:font-body [&>ul]:text-canvas/80 [&>ul]:leading-relaxed [&>ul]:mb-6 [&>ul]:list-disc [&>ul]:pl-6
+      [&>ol]:font-body [&>ol]:text-canvas/80 [&>ol]:leading-relaxed [&>ol]:mb-6 [&>ol]:list-decimal [&>ol]:pl-6
+      [&>blockquote]:border-l-2 [&>blockquote]:border-brass [&>blockquote]:pl-6 [&>blockquote]:font-body [&>blockquote]:text-canvas/60 [&>blockquote]:italic [&>blockquote]:my-8
+      [&>strong]:text-canvas [&>strong]:font-body [&>strong]:font-medium
+      [&>a]:text-brass [&>a]:underline-offset-2 hover:[&>a]:text-canvas">
+      <slot />
+    </div>
+
+    <!-- CTA Strip -->
+    <div class="mt-20 border border-iron p-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+      <div>
+        <p class="font-display text-2xl uppercase text-canvas">Ready to train?</p>
+        <p class="font-mono text-xs text-smoke mt-1">7 days free. No commitment.</p>
+      </div>
+      <a href="/free-trial" class="inline-block bg-brass text-void font-mono text-xs tracking-widest uppercase px-8 py-4 hover:bg-canvas transition-colors duration-200">
+        CLAIM FREE TRIAL
+      </a>
+    </div>
+
+  </div>
+</Base>

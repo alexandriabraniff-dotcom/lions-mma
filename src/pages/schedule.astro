@@ -1,0 +1,15 @@
+---
+import Base from '../layouts/Base.astro';
+import Schedule from '../components/Schedule';
+---
+
+<Base title="Class Schedule" description="Full weekly class schedule for Lions MMA Vancouver. Filter by location and discipline. Both 1256 and 1133 Granville St.">
+  <div class="pt-32 pb-24 px-6 max-w-7xl mx-auto">
+    <div class="mb-12">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke mb-2">CLASS SCHEDULE</p>
+      <h1 class="font-display text-6xl md:text-8xl uppercase tracking-tight text-canvas leading-none">THE WEEK.</h1>
+      <p class="font-body text-canvas/60 mt-4 max-w-xl">Both locations. Filter by discipline. Times are placeholder — confirm with the gym for the current timetable.</p>
+    </div>
+    <Schedule client:load />
+  </div>
+</Base>

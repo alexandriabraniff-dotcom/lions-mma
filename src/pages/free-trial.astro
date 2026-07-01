@@ -1,0 +1,196 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Free Trial" description="Claim your 7-day free trial at Lions MMA Vancouver. Walk in, mention your name. No card required.">
+  <div class="pt-32 pb-24 max-w-3xl mx-auto px-6">
+
+    <!-- Page header -->
+    <div class="mb-12">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke mb-2">FREE TRIAL</p>
+      <h1 class="font-display text-6xl md:text-8xl uppercase tracking-tight text-canvas leading-none">TRAIN FREE.</h1>
+      <p class="font-body text-canvas/60 mt-4 max-w-xl text-lg">7 days. Walk in. Mention your name at the front desk. No card required.</p>
+    </div>
+
+    <!-- Form wrapper -->
+    <div id="form-wrapper">
+      <form id="trial-form" action="/api/trial" method="POST" class="flex flex-col gap-6" novalidate>
+
+        <!-- Name row -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div class="flex flex-col gap-2">
+            <label for="firstName" class="font-mono text-xs tracking-widest uppercase text-smoke">First Name <span class="text-brass">*</span></label>
+            <input
+              type="text"
+              id="firstName"
+              name="firstName"
+              required
+              autocomplete="given-name"
+              placeholder="Alex"
+              class="w-full bg-vault border border-iron text-canvas font-body py-3 px-4 focus:outline-none focus:border-brass transition-colors placeholder:text-smoke"
+            />
+          </div>
+          <div class="flex flex-col gap-2">
+            <label for="lastName" class="font-mono text-xs tracking-widest uppercase text-smoke">Last Name <span class="text-brass">*</span></label>
+            <input
+              type="text"
+              id="lastName"
+              name="lastName"
+              required
+              autocomplete="family-name"
+              placeholder="Smith"
+              class="w-full bg-vault border border-iron text-canvas font-body py-3 px-4 focus:outline-none focus:border-brass transition-colors placeholder:text-smoke"
+            />
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="flex flex-col gap-2">
+          <label for="email" class="font-mono text-xs tracking-widest uppercase text-smoke">Email <span class="text-brass">*</span></label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            autocomplete="email"
+            placeholder="you@example.com"
+            class="w-full bg-vault border border-iron text-canvas font-body py-3 px-4 focus:outline-none focus:border-brass transition-colors placeholder:text-smoke"
+          />
+        </div>
+
+        <!-- Phone -->
+        <div class="flex flex-col gap-2">
+          <label for="phone" class="font-mono text-xs tracking-widest uppercase text-smoke">Phone <span class="text-smoke/50">(optional)</span></label>
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            autocomplete="tel"
+            placeholder="+1 (604) 000-0000"
+            class="w-full bg-vault border border-iron text-canvas font-body py-3 px-4 focus:outline-none focus:border-brass transition-colors placeholder:text-smoke"
+          />
+        </div>
+
+        <!-- Location -->
+        <div class="flex flex-col gap-2">
+          <label for="location" class="font-mono text-xs tracking-widest uppercase text-smoke">Which location are you interested in?</label>
+          <select
+            id="location"
+            name="location"
+            class="w-full bg-vault border border-iron text-canvas font-body py-3 px-4 focus:outline-none focus:border-brass transition-colors appearance-none cursor-pointer"
+          >
+            <option value="both">Both</option>
+            <option value="1256">1256 Granville St</option>
+            <option value="1133">1133 Granville St</option>
+          </select>
+        </div>
+
+        <!-- Source -->
+        <div class="flex flex-col gap-2">
+          <label for="source" class="font-mono text-xs tracking-widest uppercase text-smoke">How did you hear about us? <span class="text-smoke/50">(optional)</span></label>
+          <select
+            id="source"
+            name="source"
+            class="w-full bg-vault border border-iron text-canvas font-body py-3 px-4 focus:outline-none focus:border-brass transition-colors appearance-none cursor-pointer"
+          >
+            <option value="">Select an option</option>
+            <option value="google">Google Search</option>
+            <option value="instagram">Instagram</option>
+            <option value="facebook">Facebook</option>
+            <option value="friend">Friend or family</option>
+            <option value="walked-by">Walked past the gym</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <!-- Message -->
+        <div class="flex flex-col gap-2">
+          <label for="message" class="font-mono text-xs tracking-widest uppercase text-smoke">Message or questions <span class="text-smoke/50">(optional)</span></label>
+          <textarea
+            id="message"
+            name="message"
+            rows="4"
+            placeholder="Any questions before you come in?"
+            class="w-full bg-vault border border-iron text-canvas font-body py-3 px-4 focus:outline-none focus:border-brass transition-colors placeholder:text-smoke resize-none"
+          ></textarea>
+        </div>
+
+        <!-- Error message -->
+        <p id="form-error" class="hidden font-body text-sm text-red-400"></p>
+
+        <!-- Submit -->
+        <button
+          type="submit"
+          id="submit-btn"
+          class="w-full bg-brass text-void font-display tracking-wider uppercase py-4 text-sm hover:bg-canvas hover:text-void transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          CLAIM YOUR 7 DAYS
+        </button>
+
+      </form>
+
+      <p class="font-body text-canvas/40 text-sm mt-8">
+        Prefer to just show up? Works too. Both gyms are open for drop-ins during class hours.
+      </p>
+    </div>
+
+    <!-- Success state (hidden initially) -->
+    <div id="form-success" class="hidden">
+      <div class="border border-brass bg-vault p-10">
+        <p class="font-mono text-xs tracking-widest uppercase text-brass mb-4">SEE YOU THERE</p>
+        <h2 class="font-display text-4xl md:text-5xl uppercase tracking-tight text-canvas leading-none mb-6">You're in. See you on the mats.</h2>
+        <div class="flex flex-col gap-2 mb-8">
+          <p class="font-mono text-sm text-canvas/80">1256 Granville St, Vancouver, BC V6Z 1M6</p>
+          <p class="font-mono text-sm text-canvas/80">1133 Granville St, Vancouver, BC V6Z 1L4</p>
+        </div>
+        <a href="/schedule" class="font-mono text-xs tracking-widest uppercase text-brass hover:underline">VIEW THE CLASS SCHEDULE</a>
+      </div>
+    </div>
+
+  </div>
+</Base>
+
+<script>
+  const form = document.getElementById('trial-form') as HTMLFormElement | null;
+  const formWrapper = document.getElementById('form-wrapper') as HTMLElement | null;
+  const successEl = document.getElementById('form-success') as HTMLElement | null;
+  const errorEl = document.getElementById('form-error') as HTMLElement | null;
+  const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement | null;
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    if (!form || !submitBtn || !errorEl || !formWrapper || !successEl) return;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'SENDING...';
+    errorEl.classList.add('hidden');
+    errorEl.textContent = '';
+
+    try {
+      const data = new FormData(form);
+      const res = await fetch('/api/trial', {
+        method: 'POST',
+        body: data,
+      });
+
+      const json = await res.json();
+
+      if (res.ok && json.success) {
+        formWrapper.classList.add('hidden');
+        successEl.classList.remove('hidden');
+      } else {
+        const msg = json.error ?? 'Something went wrong on our end. Call us at (604) 684-0991 or just come in.';
+        errorEl.textContent = msg;
+        errorEl.classList.remove('hidden');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'CLAIM YOUR 7 DAYS';
+      }
+    } catch {
+      errorEl.textContent = 'Something went wrong on our end. Call us at (604) 684-0991 or just come in.';
+      errorEl.classList.remove('hidden');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'CLAIM YOUR 7 DAYS';
+    }
+  });
+</script>

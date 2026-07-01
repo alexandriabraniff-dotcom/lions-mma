@@ -1,0 +1,91 @@
+---
+import Base from '../../layouts/Base.astro';
+import { disciplines } from '../../data/disciplines';
+
+const programs = [
+  {
+    id: 'muay-thai',
+    name: 'Muay Thai',
+    tagline: 'The Art of 8 Limbs',
+    slug: 'muay-thai',
+    description: 'Eight weapons. Hands, elbows, knees, feet. The complete striking system used by fighters across every combat sport.',
+  },
+  {
+    id: 'boxing',
+    name: 'Boxing',
+    tagline: 'The Sweet Science',
+    slug: 'boxing',
+    description: 'Punching, defense, footwork, counters. The purest form of striking — and the hardest to master.',
+  },
+  {
+    id: 'bjj-gi',
+    name: 'BJJ (Gi)',
+    tagline: 'The Gentle Art',
+    slug: 'bjj-gi',
+    description: 'Leverage over strength. A smaller person controlling a bigger one through technique. The foundation of modern grappling.',
+  },
+  {
+    id: 'nogi',
+    name: 'No-Gi',
+    tagline: 'Submission Grappling',
+    slug: 'nogi',
+    description: 'Same principles. No collar, no lapels. Wrestling-heavy, fast-paced, and increasingly essential for competition.',
+  },
+  {
+    id: 'wrestling',
+    name: 'Wrestling',
+    tagline: 'Hardest Sport in the World',
+    slug: 'wrestling',
+    description: 'The engine under every serious grappler. Takedowns, scrambles, and the kind of conditioning that resets your ceiling.',
+  },
+  {
+    id: 'mma',
+    name: 'MMA',
+    tagline: 'Train Like a Pro',
+    slug: 'mma',
+    description: 'Every tool, combined. Striking into grappling, grappling into striking. Train like the full picture matters.',
+  },
+  {
+    id: 'womens',
+    name: "Women's Only",
+    tagline: 'Safe, Inclusive, Empowering',
+    slug: 'womens-only',
+    description: 'All-women classes in Muay Thai, BJJ, and No-Gi. Taught by female instructors. The same standard as every other class on the floor.',
+  },
+  {
+    id: 'kids',
+    name: 'Kids',
+    tagline: 'Anti-Bullying, Respect, Values',
+    slug: 'kids',
+    description: 'Confidence, character, and the ability to handle themselves. Ages 4 and up. No ego tolerated from anyone in the building.',
+  },
+  {
+    id: 'private',
+    name: 'Private Training',
+    tagline: 'Level Up',
+    slug: 'private-training',
+    description: 'One-on-one with a Lions MMA instructor. The fastest way to fix something specific or accelerate toward a goal.',
+  },
+];
+---
+
+<Base title="Programs" description="Nine disciplines across two locations. Muay Thai, Boxing, BJJ, No-Gi, Wrestling, MMA, Women's Only, Kids, and Private Training at Lions MMA Vancouver.">
+  <div class="pt-32 pb-24 max-w-7xl mx-auto px-6">
+
+    <p class="font-mono text-xs tracking-widest uppercase text-smoke mb-2">WHAT WE TEACH</p>
+    <h1 class="font-display text-7xl md:text-9xl uppercase tracking-tight text-canvas leading-none">PROGRAMS.</h1>
+    <p class="font-body text-canvas/60 mt-4">Nine disciplines. Two locations. One standard.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-iron mt-16">
+      {programs.map(program => (
+        <a href={`/programs/${program.slug}`} class="bg-vault hover:bg-void transition-colors duration-300 p-10 group block">
+          <p class="font-mono text-xs text-brass tracking-widest uppercase mb-3">{program.tagline}</p>
+          <h2 class="font-display text-3xl uppercase tracking-tight text-canvas group-hover:text-brass transition-colors leading-tight">{program.name}</h2>
+          <p class="font-body text-sm text-canvas/60 mt-4 leading-relaxed">{program.description}</p>
+          <p class="font-mono text-xs text-brass mt-8 group-hover:text-canvas transition-colors tracking-wider">LEARN MORE →</p>
+        </a>
+      ))}
+    </div>
+
+  </div>
+</Base>

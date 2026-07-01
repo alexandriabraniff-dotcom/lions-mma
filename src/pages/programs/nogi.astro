@@ -1,0 +1,63 @@
+---
+import Base from '../../layouts/Base.astro';
+import Schedule from '../../components/Schedule';
+---
+
+<Base title="No-Gi" description="No-Gi submission grappling classes at Lions MMA Vancouver. Led by Guilherme Falcao, Gabrielle Stan, and Merck Milne.">
+
+  <!-- Header -->
+  <div class="pt-32 pb-0 max-w-7xl mx-auto px-6">
+    <p class="font-mono text-xs tracking-widest uppercase text-smoke mb-3">SUBMISSION GRAPPLING</p>
+    <h1 class="font-display text-7xl md:text-9xl uppercase tracking-tight text-canvas leading-none">NO-GI.</h1>
+    <div class="w-full aspect-video bg-vault border-t border-brass mt-8 flex items-center justify-center">
+      <p class="font-mono text-xs text-smoke">PHOTO / VIDEO COMING SOON</p>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="py-24 max-w-4xl mx-auto px-6">
+
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHAT IT IS</p>
+      <div class="space-y-6 font-body text-canvas/80 leading-relaxed">
+        <p>No-Gi is BJJ without the kimono. No collar grips, no lapel controls, no sleeve hooks. You are working with underhooks, overhooks, body locks, and wrist control. The absence of the Gi changes the pace, the grip game, and the submission entries significantly. Matches move faster. Wrestling becomes more central. The margin for sloppy technique gets thinner.</p>
+        <p>The format has exploded in popularity over the last decade largely due to ADCC and EBI-style submission-only competition, and increasingly shows up as the dominant grappling format in MMA preparation. If you compete in Gi, No-Gi rounds out your game. If you train MMA, No-Gi is the more directly applicable format.</p>
+        <p>At Lions, the No-Gi program is run by Guilherme Falcao, Gabrielle Stan, and Merck Milne. The instruction is technically grounded — not just scramble-heavy wrestling with submission attempts thrown in, but a coherent system of position, control, and finishing. Students build structured attacks from the guard, half guard, back, and leg entanglements.</p>
+      </div>
+    </div>
+
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHO IT IS FOR</p>
+      <ul class="space-y-3 font-body text-canvas/80 leading-relaxed">
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Gi BJJ practitioners who want to cross-train and remove the crutch of fabric grips</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Wrestlers adding a submission layer to their existing game</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>MMA athletes training for realistic grappling situations</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Competitors targeting ADCC-style or submission-only events</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Anyone who wants a fast-paced, physically demanding grappling practice</span></li>
+      </ul>
+    </div>
+
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHAT A CLASS LOOKS LIKE</p>
+      <p class="font-body text-canvas/80 leading-relaxed">No-Gi classes open with movement drills and level changes to get the body ready for wrestling-intensity movement. Technique instruction covers a specific position or attack chain, drilled with a partner at progressive resistance. Classes close with live rolling. The pace is higher than Gi classes on average. Expect to work harder for the same positional control — and to earn every submission you finish.</p>
+    </div>
+
+    <!-- Schedule -->
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">CLASS SCHEDULE</p>
+      <Schedule client:load filterDiscipline="nogi" compact={true} />
+    </div>
+
+    <!-- CTA -->
+    <div class="border border-iron p-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+      <div>
+        <p class="font-display text-2xl uppercase text-canvas">Try it free.</p>
+        <p class="font-mono text-xs text-smoke mt-1">7 days. No commitment.</p>
+      </div>
+      <a href="/free-trial" class="inline-block bg-brass text-void font-mono text-xs tracking-widest uppercase px-8 py-4 hover:bg-canvas transition-colors duration-200">
+        CLAIM FREE TRIAL
+      </a>
+    </div>
+
+  </div>
+</Base>

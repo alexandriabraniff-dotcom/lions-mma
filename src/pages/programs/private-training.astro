@@ -1,0 +1,63 @@
+---
+import Base from '../../layouts/Base.astro';
+import Schedule from '../../components/Schedule';
+---
+
+<Base title="Private Training" description="Private training sessions at Lions MMA Vancouver. One-on-one with a Lions MMA instructor. Book at the front desk.">
+
+  <!-- Header -->
+  <div class="pt-32 pb-0 max-w-7xl mx-auto px-6">
+    <p class="font-mono text-xs tracking-widest uppercase text-smoke mb-3">LEVEL UP</p>
+    <h1 class="font-display text-7xl md:text-9xl uppercase tracking-tight text-canvas leading-none">PRIVATE TRAINING.</h1>
+    <div class="w-full aspect-video bg-vault border-t border-brass mt-8 flex items-center justify-center">
+      <p class="font-mono text-xs text-smoke">PHOTO / VIDEO COMING SOON</p>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="py-24 max-w-4xl mx-auto px-6">
+
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHAT IT IS</p>
+      <div class="space-y-6 font-body text-canvas/80 leading-relaxed">
+        <p>Private training is one instructor, one student, one session with a specific purpose. No class structure to follow, no waiting for technique demonstrations to apply to you. Every minute of the session is pointed directly at whatever you need — fixing a mechanical problem, building a specific game plan, accelerating toward a competition, or getting your first month of training compressed into a focused foundation.</p>
+        <p>Privates at Lions are available with any instructor on the coaching staff, depending on your goals and their schedule. Striking privates, grappling privates, MMA-specific work, kids sessions — all available. The front desk can match you with the right coach based on what you are trying to accomplish.</p>
+        <p>Private training is the fastest way to improve in any discipline, particularly when you are stuck on something specific. One good private session can unlock movement patterns or conceptual understanding that would have taken months of group classes to find. Students preparing for competition use privates to sharpen game plans. New students use them to build confidence before stepping into group classes. Both are equally valid uses of the format.</p>
+      </div>
+    </div>
+
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHO IT IS FOR</p>
+      <ul class="space-y-3 font-body text-canvas/80 leading-relaxed">
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Beginners who want an introduction to the gym before joining group classes</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Intermediate students stuck on a specific technical or conceptual problem</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Competitors building a game plan in the weeks before an event</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Athletes who travel or have irregular schedules and cannot commit to regular class times</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Anyone who wants to accelerate their development with focused, undivided coaching attention</span></li>
+      </ul>
+    </div>
+
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHAT A SESSION LOOKS LIKE</p>
+      <p class="font-body text-canvas/80 leading-relaxed">Sessions are typically 60 minutes. You set the agenda with your coach before the session starts: what you want to work, where you feel the gaps, what you are preparing for. The coach builds the session around that. Warm-up, technique, drilling, and live work as appropriate. Private sessions can be booked as one-offs or in blocks. Pricing and availability are confirmed at the front desk.</p>
+    </div>
+
+    <!-- Schedule -->
+    <div class="mb-16">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">AVAILABILITY</p>
+      <Schedule client:load filterDiscipline="private" compact={true} />
+    </div>
+
+    <!-- CTA -->
+    <div class="border border-iron p-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+      <div>
+        <p class="font-display text-2xl uppercase text-canvas">Book a session.</p>
+        <p class="font-mono text-xs text-smoke mt-1">Inquire at the front desk or through the free trial form.</p>
+      </div>
+      <a href="/free-trial" class="inline-block bg-brass text-void font-mono text-xs tracking-widest uppercase px-8 py-4 hover:bg-canvas transition-colors duration-200">
+        GET IN TOUCH
+      </a>
+    </div>
+
+  </div>
+</Base>
