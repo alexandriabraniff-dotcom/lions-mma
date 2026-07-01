@@ -432,115 +432,159 @@ function TimeGrid({
   }
 
   return (
-    <div
-      ref={scrollRef}
-      className="overflow-y-auto scrollbar-hide"
-      style={{
-        maxHeight:          '660px',
-        overscrollBehavior: 'contain',
-        maskImage:          'linear-gradient(to bottom, black calc(100% - 48px), transparent 100%)',
-        WebkitMaskImage:    'linear-gradient(to bottom, black calc(100% - 48px), transparent 100%)',
-      } as React.CSSProperties}
-    >
-      <div className="flex" style={{ height: TOTAL_H, minHeight: TOTAL_H }}>
+    <div>
+      {/* ── Sticky day-name header strip ── */}
+      <div
+        className="flex"
+        style={{ borderBottom: '1px solid rgba(255,255,255,0.12)' }}
+      >
+        {/* Spacer above time-label column */}
+        <div style={{ width: TIME_COL, minWidth: TIME_COL, flexShrink: 0 }} />
 
-        {/* ── Time labels ── */}
-        <div
-          className="shrink-0 relative select-none"
-          style={{ width: TIME_COL, minWidth: TIME_COL }}
-        >
-          {HOURS.map(h => (
-            <div
-              key={h}
-              className="absolute right-3 font-mono"
-              style={{
-                top:      (h - START_HOUR) * HOUR_PX + 4,
-                fontSize: '10px',
-                color:    'rgba(138,132,128,0.6)',
-                letterSpacing: '0.03em',
-              }}
-            >
-              {fmtHour(h)}
-            </div>
-          ))}
-        </div>
-
-        {/* ── Grid body ── */}
-        <div
-          className="flex-1 relative overflow-hidden"
-          style={{ borderLeft: '1px solid rgba(255,255,255,0.06)' }}
-        >
-          {HOURS.map(h => (
-            <div
-              key={`h-${h}`}
-              className="absolute left-0 right-0 pointer-events-none"
-              style={{ top: (h - START_HOUR) * HOUR_PX, borderTop: '1px solid rgba(255,255,255,0.05)' }}
-            />
-          ))}
-
-          {HOURS.map(h => (
-            <div
-              key={`hh-${h}`}
-              className="absolute left-0 right-0 pointer-events-none"
-              style={{ top: (h - START_HOUR) * HOUR_PX + HOUR_PX / 2, borderTop: '1px solid rgba(255,255,255,0.025)' }}
-            />
-          ))}
-
-          {showNow && (
-            <div
-              className="absolute left-0 right-0 z-30 pointer-events-none"
-              style={{ top: nowPx }}
-            >
+        {/* One cell per visible day */}
+        <div className="flex flex-1" style={{ borderLeft: '1px solid rgba(255,255,255,0.08)' }}>
+          {days.map((day, idx) => {
+            const isToday = day === todayDay;
+            return (
               <div
+                key={day}
+                className="flex-1 flex flex-col items-center justify-center"
                 style={{
-                  height:          '1.5px',
-                  backgroundColor: '#C09A3C',
-                  boxShadow:       '0 0 6px #C09A3C88',
-                  position:        'relative',
+                  padding:         '10px 4px 9px',
+                  borderRight:     '1px solid rgba(255,255,255,0.08)',
+                  backgroundColor: isToday ? 'rgba(192,154,60,0.05)' : 'transparent',
                 }}
+              >
+                <span
+                  style={{
+                    fontFamily:    "'Inter', sans-serif",
+                    fontSize:      inWeekView ? '11px' : '15px',
+                    fontWeight:    600,
+                    letterSpacing: inWeekView ? '0.06em' : '0.08em',
+                    textTransform: 'uppercase',
+                    color:         isToday ? '#C09A3C' : 'rgba(238,232,220,0.75)',
+                    lineHeight:    1,
+                  } as React.CSSProperties}
+                >
+                  {inWeekView ? DAY_LABELS[day].slice(0, 3) : DAY_LABELS[day]}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ── Scrollable time grid ── */}
+      <div
+        ref={scrollRef}
+        className="overflow-y-auto scrollbar-hide"
+        style={{
+          maxHeight:          '620px',
+          overscrollBehavior: 'contain',
+          maskImage:          'linear-gradient(to bottom, black calc(100% - 48px), transparent 100%)',
+          WebkitMaskImage:    'linear-gradient(to bottom, black calc(100% - 48px), transparent 100%)',
+        } as React.CSSProperties}
+      >
+        <div className="flex" style={{ height: TOTAL_H, minHeight: TOTAL_H }}>
+
+          {/* ── Time labels ── */}
+          <div
+            className="shrink-0 relative select-none"
+            style={{ width: TIME_COL, minWidth: TIME_COL }}
+          >
+            {HOURS.map(h => (
+              <div
+                key={h}
+                className="absolute right-3 font-mono"
+                style={{
+                  top:      (h - START_HOUR) * HOUR_PX + 4,
+                  fontSize: '10px',
+                  color:    'rgba(138,132,128,0.55)',
+                  letterSpacing: '0.03em',
+                }}
+              >
+                {fmtHour(h)}
+              </div>
+            ))}
+          </div>
+
+          {/* ── Grid body ── */}
+          <div
+            className="flex-1 relative overflow-hidden"
+            style={{ borderLeft: '1px solid rgba(255,255,255,0.08)' }}
+          >
+            {HOURS.map(h => (
+              <div
+                key={`h-${h}`}
+                className="absolute left-0 right-0 pointer-events-none"
+                style={{ top: (h - START_HOUR) * HOUR_PX, borderTop: '1px solid rgba(255,255,255,0.07)' }}
+              />
+            ))}
+
+            {HOURS.map(h => (
+              <div
+                key={`hh-${h}`}
+                className="absolute left-0 right-0 pointer-events-none"
+                style={{ top: (h - START_HOUR) * HOUR_PX + HOUR_PX / 2, borderTop: '1px solid rgba(255,255,255,0.03)' }}
+              />
+            ))}
+
+            {showNow && (
+              <div
+                className="absolute left-0 right-0 z-30 pointer-events-none"
+                style={{ top: nowPx }}
               >
                 <div
                   style={{
-                    position:        'absolute',
-                    left:            -5,
-                    top:             -4,
-                    width:           10,
-                    height:          10,
-                    borderRadius:    '50%',
+                    height:          '1.5px',
                     backgroundColor: '#C09A3C',
-                    boxShadow:       '0 0 8px #C09A3C, 0 0 16px #C09A3C66',
-                  }}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Day columns */}
-          <div className="flex absolute inset-0" style={{ height: TOTAL_H }}>
-            {days.map(day => {
-              const isToday  = day === todayDay;
-              const sessions = layoutSessions(getGroupedDay(day));
-              return (
-                <div
-                  key={day}
-                  className="flex-1 relative"
-                  style={{
-                    borderRight:     '1px solid rgba(255,255,255,0.04)',
-                    backgroundColor: isToday ? 'rgba(192,154,60,0.03)' : 'transparent',
+                    boxShadow:       '0 0 6px #C09A3C88',
+                    position:        'relative',
                   }}
                 >
-                  {sessions.map((s, i) => (
-                    <EventBlock
-                      key={i}
-                      session={s}
-                      isCurrent={isCurrent(s)}
-                      showLocation={activeLocation === 'all'}
-                      inWeekView={inWeekView}
-                    />
-                  ))}
+                  <div
+                    style={{
+                      position:        'absolute',
+                      left:            -5,
+                      top:             -4,
+                      width:           10,
+                      height:          10,
+                      borderRadius:    '50%',
+                      backgroundColor: '#C09A3C',
+                      boxShadow:       '0 0 8px #C09A3C, 0 0 16px #C09A3C66',
+                    }}
+                  />
                 </div>
-              );
-            })}
+              </div>
+            )}
+
+            {/* Day columns */}
+            <div className="flex absolute inset-0" style={{ height: TOTAL_H }}>
+              {days.map(day => {
+                const isToday  = day === todayDay;
+                const sessions = layoutSessions(getGroupedDay(day));
+                return (
+                  <div
+                    key={day}
+                    className="flex-1 relative"
+                    style={{
+                      borderRight:     '1px solid rgba(255,255,255,0.08)',
+                      backgroundColor: isToday ? 'rgba(192,154,60,0.03)' : 'transparent',
+                    }}
+                  >
+                    {sessions.map((s, i) => (
+                      <EventBlock
+                        key={i}
+                        session={s}
+                        isCurrent={isCurrent(s)}
+                        showLocation={activeLocation === 'all'}
+                        inWeekView={inWeekView}
+                      />
+                    ))}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
@@ -619,8 +663,9 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
       style={{
         borderRadius: compact ? 0 : '16px',
         overflow:     compact ? undefined : 'hidden',
-        border:       compact ? undefined : '1px solid rgba(255,255,255,0.06)',
-        backgroundColor: compact ? undefined : 'rgba(26,23,20,0.5)',
+        border:       compact ? undefined : '1px solid rgba(255,255,255,0.1)',
+        backgroundColor: compact ? undefined : 'rgba(22,19,16,0.7)',
+        boxShadow:    compact ? undefined : '0 1px 0 rgba(255,255,255,0.04) inset',
       }}
     >
 
@@ -685,21 +730,23 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
         </div>
       )}
 
-      {/* ── Calendar header: day tabs ── */}
+      {/* ── Day navigation tabs ── */}
       <div
         className="flex items-stretch"
         style={{
           marginTop:    showControls ? '12px' : 0,
-          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          borderBottom: '1px solid rgba(255,255,255,0.1)',
+          borderTop:    showControls ? '1px solid rgba(255,255,255,0.06)' : undefined,
         }}
       >
-        {/* Spacer — exactly TIME_COL wide to align with time-label column */}
+        {/* Spacer — exactly TIME_COL wide */}
         <div className="shrink-0" style={{ width: TIME_COL }} />
 
-        {/* Day tabs — flex-1 so each tab gets exactly the same width as a grid column */}
+        {/* Day tabs */}
         <div
           ref={dayTabsRef}
           className="flex flex-1 overflow-x-auto scrollbar-hide"
+          style={{ borderLeft: '1px solid rgba(255,255,255,0.08)' }}
         >
           {DAYS_ORDER.map(day => {
             const isActive = viewMode === 'day' && activeDay === day;
@@ -710,17 +757,27 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
                 key={day}
                 data-active={isActive ? 'true' : 'false'}
                 onClick={() => { setActiveDay(day); setViewMode('day'); }}
-                className="flex-1 shrink-0 flex flex-col items-center justify-center gap-1.5 py-3 transition-colors"
-                style={{ minWidth: '40px' }}
+                className="flex-1 shrink-0 flex flex-col items-center justify-center gap-1 py-3 transition-colors"
+                style={{
+                  minWidth:        '40px',
+                  borderRight:     '1px solid rgba(255,255,255,0.08)',
+                  backgroundColor: isActive
+                    ? 'rgba(192,154,60,0.08)'
+                    : 'transparent',
+                  borderBottom:    isActive
+                    ? '2px solid #C09A3C'
+                    : '2px solid transparent',
+                  transition: 'background-color 0.15s ease',
+                }}
               >
                 <span
                   className="font-mono uppercase leading-none"
                   style={{
-                    fontSize:      '10px',
-                    letterSpacing: '0.08em',
+                    fontSize:      '9px',
+                    letterSpacing: '0.1em',
                     color:         isToday && !isActive ? '#C09A3C'
                                  : isActive ? 'rgba(238,232,220,0.9)'
-                                 : 'rgba(138,132,128,0.7)',
+                                 : 'rgba(138,132,128,0.6)',
                   }}
                 >
                   {DAY_LABELS[day].slice(0, 3)}
@@ -729,17 +786,14 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
                 <span
                   className="font-display leading-none"
                   style={{
-                    fontSize:        '17px',
-                    minWidth:        '28px',
-                    textAlign:       'center',
-                    borderRadius:    '100px',
-                    padding:         '1px 6px',
-                    backgroundColor: isActive ? '#C09A3C' : 'transparent',
-                    color:           isActive ? '#0D0B09'
-                                   : isToday  ? '#C09A3C'
-                                   : count > 0 ? 'rgba(238,232,220,0.85)'
-                                   : 'rgba(44,40,36,0.9)',
-                    transition:     'all 0.2s ease',
+                    fontSize:   '16px',
+                    minWidth:   '24px',
+                    textAlign:  'center',
+                    color:      isActive ? '#C09A3C'
+                               : isToday  ? '#C09A3C'
+                               : count > 0 ? 'rgba(238,232,220,0.8)'
+                               : 'rgba(60,55,50,0.9)',
+                    transition: 'color 0.15s ease',
                   }}
                 >
                   {count}
