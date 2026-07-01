@@ -2,64 +2,53 @@
 ---
 
 <section class="relative min-h-screen overflow-hidden">
-  <!-- Replace this div with an <Image> tag once client provides high-res action photography -->
-  <div class="hero-bg absolute inset-0 bg-gradient-to-br from-vault to-void"></div>
+
+  <!-- Full-bleed hero photo (replace src with client photo when available) -->
+  <img
+    src="https://picsum.photos/seed/lionshero/1920/1080"
+    alt=""
+    class="absolute inset-0 w-full h-full object-cover"
+    loading="eager"
+  />
+
+  <!-- Dark overlay -->
+  <div class="absolute inset-0 bg-void/65 z-10"></div>
 
   <!-- Grain overlay -->
-  <div class="grain absolute inset-0 z-10 pointer-events-none"></div>
+  <div class="grain absolute inset-0 z-20 pointer-events-none"></div>
 
   <!-- Bottom vignette -->
-  <div class="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-void to-transparent z-10"></div>
+  <div class="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-void to-transparent z-20"></div>
 
-  <!-- Content -->
-  <div class="absolute inset-0 z-20 flex flex-col justify-end pb-20 px-6 md:px-12 lg:px-20">
-    <div class="max-w-7xl mx-auto w-full">
+  <!-- Content — centred logo + CTAs -->
+  <div class="absolute inset-0 z-30 flex flex-col items-center justify-center px-6 text-center">
 
-      <!-- Eyebrow -->
-      <p class="font-mono text-xs tracking-widest uppercase text-brass mb-4">
-        VANCOUVER, BC &mdash; SINCE 2001
-      </p>
+    <!-- Logo (drop logo.png into public/images/ to activate) -->
+    <img
+      src="/images/logo.png"
+      alt="Lions MMA"
+      class="w-44 md:w-64 mb-10 mask-wipe drop-shadow-2xl"
+      style="animation-delay: 0.1s"
+    />
 
-      <!-- Headline line 1 -->
-      <h1
-        class="mask-wipe font-display text-[clamp(4rem,12vw,10rem)] leading-none tracking-tight uppercase text-canvas"
-        style="animation-delay: 0.1s"
+    <!-- CTA row -->
+    <div class="flex gap-4 flex-wrap justify-center">
+      <a
+        href="/free-trial"
+        class="bg-brass text-void font-display text-sm tracking-wider uppercase py-3 px-8 hover:bg-canvas transition-colors duration-200 active:translate-y-px"
       >
-        1256 &amp; 1133
-      </h1>
-
-      <!-- Headline line 2 -->
-      <p
-        class="mask-wipe font-display text-[clamp(2.5rem,8vw,7rem)] leading-none tracking-tight uppercase text-canvas"
-        style="animation-delay: 0.4s"
+        TRAIN FREE · 7 DAYS
+      </a>
+      <a
+        href="/programs"
+        class="border border-canvas/40 text-canvas font-display text-sm tracking-wider uppercase py-3 px-8 hover:border-canvas transition-colors duration-200 active:translate-y-px"
       >
-        GRANVILLE STREET.
-      </p>
-
-      <!-- Sub copy -->
-      <p class="font-body text-lg text-canvas/85 mt-6 max-w-lg">
-        Vancouver's premier MMA and BJJ gym. Two locations, one team.
-      </p>
-
-      <!-- CTA row -->
-      <div class="mt-8 flex gap-4 flex-wrap">
-        <a
-          href="/free-trial"
-          class="bg-brass text-void font-display text-sm tracking-wider uppercase py-3 px-8 hover:bg-canvas transition-colors duration-200 active:translate-y-px"
-        >
-          TRAIN FREE &mdash; 7 DAYS
-        </a>
-        <a
-          href="/programs"
-          class="border border-canvas/40 text-canvas font-display text-sm tracking-wider uppercase py-3 px-8 hover:border-canvas transition-colors duration-200 active:translate-y-px"
-        >
-          VIEW PROGRAMS
-        </a>
-      </div>
-
+        VIEW PROGRAMS
+      </a>
     </div>
+
   </div>
 
   <!-- Brass accent line -->
-  <div class="absolute bottom-0 left-0 w-[clamp(4rem,20vw,12rem)] h-px bg-brass z-20"></div>
+  <div class="absolute bottom-0 left-0 w-[clamp(4rem,20vw,12rem)] h-px bg-brass z-30"></div>
 </section>

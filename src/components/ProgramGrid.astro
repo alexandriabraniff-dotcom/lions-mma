@@ -1,5 +1,19 @@
 ---
 import { disciplines } from '../data/disciplines';
+
+const disciplineImages: Record<string, string> = {
+  'muay-thai':    'https://picsum.photos/seed/mt1/800/600',
+  'boxing':       'https://picsum.photos/seed/bx1/800/600',
+  'dutch':        'https://picsum.photos/seed/dk1/800/600',
+  'bjj-gi':       'https://picsum.photos/seed/gi1/800/600',
+  'nogi':         'https://picsum.photos/seed/ng1/800/600',
+  'wrestling':    'https://picsum.photos/seed/wr1/800/600',
+  'mma':          'https://picsum.photos/seed/mm1/800/600',
+  'conditioning': 'https://picsum.photos/seed/sc1/800/600',
+  'womens':       'https://picsum.photos/seed/wo1/800/600',
+  'kids':         'https://picsum.photos/seed/kd1/800/600',
+  'private':      'https://picsum.photos/seed/pv1/800/600',
+};
 ---
 
 <section class="reveal py-24 bg-vault" id="programs">
@@ -11,36 +25,44 @@ import { disciplines } from '../data/disciplines';
 
     <!-- Program grid -->
     <div class="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-iron">
-      {disciplines.map((discipline, index) => {
-        const isPrivate = discipline.id === 'private';
+      {disciplines.map((discipline) => {
         const isLastPrivate = discipline.slug === 'private-training';
+        const imgSrc = disciplineImages[discipline.id] ?? 'https://picsum.photos/seed/gym1/800/600';
         return (
           <a
             href={`/programs/${discipline.slug}`}
             class:list={[
-              'bg-vault hover:bg-void transition-colors duration-300 group p-8 flex flex-col gap-3 relative overflow-hidden cursor-pointer',
+              'group relative overflow-hidden cursor-pointer',
               isLastPrivate ? 'lg:col-span-2' : '',
             ]}
+            style="min-height: 280px;"
           >
-            <!-- Short code -->
-            <span class="font-mono text-xs text-smoke tracking-widest">{discipline.short}</span>
+            <!-- Photo background -->
+            <img
+              src={imgSrc}
+              alt=""
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              loading="lazy"
+            />
 
-            <!-- Brass accent line -->
-            <div class="w-8 h-px bg-brass mb-2"></div>
+            <!-- Dark overlay — heavier at bottom for text legibility -->
+            <div class="absolute inset-0 bg-gradient-to-t from-void/95 via-void/55 to-void/25"></div>
 
-            <!-- Discipline name -->
-            <h3 class="font-display text-3xl uppercase tracking-tight text-canvas group-hover:text-brass transition-colors duration-200">
-              {discipline.name}
-            </h3>
-
-            <!-- Tagline -->
-            <p class="font-body text-sm text-canvas/50 group-hover:text-canvas/70 transition-colors duration-200">
-              {discipline.tagline}
-            </p>
+            <!-- Content anchored to bottom -->
+            <div class="relative z-10 flex flex-col gap-2 p-8 h-full justify-end" style="min-height: 280px;">
+              <span class="font-mono text-xs text-smoke tracking-widest">{discipline.short}</span>
+              <div class="w-8 h-px bg-brass mb-1"></div>
+              <h3 class="font-display text-3xl uppercase tracking-tight text-canvas group-hover:text-brass transition-colors duration-200 leading-none">
+                {discipline.name}
+              </h3>
+              <p class="font-body text-sm text-canvas/70 group-hover:text-canvas/90 transition-colors duration-200">
+                {discipline.tagline}
+              </p>
+            </div>
 
             <!-- Hover arrow -->
             <span
-              class="absolute bottom-8 right-8 text-brass opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-200"
+              class="absolute top-6 right-6 z-10 text-brass opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-200"
               aria-hidden="true"
             >
               &rarr;

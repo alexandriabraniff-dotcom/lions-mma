@@ -4,30 +4,66 @@ import { team } from '../data/team';
 
 const headInstructors = team.filter(c => c.role.includes('Head Instructor'));
 const otherInstructors = team.filter(c => !c.role.includes('Head Instructor'));
+
+// Placeholder portraits — swap for real photos in public/images/team/{id}.jpg
+const coachPhotos: Record<string, string> = {
+  'amir-ghassemi':     'https://randomuser.me/api/portraits/men/32.jpg',
+  'guilherme-falcao':  'https://randomuser.me/api/portraits/men/45.jpg',
+  'alex-coles':        'https://randomuser.me/api/portraits/men/22.jpg',
+  'gabrielle-stan':    'https://randomuser.me/api/portraits/women/44.jpg',
+  'alberto-garcia':    'https://randomuser.me/api/portraits/men/67.jpg',
+  'jessica-wilson':    'https://randomuser.me/api/portraits/women/28.jpg',
+  'adam-karse':        'https://randomuser.me/api/portraits/men/55.jpg',
+  'rodrigo-sezinando': 'https://randomuser.me/api/portraits/men/11.jpg',
+  'merck-milne':       'https://randomuser.me/api/portraits/men/38.jpg',
+  'lucio-tavares':     'https://randomuser.me/api/portraits/men/77.jpg',
+  'daniel-osario':     'https://randomuser.me/api/portraits/men/14.jpg',
+  'daria-preradovic':  'https://randomuser.me/api/portraits/women/62.jpg',
+  'emma-stecklov':     'https://randomuser.me/api/portraits/women/17.jpg',
+};
 ---
 
 <Base title="The Team" description="Meet the coaches at Lions MMA Vancouver. Head instructors and staff across striking, grappling, kids, and conditioning.">
-  <div class="pt-32 pb-24 max-w-7xl mx-auto px-6">
 
-    <p class="font-mono text-xs tracking-widest uppercase text-smoke mb-2">THE TEAM</p>
-    <h1 class="font-display text-7xl md:text-9xl uppercase tracking-tight text-canvas leading-none">COACHES.</h1>
-    <p class="font-body text-canvas/60 mt-4">The instructors who built this gym.</p>
+  <!-- Page header with background photo -->
+  <div class="relative pt-48 pb-24 overflow-hidden">
+    <img
+      src="https://picsum.photos/seed/team-hero/1920/900"
+      alt=""
+      class="absolute inset-0 w-full h-full object-cover"
+      loading="eager"
+    />
+    <div class="absolute inset-0 bg-gradient-to-b from-void/80 via-void/70 to-void"></div>
+    <div class="relative z-10 max-w-7xl mx-auto px-6">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke mb-2">THE TEAM</p>
+      <h1 class="font-display text-7xl md:text-9xl uppercase tracking-tight text-canvas leading-none">COACHES.</h1>
+    </div>
+  </div>
+
+  <div class="pb-24 max-w-7xl mx-auto px-6">
 
     <!-- Head Instructors -->
-    <div class="mt-20">
+    <div class="mt-4">
       <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">HEAD INSTRUCTORS</p>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-iron">
         {headInstructors.map(coach => (
-          <div class="bg-vault p-8">
-            <div class="w-full aspect-[4/5] bg-iron mb-6 flex items-end p-3">
-              <div class="font-mono text-xs text-smoke">PHOTO COMING SOON</div>
+          <div class="bg-vault">
+            <div class="w-full aspect-[4/5] overflow-hidden bg-iron">
+              <img
+                src={coachPhotos[coach.id] ?? 'https://randomuser.me/api/portraits/men/1.jpg'}
+                alt={coach.name}
+                class="w-full h-full object-cover object-top"
+                loading="lazy"
+              />
             </div>
-            <p class="font-display text-2xl uppercase text-canvas">{coach.name}</p>
-            <p class="font-mono text-xs text-brass tracking-wider uppercase mt-1">{coach.role}</p>
-            {coach.credentials && (
-              <p class="font-mono text-xs text-smoke mt-1">{coach.credentials}</p>
-            )}
-            <p class="font-body text-sm text-canvas/60 mt-4 leading-relaxed">{coach.bio}</p>
+            <div class="p-8">
+              <p class="font-display text-2xl uppercase text-canvas">{coach.name}</p>
+              <p class="font-mono text-xs text-brass tracking-wider uppercase mt-1">{coach.role}</p>
+              {coach.credentials && (
+                <p class="font-mono text-xs text-smoke mt-1">{coach.credentials}</p>
+              )}
+              <p class="font-body text-sm text-canvas/80 mt-4 leading-relaxed">{coach.bio}</p>
+            </div>
           </div>
         ))}
       </div>
@@ -38,22 +74,27 @@ const otherInstructors = team.filter(c => !c.role.includes('Head Instructor'));
       <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">INSTRUCTORS</p>
       <div class="grid grid-cols-1 md:grid-cols-4 gap-px bg-iron">
         {otherInstructors.map(coach => (
-          <div class="bg-vault p-8">
-            <div class="w-full aspect-square bg-iron mb-6 flex items-end p-3">
-              <div class="font-mono text-xs text-smoke">PHOTO COMING SOON</div>
+          <div class="bg-vault">
+            <div class="w-full aspect-square overflow-hidden bg-iron">
+              <img
+                src={coachPhotos[coach.id] ?? 'https://randomuser.me/api/portraits/men/1.jpg'}
+                alt={coach.name}
+                class="w-full h-full object-cover object-top"
+                loading="lazy"
+              />
             </div>
-            <p class="font-display text-2xl uppercase text-canvas">{coach.name}</p>
-            <p class="font-mono text-xs text-brass tracking-wider uppercase mt-1">{coach.role}</p>
-            {coach.credentials && (
-              <p class="font-mono text-xs text-smoke mt-1">{coach.credentials}</p>
-            )}
-            <p class="font-body text-sm text-canvas/60 mt-4 leading-relaxed">{coach.bio}</p>
+            <div class="p-8">
+              <p class="font-display text-2xl uppercase text-canvas">{coach.name}</p>
+              <p class="font-mono text-xs text-brass tracking-wider uppercase mt-1">{coach.role}</p>
+              {coach.credentials && (
+                <p class="font-mono text-xs text-smoke mt-1">{coach.credentials}</p>
+              )}
+              <p class="font-body text-sm text-canvas/80 mt-4 leading-relaxed">{coach.bio}</p>
+            </div>
           </div>
         ))}
       </div>
     </div>
-
-    <p class="font-mono text-xs text-smoke/50 mt-16">Coach roster and photos are placeholder. Confirm current roster with the gym.</p>
 
   </div>
 </Base>
