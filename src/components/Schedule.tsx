@@ -316,6 +316,11 @@ function ClassModal({
   }, []);
 
   return (
+    <>
+      <style>{`
+        @keyframes modalFadeIn   { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes modalSlideIn  { from { opacity: 0; transform: scale(0.95) translateY(8px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+      `}</style>
     <div
       onClick={handleBackdrop}
       style={{
@@ -329,9 +334,10 @@ function ClassModal({
         alignItems:      'center',
         justifyContent:  'center',
         padding:         '24px',
+        animation:       'modalFadeIn 0.2s ease forwards',
       } as React.CSSProperties}
     >
-      {/* Sheet panel */}
+      {/* Panel */}
       <div
         style={{
           width:           '100%',
@@ -341,6 +347,7 @@ function ClassModal({
           border:          `1px solid ${accent}30`,
           boxShadow:       `0 8px 48px rgba(0,0,0,0.6), 0 0 0 1px ${accent}15`,
           overflow:        'hidden',
+          animation:       'modalSlideIn 0.25s cubic-bezier(0.34,1.56,0.64,1) forwards',
         } as React.CSSProperties}
       >
         {/* Accent bar */}
@@ -459,6 +466,7 @@ function ClassModal({
         </div>
       </div>
     </div>
+    </>
   );
 }
 
