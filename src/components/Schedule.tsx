@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { schedule, DAY_LABELS, DAYS_ORDER } from '../data/schedule';
-import type { ClassSession, Day } from '../data/schedule';
+import type { ClassSession, Day, Level } from '../data/schedule';
 import { disciplines } from '../data/disciplines';
 import { locations } from '../data/locations';
 
@@ -11,12 +11,22 @@ type ScheduleProps = {
   compact?: boolean;
 };
 
+/**
+ * GroupedSession collapses simultaneous classes that share the same
+ * start time + discipline + location + note into one card.
+ * e.g. Muay Thai Beginner 12pm + Muay Thai Int–Adv 12pm → one card showing
+ * "Beginner / Int–Adv".
+ */
+type GroupedSession = Omit<ClassSession, 'level'> & {
+  levels: (Level | undefined)[];
+};
+
 type ClassCardProps = {
-  session: ClassSession;
+  session: GroupedSession;
+  levelStr: string;       // pre-joined level label e.g. "Beginner / Int–Adv"
   showLocation: boolean;
   compact: boolean;
   accentColor: string;
-  getLevelLabel: (level?: string) => string;
   fmt12h: (t: string) => string;
   isCurrentTime: (s: ClassSession) => boolean;
 };
@@ -24,37 +34,77 @@ type ClassCardProps = {
 // ─── Accent colors per discipline ─────────────────────────────────────────────
 
 const DISCIPLINE_ACCENT_COLORS: Record<string, string> = {
-  'muay-thai': '#C09A3C',
-  'boxing':    '#8B7355',
-  'bjj-gi':    '#4A6741',
-  'nogi':      '#3D5A7A',
-  'wrestling': '#7A4A3D',
-  'mma':       '#5A3D6B',
-  'womens':    '#8B4A6B',
-  'kids':      '#4A7A6B',
-  'private':   '#6B6B4A',
+  'muay-thai':    '#C09A3C',
+  'boxing':       '#8B7355',
+  'dutch':        '#A07840',
+  'bjj-gi':       '#4A6741',
+  'nogi':         '#3D5A7A',
+  'wrestling':    '#7A4A3D',
+  'mma':          '#5A3D6B',
+  'conditioning': '#5A6B4A',
+  'womens':       '#8B4A6B',
+  'kids':         '#4A7A6B',
+  'private':      '#6B6B4A',
 };
+
+// ─── Level label map ──────────────────────────────────────────────────────────
+
+function getLevelLabel(level?: string): string {
+  switch (level) {
+    case 'beginner':     return 'Beginner';
+    case 'intermediate': return 'Int–Adv';
+    case 'all':          return 'All Levels';
+    case 'womens':       return "Women's Only";
+    case 'kids':         return 'Kids';
+    case 'teens':        return 'Teens 12+';
+    case 'competition':  return 'Competition';
+    default:             return '';
+  }
+}
+
+// ─── Grouping ─────────────────────────────────────────────────────────────────
+//
+// Sessions that share the same start time, discipline, location, AND note
+// are merged into one GroupedSession with multiple levels.
+// Kids classes at the same time but different notes (different age groups)
+// stay as separate cards since they are genuinely different programs.
+
+function groupSessions(sessions: ClassSession[]): GroupedSession[] {
+  const map = new Map<string, GroupedSession>();
+  for (const s of sessions) {
+    const key = `${s.start}|${s.discipline}|${s.location}|${s.note ?? ''}`;
+    const existing = map.get(key);
+    if (existing) {
+      existing.levels.push(s.level);
+      // keep the later end time when sessions overlap (e.g. 1h vs 1.5h)
+      if (s.end > existing.end) existing.end = s.end;
+    } else {
+      const { level, ...rest } = s;
+      map.set(key, { ...rest, levels: [level] });
+    }
+  }
+  return Array.from(map.values());
+}
 
 // ─── ClassCard ────────────────────────────────────────────────────────────────
 
 function ClassCard({
   session,
+  levelStr,
   showLocation,
   compact,
   accentColor,
-  getLevelLabel,
   fmt12h,
   isCurrentTime,
 }: ClassCardProps) {
-  const isCurrent = isCurrentTime(session);
+  const isCurrent = isCurrentTime(session as ClassSession);
   const disciplineName =
     disciplines.find((d) => d.id === session.discipline)?.name ?? session.discipline;
   const locationShort =
     locations.find((l) => l.id === session.location)?.short ?? session.location;
-  const levelLabel = getLevelLabel(session.level);
 
   if (compact) {
-    // ── Week-view compact card (desktop columns) ─────────────────────────────
+    // ── Week-view compact card ─────────────────────────────────────────────
     return (
       <div
         className="mb-1.5 pl-3 pr-2 py-2 border-l-2 transition-colors"
@@ -75,12 +125,12 @@ function ClassCard({
           </div>
         )}
         <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-          {levelLabel && (
+          {levelStr && (
             <span
               className="font-mono text-[9px] px-1 py-0.5 leading-none"
               style={{ border: '1px solid #2C2824', color: '#6E6560' }}
             >
-              {levelLabel}
+              {levelStr}
             </span>
           )}
           {showLocation && (
@@ -101,17 +151,16 @@ function ClassCard({
     );
   }
 
-  // ── Day-view full card (mobile + desktop day view) ─────────────────────────
+  // ── Day-view full card (mobile + desktop) ──────────────────────────────────
   return (
     <div
       className="relative overflow-hidden transition-all duration-200"
       style={{
-        backgroundColor: isCurrent ? '#1A1714' : '#1A1714',
+        backgroundColor: '#1A1714',
         borderLeft: `3px solid ${accentColor}`,
         boxShadow: isCurrent ? `0 0 0 1px ${accentColor}33` : 'none',
       }}
     >
-      {/* Subtle accent tint when active */}
       {isCurrent && (
         <div
           className="absolute inset-0 pointer-events-none"
@@ -119,7 +168,7 @@ function ClassCard({
         />
       )}
 
-      <div className="relative flex items-stretch gap-0">
+      <div className="relative flex items-stretch">
         {/* Time column */}
         <div
           className="flex flex-col justify-center items-end shrink-0 px-4 py-4 border-r"
@@ -151,8 +200,6 @@ function ClassCard({
                 </div>
               )}
             </div>
-
-            {/* NOW badge */}
             {isCurrent && (
               <div
                 className="shrink-0 font-mono text-[10px] px-2 py-1 animate-pulse leading-none"
@@ -163,23 +210,20 @@ function ClassCard({
             )}
           </div>
 
-          {/* Tags row */}
+          {/* Level + location tags */}
           <div className="flex items-center gap-2 mt-3 flex-wrap">
-            {levelLabel && (
+            {levelStr && (
               <span
                 className="font-mono text-[10px] px-2 py-1 leading-none"
                 style={{ border: '1px solid #2C2824', color: '#6E6560' }}
               >
-                {levelLabel}
+                {levelStr}
               </span>
             )}
             {showLocation && (
               <span
                 className="font-mono text-[10px] px-2 py-1 leading-none"
-                style={{
-                  border: `1px solid ${accentColor}66`,
-                  color: accentColor,
-                }}
+                style={{ border: `1px solid ${accentColor}66`, color: accentColor }}
               >
                 {locationShort} GRANVILLE
               </span>
@@ -196,13 +240,11 @@ function ClassCard({
 export default function Schedule({ filterDiscipline, compact = false }: ScheduleProps) {
   const dayTabsRef = useRef<HTMLDivElement>(null);
 
-  // ── Helper: today's Day key ───────────────────────────────────────────────
   function getTodayDay(): Day {
     const map: Record<number, Day> = { 0: 'sun', 1: 'mon', 2: 'tue', 3: 'wed', 4: 'thu', 5: 'fri', 6: 'sat' };
     return map[new Date().getDay()] ?? 'mon';
   }
 
-  // ── State ─────────────────────────────────────────────────────────────────
   const [activeLocation, setActiveLocation] = useState<'all' | '1256' | '1133'>('all');
   const [activeDiscipline, setActiveDiscipline] = useState<string>('all');
   const [activeDay, setActiveDay] = useState<Day>(getTodayDay);
@@ -212,16 +254,12 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
     setViewMode(window.innerWidth >= 768 ? 'week' : 'day');
   }, []);
 
-  // Scroll active day tab into view
   useEffect(() => {
     if (!dayTabsRef.current) return;
-    const activeBtn = dayTabsRef.current.querySelector('[data-active="true"]') as HTMLElement;
-    if (activeBtn) {
-      activeBtn.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
-    }
+    const btn = dayTabsRef.current.querySelector('[data-active="true"]') as HTMLElement;
+    btn?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
   }, [activeDay]);
 
-  // ── Helpers ───────────────────────────────────────────────────────────────
   function fmt12h(time: string): string {
     const [hourStr, minuteStr] = time.split(':');
     const hour = parseInt(hourStr, 10);
@@ -245,20 +283,8 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
     return nowMins >= sH * 60 + sM && nowMins < eH * 60 + eM;
   }
 
-  function getLevelLabel(level?: string): string {
-    switch (level) {
-      case 'beginner':     return 'Beginner';
-      case 'intermediate': return 'Int–Adv';
-      case 'all':          return 'All Levels';
-      case 'womens':       return "Women's Only";
-      case 'kids':         return 'Kids';
-      case 'teens':        return 'Teens 12+';
-      case 'competition':  return 'Competition';
-      default:             return '';
-    }
-  }
+  // ── Filtering + grouping ──────────────────────────────────────────────────
 
-  // ── Filtering ─────────────────────────────────────────────────────────────
   const effectiveDiscipline = filterDiscipline ?? activeDiscipline;
 
   const filteredSessions = schedule.filter((s) => {
@@ -267,14 +293,22 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
     return locOk && discOk;
   });
 
-  function getDaySessions(day: Day): ClassSession[] {
-    return filteredSessions
+  function getGroupedDaySessions(day: Day): GroupedSession[] {
+    const daySessions = filteredSessions
       .filter((s) => s.day === day)
       .sort((a, b) => a.start.localeCompare(b.start));
+    return groupSessions(daySessions);
   }
 
   function getDayCount(day: Day): number {
-    return getDaySessions(day).length;
+    return getGroupedDaySessions(day).length;
+  }
+
+  function makeLevelStr(session: GroupedSession): string {
+    return session.levels
+      .map(getLevelLabel)
+      .filter(Boolean)
+      .join(' / ');
   }
 
   const hasAnySessions = filteredSessions.length > 0;
@@ -294,7 +328,7 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
       {showControls && (
         <div className="mb-6 space-y-4">
 
-          {/* Location toggle — full-width on mobile */}
+          {/* Location toggle */}
           <div className="flex w-full">
             {(['all', '1256', '1133'] as const).map((loc) => (
               <button
@@ -313,13 +347,12 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
             ))}
           </div>
 
-          {/* Discipline chips — horizontal scroll, styled with accent color dots */}
+          {/* Discipline filter chips */}
           {!filterDiscipline && (
             <div
               className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide"
               style={{ WebkitOverflowScrolling: 'touch' }}
             >
-              {/* ALL chip */}
               <button
                 onClick={() => setActiveDiscipline('all')}
                 className="shrink-0 flex items-center gap-2 font-mono text-xs tracking-wider uppercase py-2 px-3 transition-colors whitespace-nowrap"
@@ -331,7 +364,6 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
               >
                 All Disciplines
               </button>
-
               {disciplines
                 .filter((d) => d.id !== 'private')
                 .map((d) => {
@@ -372,7 +404,6 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
             const isActive = activeDay === day && viewMode === 'day';
             const isToday  = isCurrentDay(day);
             const count    = getDayCount(day);
-
             return (
               <button
                 key={day}
@@ -383,7 +414,7 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
                   minWidth: '56px',
                   flex: '1 0 auto',
                   maxWidth: '72px',
-                  backgroundColor: isActive ? '#EEE8DC' : isToday ? 'transparent' : 'transparent',
+                  backgroundColor: isActive ? '#EEE8DC' : 'transparent',
                   color: isActive ? '#0D0B09' : isToday ? '#C09A3C' : '#6E6560',
                   border: isActive
                     ? '1px solid #EEE8DC'
@@ -406,7 +437,7 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
             );
           })}
 
-          {/* Week view toggle — appears as the last "tab" on desktop */}
+          {/* Week view toggle */}
           <button
             onClick={() => setViewMode(viewMode === 'week' ? 'day' : 'week')}
             className="hidden md:flex shrink-0 flex-col items-center justify-center gap-1 py-3 px-3 transition-colors font-mono text-[10px] uppercase tracking-wider"
@@ -418,15 +449,15 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
             }}
           >
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ opacity: 0.7 }}>
-              <rect x="1" y="1" width="3" height="3" fill="currentColor" rx="0.5"/>
-              <rect x="5.5" y="1" width="3" height="3" fill="currentColor" rx="0.5"/>
-              <rect x="10" y="1" width="3" height="3" fill="currentColor" rx="0.5"/>
-              <rect x="1" y="5.5" width="3" height="3" fill="currentColor" rx="0.5"/>
+              <rect x="1"   y="1"   width="3" height="3" fill="currentColor" rx="0.5"/>
+              <rect x="5.5" y="1"   width="3" height="3" fill="currentColor" rx="0.5"/>
+              <rect x="10"  y="1"   width="3" height="3" fill="currentColor" rx="0.5"/>
+              <rect x="1"   y="5.5" width="3" height="3" fill="currentColor" rx="0.5"/>
               <rect x="5.5" y="5.5" width="3" height="3" fill="currentColor" rx="0.5"/>
-              <rect x="10" y="5.5" width="3" height="3" fill="currentColor" rx="0.5"/>
-              <rect x="1" y="10" width="3" height="3" fill="currentColor" rx="0.5"/>
-              <rect x="5.5" y="10" width="3" height="3" fill="currentColor" rx="0.5"/>
-              <rect x="10" y="10" width="3" height="3" fill="currentColor" rx="0.5"/>
+              <rect x="10"  y="5.5" width="3" height="3" fill="currentColor" rx="0.5"/>
+              <rect x="1"   y="10"  width="3" height="3" fill="currentColor" rx="0.5"/>
+              <rect x="5.5" y="10"  width="3" height="3" fill="currentColor" rx="0.5"/>
+              <rect x="10"  y="10"  width="3" height="3" fill="currentColor" rx="0.5"/>
             </svg>
             Week
           </button>
@@ -453,8 +484,8 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
       {hasAnySessions && viewMode === 'week' && (
         <div className="grid grid-cols-7 gap-px" style={{ backgroundColor: '#2C2824' }}>
           {DAYS_ORDER.map((day) => {
-            const sessions = getDaySessions(day);
-            const today = isCurrentDay(day);
+            const grouped = getGroupedDaySessions(day);
+            const today   = isCurrentDay(day);
             return (
               <div
                 key={day}
@@ -468,20 +499,19 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
                     borderBottom: `1px solid ${today ? '#C09A3C' : '#2C2824'}`,
                   }}
                 >
-                  {DAY_LABELS[day].slice(0, 3)}
-                  {today && <span> ·</span>}
+                  {DAY_LABELS[day].slice(0, 3)}{today && ' ·'}
                 </div>
-                {sessions.length === 0 ? (
+                {grouped.length === 0 ? (
                   <div className="font-mono text-[10px] mt-2" style={{ color: '#2C2824' }}>—</div>
                 ) : (
-                  sessions.map((session, i) => (
+                  grouped.map((gs, i) => (
                     <ClassCard
                       key={i}
-                      session={session}
+                      session={gs}
+                      levelStr={makeLevelStr(gs)}
                       showLocation={activeLocation === 'all'}
                       compact={true}
-                      accentColor={DISCIPLINE_ACCENT_COLORS[session.discipline] ?? '#C09A3C'}
-                      getLevelLabel={getLevelLabel}
+                      accentColor={DISCIPLINE_ACCENT_COLORS[gs.discipline] ?? '#C09A3C'}
                       fmt12h={fmt12h}
                       isCurrentTime={isCurrentTime}
                     />
@@ -494,62 +524,65 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
       )}
 
       {/* ── DAY VIEW ── */}
-      {hasAnySessions && viewMode === 'day' && (
-        <div>
-          {/* Day header */}
-          <div className="flex items-baseline gap-3 mb-4 pb-3" style={{ borderBottom: '1px solid #2C2824' }}>
-            <h3
-              className="font-display text-3xl uppercase tracking-tight leading-none"
-              style={{ color: isCurrentDay(activeDay) ? '#C09A3C' : '#EEE8DC' }}
-            >
-              {DAY_LABELS[activeDay]}
-            </h3>
-            {isCurrentDay(activeDay) && (
-              <span className="font-mono text-xs tracking-widest uppercase" style={{ color: '#C09A3C' }}>
-                Today
-              </span>
-            )}
-            <span className="font-mono text-xs ml-auto" style={{ color: '#6E6560' }}>
-              {getDaySessions(activeDay).length} classes
-            </span>
-          </div>
-
-          {getDaySessions(activeDay).length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 gap-4">
-              <p className="font-mono text-sm tracking-wider text-center" style={{ color: '#6E6560' }}>
-                No classes on {DAY_LABELS[activeDay]} with the current filters.
-              </p>
-              <button
-                onClick={resetFilters}
-                className="font-mono text-xs uppercase tracking-wider py-2 px-4 transition-colors"
-                style={{ border: '1px solid #2C2824', color: '#6E6560' }}
+      {hasAnySessions && viewMode === 'day' && (() => {
+        const grouped = getGroupedDaySessions(activeDay);
+        return (
+          <div>
+            {/* Day header */}
+            <div className="flex items-baseline gap-3 mb-4 pb-3" style={{ borderBottom: '1px solid #2C2824' }}>
+              <h3
+                className="font-display text-3xl uppercase tracking-tight leading-none"
+                style={{ color: isCurrentDay(activeDay) ? '#C09A3C' : '#EEE8DC' }}
               >
-                Reset Filters
-              </button>
+                {DAY_LABELS[activeDay]}
+              </h3>
+              {isCurrentDay(activeDay) && (
+                <span className="font-mono text-xs tracking-widest uppercase" style={{ color: '#C09A3C' }}>
+                  Today
+                </span>
+              )}
+              <span className="font-mono text-xs ml-auto" style={{ color: '#6E6560' }}>
+                {grouped.length} {grouped.length === 1 ? 'class' : 'classes'}
+              </span>
             </div>
-          ) : (
-            <div className="flex flex-col gap-px" style={{ backgroundColor: '#2C2824' }}>
-              {getDaySessions(activeDay).map((session, i) => (
-                <ClassCard
-                  key={i}
-                  session={session}
-                  showLocation={activeLocation === 'all'}
-                  compact={false}
-                  accentColor={DISCIPLINE_ACCENT_COLORS[session.discipline] ?? '#C09A3C'}
-                  getLevelLabel={getLevelLabel}
-                  fmt12h={fmt12h}
-                  isCurrentTime={isCurrentTime}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+
+            {grouped.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-16 gap-4">
+                <p className="font-mono text-sm tracking-wider text-center" style={{ color: '#6E6560' }}>
+                  No classes on {DAY_LABELS[activeDay]} with the current filters.
+                </p>
+                <button
+                  onClick={resetFilters}
+                  className="font-mono text-xs uppercase tracking-wider py-2 px-4 transition-colors"
+                  style={{ border: '1px solid #2C2824', color: '#6E6560' }}
+                >
+                  Reset Filters
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-px" style={{ backgroundColor: '#2C2824' }}>
+                {grouped.map((gs, i) => (
+                  <ClassCard
+                    key={i}
+                    session={gs}
+                    levelStr={makeLevelStr(gs)}
+                    showLocation={activeLocation === 'all'}
+                    compact={false}
+                    accentColor={DISCIPLINE_ACCENT_COLORS[gs.discipline] ?? '#C09A3C'}
+                    fmt12h={fmt12h}
+                    isCurrentTime={isCurrentTime}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {/* ── EMBED DISCLAIMER ── */}
       {compact && filterDiscipline && (
         <p className="mt-4 font-mono text-[11px] tracking-wide" style={{ color: '#6E6560' }}>
-          Times shown are placeholders. Confirm current schedule with the gym.
+          Times shown are from the current schedule. Confirm with the gym for any changes.
         </p>
       )}
     </div>
