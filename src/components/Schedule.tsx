@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, type RefObject } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { schedule, DAY_LABELS, DAYS_ORDER } from '../data/schedule';
 import type { ClassSession, Day, Level } from '../data/schedule';
 import { disciplines } from '../data/disciplines';
@@ -328,7 +328,6 @@ function EventBlock({
           ? `0 0 0 2px ${glow}, 0 2px 12px ${glow}`
           : '0 1px 3px rgba(0,0,0,0.3)',
         transition:   'box-shadow 0.15s ease, transform 0.15s ease',
-        cursor:       'default',
       }}
       onMouseEnter={e => {
         (e.currentTarget as HTMLElement).style.transform = 'scaleY(1.005) scaleX(1.01)';
@@ -411,14 +410,12 @@ function TimeGrid({
   todayDay,
   getGroupedDay,
   activeLocation,
-  scrollRef,
 }: {
   viewMode:       'week' | 'day';
   activeDay:      Day;
   todayDay:       Day;
   getGroupedDay:  (day: Day) => GroupedSession[];
   activeLocation: string;
-  scrollRef:      RefObject<HTMLDivElement>;
 }) {
   const inWeekView = viewMode === 'week';
   const days       = inWeekView ? DAYS_ORDER : [activeDay];
@@ -474,17 +471,8 @@ function TimeGrid({
         </div>
       </div>
 
-      {/* ── Scrollable time grid ── */}
-      <div
-        ref={scrollRef}
-        className="overflow-y-auto scrollbar-hide"
-        style={{
-          maxHeight:          '620px',
-          overscrollBehavior: 'contain',
-          maskImage:          'linear-gradient(to bottom, black calc(100% - 48px), transparent 100%)',
-          WebkitMaskImage:    'linear-gradient(to bottom, black calc(100% - 48px), transparent 100%)',
-        } as React.CSSProperties}
-      >
+      {/* ── Time grid (full height, no inner scroll) ── */}
+      <div>
         <div className="flex" style={{ height: TOTAL_H, minHeight: TOTAL_H }}>
 
           {/* ── Time labels ── */}
@@ -596,7 +584,6 @@ function TimeGrid({
 
 export default function Schedule({ filterDiscipline, compact = false }: ScheduleProps) {
   const dayTabsRef = useRef<HTMLDivElement>(null);
-  const gridRef    = useRef<HTMLDivElement>(null);
 
   function getTodayDay(): Day {
     const m: Record<number, Day> = { 0:'sun',1:'mon',2:'tue',3:'wed',4:'thu',5:'fri',6:'sat' };
@@ -609,12 +596,6 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
   const [viewMode,         setViewMode]         = useState<'week' | 'day'>('day');
 
   useEffect(() => { setViewMode(window.innerWidth >= 1024 ? 'week' : 'day'); }, []);
-
-  useEffect(() => {
-    if (!gridRef.current) return;
-    const h = Math.max(START_HOUR, new Date().getHours() - 1);
-    gridRef.current.scrollTop = (h - START_HOUR) * HOUR_PX;
-  }, []);
 
   useEffect(() => {
     if (!dayTabsRef.current) return;
@@ -837,7 +818,6 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
           todayDay={todayDay}
           getGroupedDay={getGroupedDay}
           activeLocation={activeLocation}
-          scrollRef={gridRef}
         />
       )}
 

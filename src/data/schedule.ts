@@ -81,7 +81,7 @@ export const schedule: ClassSession[] = [
   { day: 'mon', start: '18:25', end: '19:25', discipline: 'muay-thai',    location: '1256', level: 'beginner' },
   { day: 'mon', start: '18:25', end: '19:25', discipline: 'muay-thai',    location: '1256', level: 'intermediate' },
   { day: 'mon', start: '19:35', end: '20:35', discipline: 'muay-thai',    location: '1256', level: 'beginner' },
-  { day: 'mon', start: '19:35', end: '20:35', discipline: 'muay-thai',    location: '1256', level: 'intermediate' },
+  { day: 'mon', start: '19:35', end: '20:35', discipline: 'muay-thai',    location: '1256', level: 'beginner',      note: 'Drills & Sparring' },
   { day: 'mon', start: '19:35', end: '21:00', discipline: 'dutch',        location: '1256', level: 'intermediate', note: 'Drills & Sparring' },
 
   // 1133 Granville — Monday
@@ -134,7 +134,7 @@ export const schedule: ClassSession[] = [
   { day: 'wed', start: '18:25', end: '19:25', discipline: 'muay-thai',    location: '1256', level: 'beginner' },
   { day: 'wed', start: '18:25', end: '19:25', discipline: 'muay-thai',    location: '1256', level: 'intermediate' },
   { day: 'wed', start: '19:35', end: '20:35', discipline: 'muay-thai',    location: '1256', level: 'beginner' },
-  { day: 'wed', start: '19:35', end: '20:35', discipline: 'muay-thai',    location: '1256', level: 'intermediate' },
+  { day: 'wed', start: '19:35', end: '20:35', discipline: 'muay-thai',    location: '1256', level: 'beginner',      note: 'Drills & Sparring' },
   { day: 'wed', start: '19:35', end: '21:00', discipline: 'mma',          location: '1256', level: 'intermediate' },
 
   // 1133 Granville — Wednesday
@@ -208,10 +208,12 @@ export const schedule: ClassSession[] = [
   { day: 'sat', start: '12:30', end: '13:30', discipline: 'muay-thai',    location: '1256', level: 'intermediate' },
   { day: 'sat', start: '13:45', end: '15:00', discipline: 'dutch',        location: '1256', level: 'all', note: 'Drills & Sparring' },
 
+  // 1256 Granville — Saturday morning (confirmed at HQ per schedule footnote)
+  { day: 'sat', start: '09:00', end: '10:00', discipline: 'conditioning', location: '1256', level: 'all' },
+  { day: 'sat', start: '10:00', end: '11:00', discipline: 'wrestling',    location: '1256', level: 'all' },
+  { day: 'sat', start: '11:00', end: '12:00', discipline: 'bjj-gi',       location: '1256', level: 'womens' },
+
   // 1133 Granville — Saturday
-  { day: 'sat', start: '09:00', end: '10:00', discipline: 'conditioning', location: '1133', level: 'all' },
-  { day: 'sat', start: '10:00', end: '11:00', discipline: 'wrestling',    location: '1133', level: 'all' },
-  { day: 'sat', start: '11:00', end: '12:00', discipline: 'bjj-gi',       location: '1133', level: 'womens' },
   { day: 'sat', start: '12:00', end: '13:30', discipline: 'bjj-gi',       location: '1133', level: 'all' },
 
   // ─────────────────────────────────────────────────────────────────────────

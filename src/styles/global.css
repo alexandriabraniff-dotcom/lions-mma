@@ -33,6 +33,11 @@ body {
   outline-offset: 3px;
 }
 
+/* Pointer cursor on all interactive elements */
+a, button, [role="button"], label[for], select {
+  cursor: pointer;
+}
+
 /* Grain overlay — subtle film grain via SVG feTurbulence */
 .grain::before {
   content: '';
