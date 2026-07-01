@@ -305,10 +305,7 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
   }
 
   function makeLevelStr(session: GroupedSession): string {
-    return session.levels
-      .map(getLevelLabel)
-      .filter(Boolean)
-      .join(' / ');
+    return [...new Set(session.levels.map(getLevelLabel).filter(Boolean))].join(' / ');
   }
 
   const hasAnySessions = filteredSessions.length > 0;
