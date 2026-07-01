@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, type RefObject } from 'react';
+import React, { useState, useEffect, useRef, type RefObject } from 'react';
 import { schedule, DAY_LABELS, DAYS_ORDER } from '../data/schedule';
 import type { ClassSession, Day, Level } from '../data/schedule';
 import { disciplines } from '../data/disciplines';
@@ -22,30 +22,30 @@ type LaidOutSession = GroupedSession & {
 
 // ─── Grid constants ───────────────────────────────────────────────────────────
 
-const START_HOUR  = 6;                               // 6 AM
-const END_HOUR    = 22;                              // 10 PM
-const HOUR_PX     = 60;                              // 60 px = 1 hour = 1 px/min
-const TOTAL_H     = (END_HOUR - START_HOUR) * HOUR_PX;
-const HOURS       = Array.from({ length: END_HOUR - START_HOUR }, (_, i) => i + START_HOUR);
-const TIME_COL_W  = 52;                              // px — left time label column
+const START_HOUR = 6;
+const END_HOUR   = 22;
+const HOUR_PX    = 64;   // px per hour (1.067 px/min — rounder number for gaps)
+const TOTAL_H    = (END_HOUR - START_HOUR) * HOUR_PX;
+const HOURS      = Array.from({ length: END_HOUR - START_HOUR }, (_, i) => i + START_HOUR);
+const TIME_COL   = 56;   // px — time-label column width
 
-// ─── Discipline accent colours ────────────────────────────────────────────────
+// ─── Discipline accent colours (slightly more saturated for the card fills) ───
 
 const ACCENT: Record<string, string> = {
   'muay-thai':    '#C09A3C',
-  'boxing':       '#8B7355',
-  'dutch':        '#A07840',
-  'bjj-gi':       '#4A6741',
-  'nogi':         '#3D5A7A',
-  'wrestling':    '#7A4A3D',
-  'mma':          '#5A3D6B',
-  'conditioning': '#5A6B4A',
-  'womens':       '#8B4A6B',
-  'kids':         '#4A7A6B',
-  'private':      '#6B6B4A',
+  'boxing':       '#A0845A',
+  'dutch':        '#B08840',
+  'bjj-gi':       '#5A8050',
+  'nogi':         '#4A6E96',
+  'wrestling':    '#9A5A48',
+  'mma':          '#7050A0',
+  'conditioning': '#608060',
+  'womens':       '#AA5A84',
+  'kids':         '#50907A',
+  'private':      '#808060',
 };
 
-// ─── Pure helpers ─────────────────────────────────────────────────────────────
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function getLevelLabel(level?: string): string {
   switch (level) {
@@ -60,51 +60,43 @@ function getLevelLabel(level?: string): string {
   }
 }
 
-function toMin(time: string): number {
-  const [h, m] = time.split(':').map(Number);
+function toMin(t: string): number {
+  const [h, m] = t.split(':').map(Number);
   return h * 60 + m;
 }
 
-/** Pixel offset from the top of the grid for a given HH:MM string. */
-function toPx(time: string): number {
-  return toMin(time) - START_HOUR * 60; // 1px per minute
+function toPx(t: string): number {
+  return ((toMin(t) - START_HOUR * 60) / 60) * HOUR_PX;
 }
 
-/** Height in px for a class that runs from start to end. */
-function heightPx(start: string, end: string): number {
-  return Math.max(toMin(end) - toMin(start), 24); // 24px minimum
+function durPx(start: string, end: string): number {
+  return Math.max(((toMin(end) - toMin(start)) / 60) * HOUR_PX, 26);
 }
 
-function fmt12h(time: string): string {
-  const [hStr, mStr] = time.split(':');
-  const h = parseInt(hStr, 10);
-  const m = mStr ?? '00';
+function fmt12h(t: string): string {
+  const [hStr, mStr] = t.split(':');
+  const h = parseInt(hStr, 10), m = mStr ?? '00';
   if (h === 0)  return `12:${m} AM`;
   if (h === 12) return `12:${m} PM`;
-  if (h < 12)   return `${h}:${m} AM`;
-  return `${h - 12}:${m} PM`;
+  return h < 12 ? `${h}:${m} AM` : `${h - 12}:${m} PM`;
 }
 
 function fmtHour(h: number): string {
   if (h === 0)  return '12 AM';
   if (h === 12) return '12 PM';
-  if (h < 12)   return `${h} AM`;
-  return `${h - 12} PM`;
+  return h < 12 ? `${h} AM` : `${h - 12} PM`;
 }
 
 // ─── Grouping ─────────────────────────────────────────────────────────────────
-//
-// Simultaneous sessions with the same discipline + location + note collapse
-// into one block showing combined levels (e.g. "Beginner / Int–Adv").
 
 function groupSessions(raw: ClassSession[]): GroupedSession[] {
   const map = new Map<string, GroupedSession>();
   for (const s of raw) {
     const key = `${s.start}|${s.discipline}|${s.location}|${s.note ?? ''}`;
-    const existing = map.get(key);
-    if (existing) {
-      existing.levels.push(s.level);
-      if (s.end > existing.end) existing.end = s.end;
+    const ex = map.get(key);
+    if (ex) {
+      ex.levels.push(s.level);
+      if (s.end > ex.end) ex.end = s.end;
     } else {
       const { level, ...rest } = s;
       map.set(key, { ...rest, levels: [level] });
@@ -113,44 +105,31 @@ function groupSessions(raw: ClassSession[]): GroupedSession[] {
   return Array.from(map.values());
 }
 
-// ─── Overlap layout (interval-graph column assignment) ────────────────────────
-//
-// Assigns each event a `col` index so no two overlapping events share a column,
-// and a `totalCols` equal to the width of the maximum clique it belongs to.
-// This is the same algorithm Google Calendar uses internally.
+// ─── Overlap layout ───────────────────────────────────────────────────────────
 
 function layoutSessions(sessions: GroupedSession[]): LaidOutSession[] {
   const sorted = [...sessions].sort((a, b) => toMin(a.start) - toMin(b.start));
   const laid: LaidOutSession[] = sorted.map(s => ({ ...s, col: 0, totalCols: 1 }));
-
-  // Greedy column assignment
   const colEnds: number[] = [];
   for (const ev of laid) {
-    const start = toMin(ev.start);
-    const end   = toMin(ev.end);
+    const s = toMin(ev.start), e = toMin(ev.end);
     let col = 0;
-    while (col < colEnds.length && colEnds[col] > start) col++;
+    while (col < colEnds.length && colEnds[col] > s) col++;
     ev.col = col;
-    colEnds[col] = end;
+    colEnds[col] = e;
   }
-
-  // Compute totalCols = size of largest clique each event participates in
   for (const ev of laid) {
-    const s = toMin(ev.start);
-    const e = toMin(ev.end);
-    let maxCol = ev.col;
-    for (const other of laid) {
-      if (toMin(other.start) < e && toMin(other.end) > s) {
-        maxCol = Math.max(maxCol, other.col);
-      }
+    const s = toMin(ev.start), e = toMin(ev.end);
+    let max = ev.col;
+    for (const ov of laid) {
+      if (toMin(ov.start) < e && toMin(ov.end) > s) max = Math.max(max, ov.col);
     }
-    ev.totalCols = maxCol + 1;
+    ev.totalCols = max + 1;
   }
-
   return laid;
 }
 
-// ─── EventBlock ───────────────────────────────────────────────────────────────
+// ─── EventBlock — Apple/ClassPass card style ──────────────────────────────────
 
 function EventBlock({
   session,
@@ -163,64 +142,109 @@ function EventBlock({
   showLocation: boolean;
   inWeekView:   boolean;
 }) {
-  const accent   = ACCENT[session.discipline] ?? '#C09A3C';
-  const name     = disciplines.find(d => d.id === session.discipline)?.name  ?? session.discipline;
-  const short    = disciplines.find(d => d.id === session.discipline)?.short ?? session.discipline;
-  const locShort = locations.find(l => l.id === session.location)?.short     ?? session.location;
-  const levels   = [...new Set(session.levels.map(getLevelLabel).filter(Boolean))].join(' / ');
+  const accent    = ACCENT[session.discipline] ?? '#C09A3C';
+  const name      = disciplines.find(d => d.id === session.discipline)?.name  ?? session.discipline;
+  const short     = disciplines.find(d => d.id === session.discipline)?.short ?? session.discipline;
+  const locShort  = locations.find(l => l.id === session.location)?.short    ?? session.location;
+  const levelStr  = [...new Set(session.levels.map(getLevelLabel).filter(Boolean))].join(' / ');
 
   const top    = toPx(session.start) + 1;
-  const h      = heightPx(session.start, session.end) - 2;
-  const leftPct = (session.col  / session.totalCols) * 100;
-  const wPct    = (1            / session.totalCols) * 100;
+  const h      = durPx(session.start, session.end) - 2;
+  const lPct   = (session.col  / session.totalCols) * 100;
+  const wPct   = (1            / session.totalCols) * 100;
+
+  // Hex alpha helpers
+  const bg     = `${accent}28`;    // ~16% fill
+  const border = `${accent}55`;    // ~33% border
+  const glow   = `${accent}40`;
 
   return (
     <div
-      className="absolute overflow-hidden select-none transition-opacity hover:opacity-90"
+      className="absolute overflow-hidden"
       style={{
-        top:    top,
-        height: h,
-        left:   `calc(${leftPct}% + 1px)`,
-        width:  `calc(${wPct}%  - 2px)`,
-        backgroundColor: `${accent}1C`,
-        borderLeft:      `2px solid ${accent}`,
-        boxShadow:       isCurrent ? `inset 0 0 0 1px ${accent}55` : 'none',
+        top,
+        height:       h,
+        left:         `calc(${lPct}% + 2px)`,
+        width:        `calc(${wPct}% - 4px)`,
+        borderRadius: inWeekView ? '6px' : '8px',
+        backgroundColor: bg,
+        border:       `1px solid ${border}`,
+        boxShadow:    isCurrent
+          ? `0 0 0 2px ${glow}, 0 2px 12px ${glow}`
+          : '0 1px 3px rgba(0,0,0,0.3)',
+        transition:   'box-shadow 0.15s ease, transform 0.15s ease',
+        cursor:       'default',
+      }}
+      onMouseEnter={e => {
+        (e.currentTarget as HTMLElement).style.transform = 'scaleY(1.005) scaleX(1.01)';
+        (e.currentTarget as HTMLElement).style.zIndex = '10';
+      }}
+      onMouseLeave={e => {
+        (e.currentTarget as HTMLElement).style.transform = '';
+        (e.currentTarget as HTMLElement).style.zIndex = '';
       }}
     >
-      <div className="p-1.5 h-full overflow-hidden flex flex-col gap-0.5">
-
-        {/* Discipline name */}
+      <div
+        className="h-full overflow-hidden flex flex-col"
+        style={{ padding: inWeekView ? '5px 6px' : '7px 9px', gap: '2px' }}
+      >
+        {/* Class name */}
         <span
-          className="font-display uppercase leading-tight truncate"
-          style={{ fontSize: inWeekView ? '10px' : '12px', fontWeight: 700, color: accent }}
+          className="leading-tight font-semibold truncate"
+          style={{
+            fontSize:   inWeekView ? '10px' : '12px',
+            color:      accent,
+            fontFamily: "'Inter', sans-serif",
+          }}
         >
           {inWeekView ? short : name}
         </span>
 
-        {/* Start time — only if tall enough */}
-        {h >= 30 && (
-          <span className="font-mono leading-none" style={{ fontSize: '10px', color: '#8A8480' }}>
+        {/* Start time */}
+        {h >= 32 && (
+          <span
+            className="leading-none font-normal truncate"
+            style={{ fontSize: '10px', color: 'rgba(238,232,220,0.6)', fontFamily: "'Inter', sans-serif" }}
+          >
             {fmt12h(session.start)}
           </span>
         )}
 
-        {/* Level — day view only, if tall enough */}
-        {!inWeekView && h >= 48 && levels && (
-          <span className="font-mono leading-none" style={{ fontSize: '10px', color: '#8A8480' }}>
-            {levels}
+        {/* Level pill */}
+        {!inWeekView && h >= 52 && levelStr && (
+          <span
+            className="leading-none truncate"
+            style={{
+              fontSize: '10px',
+              color:    accent,
+              opacity:  0.85,
+              fontFamily: "'Inter', sans-serif",
+            }}
+          >
+            {levelStr}
           </span>
         )}
 
-        {/* Location — day view, "All" filter, if tall enough */}
-        {!inWeekView && showLocation && h >= 62 && (
-          <span className="font-mono leading-none" style={{ fontSize: '10px', color: accent }}>
-            {locShort}
+        {/* Location */}
+        {!inWeekView && showLocation && h >= 68 && (
+          <span
+            className="leading-none truncate"
+            style={{
+              fontSize:   '10px',
+              color:      'rgba(238,232,220,0.45)',
+              fontFamily: "'Inter', sans-serif",
+            }}
+          >
+            {locShort} Granville
           </span>
         )}
 
-        {/* Note — day view, if tall enough */}
-        {!inWeekView && session.note && h >= 78 && (
-          <span className="font-mono leading-none" style={{ fontSize: '10px', color: accent }}>
+        {/* Note */}
+        {!inWeekView && session.note && h >= 84 && (
+          <span
+            className="leading-none truncate"
+            style={{ fontSize: '10px', color: accent, opacity: 0.75, fontFamily: "'Inter', sans-serif" }}
+          >
             {session.note}
           </span>
         )}
@@ -246,14 +270,14 @@ function TimeGrid({
   activeLocation: string;
   scrollRef:      RefObject<HTMLDivElement>;
 }) {
-  const inWeekView  = viewMode === 'week';
-  const daysToShow  = inWeekView ? DAYS_ORDER : [activeDay];
+  const inWeekView = viewMode === 'week';
+  const days       = inWeekView ? DAYS_ORDER : [activeDay];
 
   const nowMin  = new Date().getHours() * 60 + new Date().getMinutes();
-  const nowPx   = nowMin - START_HOUR * 60;
+  const nowPx   = ((nowMin - START_HOUR * 60) / 60) * HOUR_PX;
   const showNow = nowMin >= START_HOUR * 60 && nowMin < END_HOUR * 60;
 
-  function isCurrent(s: GroupedSession): boolean {
+  function isCurrent(s: GroupedSession) {
     return s.day === todayDay && nowMin >= toMin(s.start) && nowMin < toMin(s.end);
   }
 
@@ -261,17 +285,31 @@ function TimeGrid({
     <div
       ref={scrollRef}
       className="overflow-y-auto scrollbar-hide"
-      style={{ maxHeight: '640px', overscrollBehavior: 'contain' }}
+      style={{
+        maxHeight:          '660px',
+        overscrollBehavior: 'contain',
+        // Fade out the last 48px so the scroll end feels natural
+        maskImage:          'linear-gradient(to bottom, black calc(100% - 48px), transparent 100%)',
+        WebkitMaskImage:    'linear-gradient(to bottom, black calc(100% - 48px), transparent 100%)',
+      } as React.CSSProperties}
     >
       <div className="flex" style={{ height: TOTAL_H, minHeight: TOTAL_H }}>
 
-        {/* ── Time label column ── */}
-        <div className="shrink-0 relative" style={{ width: TIME_COL_W, minWidth: TIME_COL_W }}>
+        {/* ── Time labels ── */}
+        <div
+          className="shrink-0 relative select-none"
+          style={{ width: TIME_COL, minWidth: TIME_COL }}
+        >
           {HOURS.map(h => (
             <div
               key={h}
-              className="absolute right-2 font-mono leading-none select-none"
-              style={{ top: (h - START_HOUR) * HOUR_PX - 7, fontSize: '10px', color: '#8A8480' }}
+              className="absolute right-3 font-mono"
+              style={{
+                top:      (h - START_HOUR) * HOUR_PX - 7,
+                fontSize: '10px',
+                color:    'rgba(138,132,128,0.6)',
+                letterSpacing: '0.03em',
+              }}
             >
               {fmtHour(h)}
             </div>
@@ -281,23 +319,29 @@ function TimeGrid({
         {/* ── Grid body ── */}
         <div
           className="flex-1 relative overflow-hidden"
-          style={{ borderLeft: '1px solid #2C2824' }}
+          style={{ borderLeft: '1px solid rgba(255,255,255,0.06)' }}
         >
           {/* Hour lines */}
           {HOURS.map(h => (
             <div
               key={`h-${h}`}
               className="absolute left-0 right-0 pointer-events-none"
-              style={{ top: (h - START_HOUR) * HOUR_PX, borderTop: '1px solid #2C2824' }}
+              style={{
+                top:       (h - START_HOUR) * HOUR_PX,
+                borderTop: '1px solid rgba(255,255,255,0.05)',
+              }}
             />
           ))}
 
-          {/* Half-hour lines (dimmer) */}
+          {/* Half-hour lines */}
           {HOURS.map(h => (
             <div
               key={`hh-${h}`}
               className="absolute left-0 right-0 pointer-events-none"
-              style={{ top: (h - START_HOUR) * HOUR_PX + 30, borderTop: '1px solid #1A1714' }}
+              style={{
+                top:       (h - START_HOUR) * HOUR_PX + HOUR_PX / 2,
+                borderTop: '1px solid rgba(255,255,255,0.025)',
+              }}
             />
           ))}
 
@@ -307,12 +351,24 @@ function TimeGrid({
               className="absolute left-0 right-0 z-30 pointer-events-none"
               style={{ top: nowPx }}
             >
-              <div style={{ position: 'relative', height: 0, borderTop: '1.5px solid #C09A3C' }}>
+              <div
+                style={{
+                  height:          '1.5px',
+                  backgroundColor: '#C09A3C',
+                  boxShadow:       '0 0 6px #C09A3C88',
+                  position:        'relative',
+                }}
+              >
                 <div
                   style={{
-                    position: 'absolute', left: -4, top: -4,
-                    width: 8, height: 8, borderRadius: '50%',
+                    position:        'absolute',
+                    left:            -5,
+                    top:             -4,
+                    width:           10,
+                    height:          10,
+                    borderRadius:    '50%',
                     backgroundColor: '#C09A3C',
+                    boxShadow:       '0 0 8px #C09A3C, 0 0 16px #C09A3C66',
                   }}
                 />
               </div>
@@ -321,7 +377,7 @@ function TimeGrid({
 
           {/* Day columns */}
           <div className="flex absolute inset-0" style={{ height: TOTAL_H }}>
-            {daysToShow.map(day => {
+            {days.map(day => {
               const isToday  = day === todayDay;
               const sessions = layoutSessions(getGroupedDay(day));
               return (
@@ -329,9 +385,10 @@ function TimeGrid({
                   key={day}
                   className="flex-1 relative"
                   style={{
-                    borderRight:     '1px solid #2C2824',
-                    backgroundColor: isToday ? 'rgba(192,154,60,0.025)' : 'transparent',
-                    minWidth:        inWeekView ? 0 : undefined,
+                    borderRight:     '1px solid rgba(255,255,255,0.04)',
+                    backgroundColor: isToday
+                      ? 'rgba(192,154,60,0.03)'
+                      : 'transparent',
                   }}
                 >
                   {sessions.map((s, i) => (
@@ -356,8 +413,8 @@ function TimeGrid({
 // ─── Schedule ─────────────────────────────────────────────────────────────────
 
 export default function Schedule({ filterDiscipline, compact = false }: ScheduleProps) {
-  const dayTabsRef  = useRef<HTMLDivElement>(null);
-  const gridRef     = useRef<HTMLDivElement>(null);
+  const dayTabsRef = useRef<HTMLDivElement>(null);
+  const gridRef    = useRef<HTMLDivElement>(null);
 
   function getTodayDay(): Day {
     const m: Record<number, Day> = { 0:'sun',1:'mon',2:'tue',3:'wed',4:'thu',5:'fri',6:'sat' };
@@ -369,34 +426,28 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
   const [activeDay,        setActiveDay]        = useState<Day>(getTodayDay);
   const [viewMode,         setViewMode]         = useState<'week' | 'day'>('day');
 
-  // Default to week view on large screens
-  useEffect(() => {
-    setViewMode(window.innerWidth >= 1024 ? 'week' : 'day');
-  }, []);
+  useEffect(() => { setViewMode(window.innerWidth >= 1024 ? 'week' : 'day'); }, []);
 
-  // On mount, scroll the grid so current time is visible (or 8 AM if earlier)
   useEffect(() => {
     if (!gridRef.current) return;
     const h = Math.max(START_HOUR, new Date().getHours() - 1);
     gridRef.current.scrollTop = (h - START_HOUR) * HOUR_PX;
   }, []);
 
-  // Keep active day tab visible
   useEffect(() => {
     if (!dayTabsRef.current) return;
     const btn = dayTabsRef.current.querySelector('[data-active="true"]') as HTMLElement | null;
     btn?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
   }, [activeDay]);
 
-  function isCurrentDay(day: Day): boolean { return day === getTodayDay(); }
+  function isCurrentDay(day: Day) { return day === getTodayDay(); }
 
-  const effectiveDiscipline = filterDiscipline ?? activeDiscipline;
+  const disc = filterDiscipline ?? activeDiscipline;
 
-  const filtered = schedule.filter(s => {
-    const locOk  = activeLocation === 'all' || s.location === activeLocation;
-    const discOk = effectiveDiscipline === 'all' || s.discipline === effectiveDiscipline;
-    return locOk && discOk;
-  });
+  const filtered = schedule.filter(s =>
+    (activeLocation === 'all' || s.location === activeLocation) &&
+    (disc === 'all' || s.discipline === disc)
+  );
 
   function getGroupedDay(day: Day): GroupedSession[] {
     return groupSessions(
@@ -404,61 +455,70 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
     );
   }
 
-  function getDayCount(day: Day): number { return getGroupedDay(day).length; }
-
-  function resetFilters() {
-    setActiveLocation('all');
-    setActiveDiscipline('all');
-    setActiveDay(getTodayDay());
-  }
-
-  const todayDay       = getTodayDay();
-  const hasAny         = filtered.length > 0;
-  const showControls   = !(compact && filterDiscipline);
+  const todayDay     = getTodayDay();
+  const hasAny       = filtered.length > 0;
+  const showControls = !(compact && filterDiscipline);
 
   // ──────────────────────────────────────────────────────────────────────────
   return (
-    <div className={compact ? '' : 'py-2'}>
+    <div
+      className={compact ? '' : 'py-2'}
+      style={{
+        borderRadius: compact ? 0 : '16px',
+        overflow:     compact ? undefined : 'hidden',
+        border:       compact ? undefined : '1px solid rgba(255,255,255,0.06)',
+        backgroundColor: compact ? undefined : 'rgba(26,23,20,0.5)',
+      }}
+    >
 
       {/* ── Controls ── */}
       {showControls && (
-        <div className="mb-4 space-y-3">
-
-          {/* Location toggle */}
-          <div className="flex w-full">
+        <div
+          className="space-y-3"
+          style={{ padding: '16px 16px 0 16px' }}
+        >
+          {/* Location — pill buttons with gap */}
+          <div className="flex gap-2">
             {(['all', '1256', '1133'] as const).map(loc => (
               <button
                 key={loc}
                 onClick={() => setActiveLocation(loc)}
-                className="flex-1 font-mono text-xs tracking-wider uppercase py-3 transition-colors"
+                className="font-mono text-xs tracking-wider uppercase transition-all"
                 style={{
-                  backgroundColor: activeLocation === loc ? '#C09A3C' : 'transparent',
-                  color:           activeLocation === loc ? '#0D0B09' : '#8A8480',
-                  border:          '1px solid #2C2824',
-                  marginRight:     '-1px',
+                  flex:            loc === 'all' ? '1 1 auto' : '0 0 auto',
+                  padding:         '8px 20px',
+                  borderRadius:    '100px',
+                  backgroundColor: activeLocation === loc ? '#C09A3C' : 'rgba(44,40,36,0.8)',
+                  color:           activeLocation === loc ? '#0D0B09' : 'rgba(138,132,128,0.9)',
+                  border:          `1px solid ${activeLocation === loc ? '#C09A3C' : 'rgba(255,255,255,0.08)'}`,
+                  fontWeight:      activeLocation === loc ? 600 : 400,
+                  transition:      'all 0.2s ease',
                 }}
               >
-                {loc === 'all' ? 'ALL' : loc}
+                {loc === 'all' ? 'All Locations' : `${loc} Granville`}
               </button>
             ))}
           </div>
 
-          {/* Discipline chips */}
+          {/* Discipline chips — pill style */}
           {!filterDiscipline && (
             <div
               className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide"
-              style={{ WebkitOverflowScrolling: 'touch' } as React.CSSProperties}
+              style={{ overflowX: 'auto' } as React.CSSProperties}
             >
               <button
                 onClick={() => setActiveDiscipline('all')}
-                className="shrink-0 flex items-center gap-2 font-mono text-xs tracking-wider uppercase py-2 px-3 transition-colors whitespace-nowrap"
+                className="shrink-0 font-mono text-xs tracking-wider uppercase transition-all whitespace-nowrap"
                 style={{
-                  backgroundColor: activeDiscipline === 'all' ? '#C09A3C' : 'transparent',
-                  color:           activeDiscipline === 'all' ? '#0D0B09' : '#8A8480',
-                  border:          '1px solid #2C2824',
+                  padding:         '6px 14px',
+                  borderRadius:    '100px',
+                  backgroundColor: activeDiscipline === 'all' ? '#C09A3C' : 'rgba(44,40,36,0.8)',
+                  color:           activeDiscipline === 'all' ? '#0D0B09' : 'rgba(138,132,128,0.9)',
+                  border:          `1px solid ${activeDiscipline === 'all' ? '#C09A3C' : 'rgba(255,255,255,0.08)'}`,
+                  transition:      'all 0.2s ease',
                 }}
               >
-                All Disciplines
+                All
               </button>
               {disciplines.filter(d => d.id !== 'private').map(d => {
                 const accent   = ACCENT[d.id] ?? '#C09A3C';
@@ -467,14 +527,20 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
                   <button
                     key={d.id}
                     onClick={() => setActiveDiscipline(d.id)}
-                    className="shrink-0 flex items-center gap-2 font-mono text-xs tracking-wider uppercase py-2 px-3 transition-colors whitespace-nowrap"
+                    className="shrink-0 flex items-center gap-1.5 font-mono text-xs tracking-wider uppercase transition-all whitespace-nowrap"
                     style={{
-                      backgroundColor: isActive ? `${accent}22` : 'transparent',
-                      color:           isActive ? accent : '#8A8480',
-                      border:          `1px solid ${isActive ? accent : '#2C2824'}`,
+                      padding:         '6px 14px',
+                      borderRadius:    '100px',
+                      backgroundColor: isActive ? `${accent}30` : 'rgba(44,40,36,0.8)',
+                      color:           isActive ? accent : 'rgba(138,132,128,0.9)',
+                      border:          `1px solid ${isActive ? `${accent}70` : 'rgba(255,255,255,0.08)'}`,
+                      transition:      'all 0.2s ease',
                     }}
                   >
-                    <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: accent }} />
+                    <span
+                      className="shrink-0 rounded-full"
+                      style={{ width: 6, height: 6, backgroundColor: accent, opacity: isActive ? 1 : 0.5 }}
+                    />
                     {d.name}
                   </button>
                 );
@@ -485,47 +551,65 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
       )}
 
       {/* ── Calendar header: day tabs + week toggle ── */}
-      <div className="flex items-stretch" style={{ borderBottom: '1px solid #2C2824' }}>
-
-        {/* Spacer — lines up with time-label column */}
-        <div className="shrink-0" style={{ width: TIME_COL_W }} />
+      <div
+        className="flex items-stretch"
+        style={{
+          marginTop:    showControls ? '12px' : 0,
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          padding:      '0 4px',
+        }}
+      >
+        {/* Spacer aligning with time-label column */}
+        <div className="shrink-0" style={{ width: TIME_COL - 4 }} />
 
         {/* Day tabs */}
         <div
           ref={dayTabsRef}
           className="flex flex-1 overflow-x-auto scrollbar-hide"
-          style={{ WebkitOverflowScrolling: 'touch' } as React.CSSProperties}
         >
           {DAYS_ORDER.map(day => {
             const isActive = viewMode === 'day' && activeDay === day;
             const isToday  = isCurrentDay(day);
-            const count    = getDayCount(day);
+            const count    = getGroupedDay(day).length;
             return (
               <button
                 key={day}
                 data-active={isActive ? 'true' : 'false'}
                 onClick={() => { setActiveDay(day); setViewMode('day'); }}
-                className="flex-1 shrink-0 flex flex-col items-center justify-center gap-1 py-3 transition-colors"
-                style={{
-                  minWidth:        '52px',
-                  maxWidth:        '80px',
-                  backgroundColor: isActive  ? '#EEE8DC'    : 'transparent',
-                  color:           isActive  ? '#0D0B09'
-                                 : isToday  ? '#C09A3C'
-                                 :             '#8A8480',
-                  borderBottom:    isToday && !isActive ? '2px solid #C09A3C' : '2px solid transparent',
-                }}
+                className="flex-1 shrink-0 flex flex-col items-center justify-center gap-1.5 py-3 transition-colors"
+                style={{ minWidth: '48px', maxWidth: '76px' }}
               >
-                <span className="font-mono text-[11px] uppercase tracking-wider leading-none">
+                {/* Day abbreviation */}
+                <span
+                  className="font-mono uppercase leading-none"
+                  style={{
+                    fontSize:      '10px',
+                    letterSpacing: '0.08em',
+                    color:         isToday && !isActive ? '#C09A3C'
+                                 : isActive ? 'rgba(238,232,220,0.9)'
+                                 : 'rgba(138,132,128,0.7)',
+                  }}
+                >
                   {DAY_LABELS[day].slice(0, 3)}
                 </span>
+
+                {/* Count — pill background on active, brass dot on today */}
                 <span
-                  className="font-display text-lg leading-none"
+                  className="font-display leading-none"
                   style={{
-                    color: isActive ? '#0D0B09'
-                         : isToday  ? '#C09A3C'
-                         : count > 0 ? '#EEE8DC'
-                         : '#2C2824',
+                    fontSize:        '17px',
+                    minWidth:        '28px',
+                    textAlign:       'center',
+                    borderRadius:    '100px',
+                    padding:         '1px 6px',
+                    backgroundColor: isActive
+                      ? '#C09A3C'
+                      : 'transparent',
+                    color:           isActive ? '#0D0B09'
+                                   : isToday  ? '#C09A3C'
+                                   : count > 0 ? 'rgba(238,232,220,0.85)'
+                                   : 'rgba(44,40,36,0.9)',
+                    transition:     'all 0.2s ease',
                   }}
                 >
                   {count}
@@ -535,13 +619,16 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
           })}
         </div>
 
-        {/* Week view toggle (desktop only) */}
+        {/* Week view toggle */}
         <button
           onClick={() => setViewMode(v => v === 'week' ? 'day' : 'week')}
-          className="hidden lg:flex shrink-0 items-center gap-2 px-4 font-mono text-[11px] uppercase tracking-wider transition-colors whitespace-nowrap"
+          className="hidden lg:flex shrink-0 items-center gap-2 px-4 transition-all whitespace-nowrap"
           style={{
-            color:      viewMode === 'week' ? '#C09A3C' : '#8A8480',
-            borderLeft: '1px solid #2C2824',
+            fontFamily:    "'Inter', sans-serif",
+            fontSize:      '11px',
+            letterSpacing: '0.04em',
+            color:         viewMode === 'week' ? '#C09A3C' : 'rgba(138,132,128,0.7)',
+            borderLeft:    '1px solid rgba(255,255,255,0.06)',
           }}
         >
           <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
@@ -561,16 +648,24 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
 
       {/* ── Empty state ── */}
       {!hasAny && (
-        <div className="flex flex-col items-center justify-center py-16 gap-4">
-          <p className="font-mono text-sm tracking-wider text-center" style={{ color: '#8A8480' }}>
-            No classes match the current filter.
+        <div className="flex flex-col items-center justify-center gap-4" style={{ padding: '64px 24px' }}>
+          <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '14px', color: 'rgba(138,132,128,0.7)', letterSpacing: '0.02em' }}>
+            No classes match this filter.
           </p>
           <button
-            onClick={resetFilters}
-            className="font-mono text-xs uppercase tracking-wider py-2 px-4"
-            style={{ border: '1px solid #2C2824', color: '#8A8480' }}
+            onClick={() => { setActiveLocation('all'); setActiveDiscipline('all'); setActiveDay(getTodayDay()); }}
+            style={{
+              fontFamily:      "'Inter', sans-serif",
+              fontSize:        '12px',
+              letterSpacing:   '0.04em',
+              padding:         '8px 20px',
+              borderRadius:    '100px',
+              border:          '1px solid rgba(255,255,255,0.1)',
+              color:           'rgba(138,132,128,0.8)',
+              backgroundColor: 'transparent',
+            }}
           >
-            Reset Filters
+            Reset filters
           </button>
         </div>
       )}
@@ -589,8 +684,16 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
 
       {/* ── Compact disclaimer ── */}
       {compact && filterDiscipline && (
-        <p className="mt-4 font-mono text-[11px] tracking-wide" style={{ color: '#8A8480' }}>
-          Times shown are from the current schedule. Confirm with the gym for any changes.
+        <p
+          style={{
+            margin:      '12px 16px 16px',
+            fontFamily:  "'Inter', sans-serif",
+            fontSize:    '11px',
+            color:       'rgba(138,132,128,0.55)',
+            letterSpacing: '0.02em',
+          }}
+        >
+          Times are subject to change. Confirm with the gym before visiting.
         </p>
       )}
     </div>
