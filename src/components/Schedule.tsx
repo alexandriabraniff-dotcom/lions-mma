@@ -410,12 +410,14 @@ function TimeGrid({
   todayDay,
   getGroupedDay,
   activeLocation,
+  allSessionsForDay,
 }: {
-  viewMode:       'week' | 'day';
-  activeDay:      Day;
-  todayDay:       Day;
-  getGroupedDay:  (day: Day) => GroupedSession[];
-  activeLocation: string;
+  viewMode:           'week' | 'day';
+  activeDay:          Day;
+  todayDay:           Day;
+  getGroupedDay:      (day: Day) => GroupedSession[];
+  activeLocation:     string;
+  allSessionsForDay:  (day: Day) => GroupedSession[];
 }) {
   const inWeekView = viewMode === 'week';
   const days       = inWeekView ? DAYS_ORDER : [activeDay];
@@ -440,30 +442,41 @@ function TimeGrid({
 
         {/* One cell per visible day */}
         <div className="flex flex-1" style={{ borderLeft: '1px solid rgba(255,255,255,0.08)' }}>
-          {days.map((day, idx) => {
+          {days.map(day => {
             const isToday = day === todayDay;
+            const count   = allSessionsForDay(day).length;
             return (
               <div
                 key={day}
                 className="flex-1 flex flex-col items-center justify-center"
                 style={{
-                  padding:         '10px 4px 9px',
+                  padding:         '8px 4px 7px',
                   borderRight:     '1px solid rgba(255,255,255,0.08)',
                   backgroundColor: isToday ? 'rgba(192,154,60,0.05)' : 'transparent',
+                  gap:             '2px',
                 }}
               >
-                <span
-                  style={{
-                    fontFamily:    "'Inter', sans-serif",
-                    fontSize:      inWeekView ? '11px' : '15px',
-                    fontWeight:    600,
-                    letterSpacing: inWeekView ? '0.06em' : '0.08em',
-                    textTransform: 'uppercase',
-                    color:         isToday ? '#C09A3C' : 'rgba(238,232,220,0.75)',
-                    lineHeight:    1,
-                  } as React.CSSProperties}
-                >
-                  {inWeekView ? DAY_LABELS[day].slice(0, 3) : DAY_LABELS[day]}
+                {/* Label */}
+                <span style={{
+                  fontFamily:    "'Inter', sans-serif",
+                  fontSize:      '9px',
+                  fontWeight:    500,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                  color:         isToday ? 'rgba(192,154,60,0.7)' : 'rgba(138,132,128,0.5)',
+                  lineHeight:    1,
+                } as React.CSSProperties}>
+                  # classes
+                </span>
+                {/* Count */}
+                <span style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize:   inWeekView ? '14px' : '18px',
+                  fontWeight: 600,
+                  color:      isToday ? '#C09A3C' : 'rgba(238,232,220,0.8)',
+                  lineHeight: 1,
+                }}>
+                  {count}
                 </span>
               </div>
             );
@@ -837,6 +850,7 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
           todayDay={todayDay}
           getGroupedDay={getGroupedDay}
           activeLocation={activeLocation}
+          allSessionsForDay={getGroupedDay}
         />
       )}
 
