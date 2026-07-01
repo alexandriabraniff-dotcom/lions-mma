@@ -326,9 +326,9 @@ function ClassModal({
         backdropFilter:  'blur(4px)',
         WebkitBackdropFilter: 'blur(4px)',
         display:         'flex',
-        alignItems:      'flex-end',
+        alignItems:      'center',
         justifyContent:  'center',
-        padding:         '0',
+        padding:         '24px',
       } as React.CSSProperties}
     >
       {/* Sheet panel */}
@@ -337,23 +337,16 @@ function ClassModal({
           width:           '100%',
           maxWidth:        '480px',
           backgroundColor: '#1A1714',
-          borderRadius:    '20px 20px 0 0',
+          borderRadius:    '16px',
           border:          `1px solid ${accent}30`,
-          borderBottom:    'none',
-          padding:         '0 0 env(safe-area-inset-bottom, 0)',
-          boxShadow:       `0 -4px 40px rgba(0,0,0,0.5), 0 0 0 1px ${accent}15`,
+          boxShadow:       `0 8px 48px rgba(0,0,0,0.6), 0 0 0 1px ${accent}15`,
           overflow:        'hidden',
         } as React.CSSProperties}
       >
         {/* Accent bar */}
         <div style={{ height: '3px', backgroundColor: accent, opacity: 0.8 }} />
 
-        {/* Drag handle */}
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '12px 0 4px' }}>
-          <div style={{ width: '36px', height: '4px', borderRadius: '2px', backgroundColor: 'rgba(255,255,255,0.15)' }} />
-        </div>
-
-        <div style={{ padding: '8px 24px 28px' }}>
+        <div style={{ padding: '20px 24px 28px' }}>
           {/* Header row */}
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '12px', marginBottom: '20px' }}>
             <div>
@@ -366,7 +359,7 @@ function ClassModal({
             </div>
             <button
               onClick={onClose}
-              style={{ flexShrink: 0, marginTop: '2px', width: '28px', height: '28px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.08)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              style={{ flexShrink: 0, marginTop: '2px', width: '28px', height: '28px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.08)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
             >
               <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
                 <path d="M1.5 1.5L8.5 8.5M8.5 1.5L1.5 8.5" stroke="rgba(238,232,220,0.6)" strokeWidth="1.5" strokeLinecap="round"/>
@@ -458,6 +451,7 @@ function ClassModal({
               textAlign:       'center',
               textDecoration:  'none',
               transition:      'opacity 0.15s ease',
+              cursor:          'pointer',
             } as React.CSSProperties}
           >
             Learn More About {name}
@@ -512,6 +506,7 @@ function EventBlock({
           ? `0 0 0 2px ${glow}, 0 2px 12px ${glow}`
           : '0 1px 3px rgba(0,0,0,0.3)',
         transition:   'box-shadow 0.15s ease, transform 0.15s ease',
+        cursor:       'pointer',
       }}
       onClick={onSelect}
       onMouseEnter={e => {
