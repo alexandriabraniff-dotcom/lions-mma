@@ -4,12 +4,12 @@
   --color-void: #0D0B09;
   --color-vault: #1A1714;
   --color-iron: #2C2824;
-  --color-smoke: #6E6560;
+  --color-smoke: #8A8480;
   --color-canvas: #EEE8DC;
   --color-brass: #C09A3C;
 
-  --font-display: 'Big Shoulders Display', sans-serif;
-  --font-body: 'DM Sans', sans-serif;
+  --font-display: 'Barlow Condensed', sans-serif;
+  --font-body: 'Inter', sans-serif;
   --font-mono: 'IBM Plex Mono', monospace;
 }
 
@@ -20,7 +20,7 @@ html {
 body {
   background: #0D0B09;
   color: #EEE8DC;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 
 ::selection {

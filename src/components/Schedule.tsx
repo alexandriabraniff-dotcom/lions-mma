@@ -113,28 +113,28 @@ function ClassCard({
           backgroundColor: isCurrent ? 'rgba(192,154,60,0.08)' : 'transparent',
         }}
       >
-        <div className="font-mono text-[10px] text-smoke leading-none mb-0.5">
+        <div className="font-mono text-[11px] text-smoke leading-none mb-0.5">
           {fmt12h(session.start)}
         </div>
         <div className="font-display text-sm uppercase tracking-tight text-canvas leading-tight">
           {disciplineName}
         </div>
         {session.note && (
-          <div className="font-mono text-[9px] mt-0.5 leading-none" style={{ color: '#6E6560' }}>
+          <div className="font-mono text-[11px] mt-0.5 leading-none" style={{ color: '#8A8480' }}>
             {session.note}
           </div>
         )}
         <div className="flex items-center gap-1.5 mt-1 flex-wrap">
           {levelStr && (
             <span
-              className="font-mono text-[9px] px-1 py-0.5 leading-none"
-              style={{ border: '1px solid #2C2824', color: '#6E6560' }}
+              className="font-mono text-[11px] px-1 py-0.5 leading-none"
+              style={{ border: '1px solid #2C2824', color: '#8A8480' }}
             >
               {levelStr}
             </span>
           )}
           {showLocation && (
-            <span className="font-mono text-[9px]" style={{ color: accentColor }}>
+            <span className="font-mono text-[11px]" style={{ color: accentColor }}>
               {locationShort}
             </span>
           )}
@@ -177,7 +177,7 @@ function ClassCard({
           <span className="font-mono text-xs text-canvas leading-none">
             {fmt12h(session.start)}
           </span>
-          <span className="font-mono text-[10px] mt-1 leading-none" style={{ color: '#6E6560' }}>
+          <span className="font-mono text-[11px] mt-1 leading-none" style={{ color: '#8A8480' }}>
             {fmt12h(session.end)}
           </span>
         </div>
@@ -195,14 +195,14 @@ function ClassCard({
                 </div>
               )}
               {session.coach && (
-                <div className="font-mono text-xs mt-1" style={{ color: '#6E6560' }}>
+                <div className="font-mono text-xs mt-1" style={{ color: '#8A8480' }}>
                   {session.coach}
                 </div>
               )}
             </div>
             {isCurrent && (
               <div
-                className="shrink-0 font-mono text-[10px] px-2 py-1 animate-pulse leading-none"
+                className="shrink-0 font-mono text-[11px] px-2 py-1 animate-pulse leading-none"
                 style={{ border: `1px solid ${accentColor}`, color: accentColor }}
               >
                 NOW
@@ -214,15 +214,15 @@ function ClassCard({
           <div className="flex items-center gap-2 mt-3 flex-wrap">
             {levelStr && (
               <span
-                className="font-mono text-[10px] px-2 py-1 leading-none"
-                style={{ border: '1px solid #2C2824', color: '#6E6560' }}
+                className="font-mono text-[11px] px-2 py-1 leading-none"
+                style={{ border: '1px solid #2C2824', color: '#8A8480' }}
               >
                 {levelStr}
               </span>
             )}
             {showLocation && (
               <span
-                className="font-mono text-[10px] px-2 py-1 leading-none"
+                className="font-mono text-[11px] px-2 py-1 leading-none"
                 style={{ border: `1px solid ${accentColor}66`, color: accentColor }}
               >
                 {locationShort} GRANVILLE
@@ -334,7 +334,7 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
                 className="flex-1 font-mono text-xs tracking-wider uppercase py-3 transition-colors"
                 style={{
                   backgroundColor: activeLocation === loc ? '#C09A3C' : 'transparent',
-                  color: activeLocation === loc ? '#0D0B09' : '#6E6560',
+                  color: activeLocation === loc ? '#0D0B09' : '#8A8480',
                   border: '1px solid #2C2824',
                   marginRight: '-1px',
                 }}
@@ -355,7 +355,7 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
                 className="shrink-0 flex items-center gap-2 font-mono text-xs tracking-wider uppercase py-2 px-3 transition-colors whitespace-nowrap"
                 style={{
                   backgroundColor: activeDiscipline === 'all' ? '#C09A3C' : 'transparent',
-                  color: activeDiscipline === 'all' ? '#0D0B09' : '#6E6560',
+                  color: activeDiscipline === 'all' ? '#0D0B09' : '#8A8480',
                   border: '1px solid #2C2824',
                 }}
               >
@@ -373,7 +373,7 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
                       className="shrink-0 flex items-center gap-2 font-mono text-xs tracking-wider uppercase py-2 px-3 transition-colors whitespace-nowrap"
                       style={{
                         backgroundColor: isActive ? `${accent}22` : 'transparent',
-                        color: isActive ? accent : '#6E6560',
+                        color: isActive ? accent : '#8A8480',
                         border: `1px solid ${isActive ? accent : '#2C2824'}`,
                       }}
                     >
@@ -412,7 +412,7 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
                   flex: '1 0 auto',
                   maxWidth: '72px',
                   backgroundColor: isActive ? '#EEE8DC' : 'transparent',
-                  color: isActive ? '#0D0B09' : isToday ? '#C09A3C' : '#6E6560',
+                  color: isActive ? '#0D0B09' : isToday ? '#C09A3C' : '#8A8480',
                   border: isActive
                     ? '1px solid #EEE8DC'
                     : isToday
@@ -421,7 +421,7 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
                   marginRight: '-1px',
                 }}
               >
-                <span className="font-mono text-[10px] uppercase tracking-wider leading-none">
+                <span className="font-mono text-[11px] uppercase tracking-wider leading-none">
                   {DAY_LABELS[day].slice(0, 3)}
                 </span>
                 <span
@@ -437,9 +437,9 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
           {/* Week view toggle */}
           <button
             onClick={() => setViewMode(viewMode === 'week' ? 'day' : 'week')}
-            className="hidden md:flex shrink-0 flex-col items-center justify-center gap-1 py-3 px-3 transition-colors font-mono text-[10px] uppercase tracking-wider"
+            className="hidden md:flex shrink-0 flex-col items-center justify-center gap-1 py-3 px-3 transition-colors font-mono text-[11px] uppercase tracking-wider"
             style={{
-              color: viewMode === 'week' ? '#C09A3C' : '#6E6560',
+              color: viewMode === 'week' ? '#C09A3C' : '#8A8480',
               border: viewMode === 'week' ? '1px solid #C09A3C' : '1px solid #2C2824',
               whiteSpace: 'nowrap',
               marginLeft: '8px',
@@ -470,7 +470,7 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
           <button
             onClick={resetFilters}
             className="font-mono text-xs uppercase tracking-wider py-2 px-4 transition-colors"
-            style={{ border: '1px solid #2C2824', color: '#6E6560' }}
+            style={{ border: '1px solid #2C2824', color: '#8A8480' }}
           >
             Reset Filters
           </button>
@@ -490,16 +490,16 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
                 style={{ backgroundColor: today ? '#0D0B09' : '#1A1714' }}
               >
                 <div
-                  className="font-mono text-[10px] uppercase tracking-wider mb-3 pb-2"
+                  className="font-mono text-[11px] uppercase tracking-wider mb-3 pb-2"
                   style={{
-                    color: today ? '#C09A3C' : '#6E6560',
+                    color: today ? '#C09A3C' : '#8A8480',
                     borderBottom: `1px solid ${today ? '#C09A3C' : '#2C2824'}`,
                   }}
                 >
                   {DAY_LABELS[day].slice(0, 3)}{today && ' ·'}
                 </div>
                 {grouped.length === 0 ? (
-                  <div className="font-mono text-[10px] mt-2" style={{ color: '#2C2824' }}>—</div>
+                  <div className="font-mono text-[11px] mt-2" style={{ color: '#2C2824' }}>—</div>
                 ) : (
                   grouped.map((gs, i) => (
                     <ClassCard
@@ -538,20 +538,20 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
                   Today
                 </span>
               )}
-              <span className="font-mono text-xs ml-auto" style={{ color: '#6E6560' }}>
+              <span className="font-mono text-xs ml-auto" style={{ color: '#8A8480' }}>
                 {grouped.length} {grouped.length === 1 ? 'class' : 'classes'}
               </span>
             </div>
 
             {grouped.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 gap-4">
-                <p className="font-mono text-sm tracking-wider text-center" style={{ color: '#6E6560' }}>
+                <p className="font-mono text-sm tracking-wider text-center" style={{ color: '#8A8480' }}>
                   No classes on {DAY_LABELS[activeDay]} with the current filters.
                 </p>
                 <button
                   onClick={resetFilters}
                   className="font-mono text-xs uppercase tracking-wider py-2 px-4 transition-colors"
-                  style={{ border: '1px solid #2C2824', color: '#6E6560' }}
+                  style={{ border: '1px solid #2C2824', color: '#8A8480' }}
                 >
                   Reset Filters
                 </button>
@@ -578,7 +578,7 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
 
       {/* ── EMBED DISCLAIMER ── */}
       {compact && filterDiscipline && (
-        <p className="mt-4 font-mono text-[11px] tracking-wide" style={{ color: '#6E6560' }}>
+        <p className="mt-4 font-mono text-[11px] tracking-wide" style={{ color: '#8A8480' }}>
           Times shown are from the current schedule. Confirm with the gym for any changes.
         </p>
       )}
