@@ -626,7 +626,8 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
 
   const filtered = schedule.filter(s =>
     (activeLocation === 'all' || s.location === activeLocation) &&
-    (disc === 'all' || s.discipline === disc)
+    (disc === 'all'
+      || (disc === 'womens' ? s.level === 'womens' : s.discipline === disc))
   );
 
   function getGroupedDay(day: Day): GroupedSession[] {
