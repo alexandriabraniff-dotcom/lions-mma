@@ -596,7 +596,8 @@ function TimeGrid({
 // ─── Schedule ─────────────────────────────────────────────────────────────────
 
 export default function Schedule({ filterDiscipline, compact = false }: ScheduleProps) {
-  const dayTabsRef = useRef<HTMLDivElement>(null);
+  const dayTabsRef  = useRef<HTMLDivElement>(null);
+  const touchStartX = useRef<number | null>(null);
 
   function getTodayDay(): Day {
     const m: Record<number, Day> = { 0:'sun',1:'mon',2:'tue',3:'wed',4:'thu',5:'fri',6:'sat' };
@@ -606,8 +607,8 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
   // Returns the calendar date (1–31) for each day of the current week
   function getWeekDates(): Record<Day, number> {
     const today   = new Date();
-    const jsDay   = today.getDay(); // 0 = Sun
-    const fromMon = jsDay === 0 ? 6 : jsDay - 1; // days since Monday
+    const jsDay   = today.getDay();
+    const fromMon = jsDay === 0 ? 6 : jsDay - 1;
     const monday  = new Date(today);
     monday.setDate(today.getDate() - fromMon);
     const offsets: Record<Day, number> = { mon:0, tue:1, wed:2, thu:3, fri:4, sat:5, sun:6 };
@@ -620,12 +621,35 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
     return result;
   }
 
+  // Returns "Wednesday, July 1" for a given Day
+  function getFullDateLabel(day: Day): string {
+    const today   = new Date();
+    const jsDay   = today.getDay();
+    const fromMon = jsDay === 0 ? 6 : jsDay - 1;
+    const monday  = new Date(today);
+    monday.setDate(today.getDate() - fromMon);
+    const offsets: Record<Day, number> = { mon:0, tue:1, wed:2, thu:3, fri:4, sat:5, sun:6 };
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + offsets[day]);
+    return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  }
+
   const [activeLocation,   setActiveLocation]   = useState<'all' | '1256' | '1133'>('all');
   const [activeDiscipline, setActiveDiscipline] = useState<string>('all');
   const [activeDay,        setActiveDay]        = useState<Day>(getTodayDay);
   const [viewMode,         setViewMode]         = useState<'week' | 'day'>('day');
+  const [isMobile,         setIsMobile]         = useState(false);
 
-  useEffect(() => { setViewMode(window.innerWidth >= 1024 ? 'week' : 'day'); }, []);
+  useEffect(() => {
+    const check = () => {
+      const mobile = window.innerWidth < 1024;
+      setIsMobile(mobile);
+      setViewMode(mobile ? 'day' : 'week');
+    };
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   useEffect(() => {
     if (!dayTabsRef.current) return;
@@ -634,6 +658,27 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
   }, [activeDay]);
 
   function isCurrentDay(day: Day) { return day === getTodayDay(); }
+
+  // Day navigation helpers
+  function prevDay() {
+    const idx = DAYS_ORDER.indexOf(activeDay);
+    if (idx > 0) setActiveDay(DAYS_ORDER[idx - 1]);
+  }
+  function nextDay() {
+    const idx = DAYS_ORDER.indexOf(activeDay);
+    if (idx < DAYS_ORDER.length - 1) setActiveDay(DAYS_ORDER[idx + 1]);
+  }
+  function handleTouchStart(e: React.TouchEvent) {
+    touchStartX.current = e.touches[0].clientX;
+  }
+  function handleTouchEnd(e: React.TouchEvent) {
+    if (touchStartX.current === null) return;
+    const delta = e.changedTouches[0].clientX - touchStartX.current;
+    touchStartX.current = null;
+    if (Math.abs(delta) < 44) return;
+    if (delta < 0) nextDay();
+    if (delta > 0) prevDay();
+  }
 
   const disc = filterDiscipline ?? activeDiscipline;
 
@@ -743,79 +788,175 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
         </div>
       )}
 
-      {/* ── Day navigation tabs ── */}
-      <div
-        className="flex items-stretch"
-        style={{
-          marginTop:    showControls ? '12px' : 0,
-          borderBottom: '1px solid rgba(255,255,255,0.1)',
-          borderTop:    showControls ? '1px solid rgba(255,255,255,0.06)' : undefined,
-        }}
-      >
-        {/* Spacer — exactly TIME_COL wide */}
-        <div className="shrink-0" style={{ width: TIME_COL }} />
-
-        {/* Day tabs */}
+      {/* ── Day navigation ── */}
+      {isMobile ? (
+        /* ── Mobile: horizontal date chip strip ── */
         <div
-          ref={dayTabsRef}
-          className="flex flex-1 overflow-x-auto scrollbar-hide"
-          style={{ borderLeft: '1px solid rgba(255,255,255,0.08)' }}
+          style={{
+            marginTop:    showControls ? '12px' : 0,
+            borderTop:    showControls ? '1px solid rgba(255,255,255,0.06)' : undefined,
+            borderBottom: '1px solid rgba(255,255,255,0.1)',
+          }}
         >
-          {DAYS_ORDER.map(day => {
-            const isActive = viewMode === 'day' && activeDay === day;
-            const isToday  = isCurrentDay(day);
-            const dateNum  = weekDates[day];
-            return (
-              <button
-                key={day}
-                data-active={isActive ? 'true' : 'false'}
-                onClick={() => { setActiveDay(day); setViewMode('day'); }}
-                className="flex-1 shrink-0 flex flex-col items-center justify-center gap-1 py-3 transition-colors"
-                style={{
-                  minWidth:        '40px',
-                  borderRight:     '1px solid rgba(255,255,255,0.08)',
-                  backgroundColor: isActive ? 'rgba(192,154,60,0.08)' : 'transparent',
-                  borderBottom:    isActive ? '2px solid #C09A3C' : '2px solid transparent',
-                  transition:      'background-color 0.15s ease',
-                }}
-              >
-                {/* Day abbreviation */}
-                <span
-                  className="font-mono uppercase leading-none"
+          {/* Date chips */}
+          <div
+            ref={dayTabsRef}
+            className="flex overflow-x-auto scrollbar-hide gap-2"
+            style={{ padding: '12px 16px' }}
+          >
+            {DAYS_ORDER.map(day => {
+              const isActive = activeDay === day;
+              const isToday  = isCurrentDay(day);
+              const dateNum  = weekDates[day];
+              return (
+                <button
+                  key={day}
+                  data-active={isActive ? 'true' : 'false'}
+                  onClick={() => setActiveDay(day)}
+                  className="shrink-0 flex flex-col items-center gap-1"
                   style={{
-                    fontSize:      '9px',
-                    letterSpacing: '0.1em',
-                    color:         isToday && !isActive ? '#C09A3C'
-                                 : isActive             ? 'rgba(238,232,220,0.9)'
-                                 : 'rgba(138,132,128,0.6)',
+                    minWidth:   '44px',
+                    padding:    '6px 4px',
+                    borderRadius: '12px',
+                    backgroundColor: isActive ? 'rgba(192,154,60,0.15)' : 'transparent',
+                    border:     isActive ? '1px solid rgba(192,154,60,0.4)' : '1px solid transparent',
+                    transition: 'all 0.15s ease',
                   }}
                 >
-                  {DAY_LABELS[day].slice(0, 3)}
-                </span>
+                  <span style={{
+                    fontFamily:    "'Inter', sans-serif",
+                    fontSize:      '10px',
+                    fontWeight:    500,
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    color:         isActive ? '#C09A3C' : 'rgba(138,132,128,0.6)',
+                    lineHeight:    1,
+                  } as React.CSSProperties}>
+                    {DAY_LABELS[day].slice(0, 1)}
+                  </span>
+                  <span style={{
+                    fontFamily:      "'Inter', sans-serif",
+                    fontSize:        '18px',
+                    fontWeight:      600,
+                    lineHeight:      1,
+                    width:           '32px',
+                    height:          '32px',
+                    display:         'flex',
+                    alignItems:      'center',
+                    justifyContent:  'center',
+                    borderRadius:    '50%',
+                    backgroundColor: isActive             ? '#C09A3C'
+                                   : isToday && !isActive ? 'rgba(192,154,60,0.2)'
+                                   : 'transparent',
+                    color:           isActive ? '#0D0B09'
+                                   : isToday  ? '#C09A3C'
+                                   : 'rgba(238,232,220,0.85)',
+                    border:          isToday && !isActive ? '1.5px solid #C09A3C' : 'none',
+                    transition:      'all 0.15s ease',
+                  } as React.CSSProperties}>
+                    {dateNum}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
 
-                {/* Calendar date — circled on today */}
-                <span
-                  className="font-display leading-none"
+          {/* Active day heading */}
+          <div style={{ padding: '0 16px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{
+              fontFamily:    "'Inter', sans-serif",
+              fontSize:      '13px',
+              fontWeight:    600,
+              color:         'rgba(238,232,220,0.9)',
+              letterSpacing: '0.01em',
+            }}>
+              {getFullDateLabel(activeDay)}
+            </span>
+            {/* Prev / next arrows */}
+            <div style={{ display: 'flex', gap: '4px' }}>
+              {(['prev', 'next'] as const).map(dir => (
+                <button
+                  key={dir}
+                  onClick={dir === 'prev' ? prevDay : nextDay}
+                  disabled={dir === 'prev' ? DAYS_ORDER.indexOf(activeDay) === 0 : DAYS_ORDER.indexOf(activeDay) === DAYS_ORDER.length - 1}
                   style={{
-                    fontSize:        '16px',
-                    minWidth:        '28px',
-                    textAlign:       'center',
-                    borderRadius:    '100px',
-                    padding:         '1px 4px',
-                    backgroundColor: isToday && !isActive ? '#C09A3C' : 'transparent',
-                    color:           isToday && !isActive ? '#0D0B09'
-                                   : isActive             ? '#C09A3C'
-                                   : 'rgba(238,232,220,0.8)',
-                    transition:      'color 0.15s ease',
+                    width:           '28px',
+                    height:          '28px',
+                    borderRadius:    '50%',
+                    backgroundColor: 'rgba(44,40,36,0.7)',
+                    border:          '1px solid rgba(255,255,255,0.08)',
+                    display:         'flex',
+                    alignItems:      'center',
+                    justifyContent:  'center',
+                    opacity:         (dir === 'prev' ? DAYS_ORDER.indexOf(activeDay) === 0 : DAYS_ORDER.indexOf(activeDay) === DAYS_ORDER.length - 1) ? 0.3 : 1,
                   }}
                 >
-                  {dateNum}
-                </span>
-              </button>
-            );
-          })}
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                    {dir === 'prev'
+                      ? <path d="M6.5 2L3.5 5L6.5 8" stroke="rgba(238,232,220,0.7)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      : <path d="M3.5 2L6.5 5L3.5 8" stroke="rgba(238,232,220,0.7)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    }
+                  </svg>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
+      ) : (
+        /* ── Desktop: full tab row ── */
+        <div
+          className="flex items-stretch"
+          style={{
+            marginTop:    showControls ? '12px' : 0,
+            borderBottom: '1px solid rgba(255,255,255,0.1)',
+            borderTop:    showControls ? '1px solid rgba(255,255,255,0.06)' : undefined,
+          }}
+        >
+          <div className="shrink-0" style={{ width: TIME_COL }} />
+          <div
+            ref={dayTabsRef}
+            className="flex flex-1 overflow-x-auto scrollbar-hide"
+            style={{ borderLeft: '1px solid rgba(255,255,255,0.08)' }}
+          >
+            {DAYS_ORDER.map(day => {
+              const isActive = viewMode === 'day' && activeDay === day;
+              const isToday  = isCurrentDay(day);
+              const dateNum  = weekDates[day];
+              return (
+                <button
+                  key={day}
+                  data-active={isActive ? 'true' : 'false'}
+                  onClick={() => { setActiveDay(day); setViewMode('day'); }}
+                  className="flex-1 shrink-0 flex flex-col items-center justify-center gap-1 py-3 transition-colors"
+                  style={{
+                    minWidth:        '40px',
+                    borderRight:     '1px solid rgba(255,255,255,0.08)',
+                    backgroundColor: isActive ? 'rgba(192,154,60,0.08)' : 'transparent',
+                    borderBottom:    isActive ? '2px solid #C09A3C' : '2px solid transparent',
+                    transition:      'background-color 0.15s ease',
+                  }}
+                >
+                  <span className="font-mono uppercase leading-none" style={{
+                    fontSize: '9px', letterSpacing: '0.1em',
+                    color: isToday && !isActive ? '#C09A3C' : isActive ? 'rgba(238,232,220,0.9)' : 'rgba(138,132,128,0.6)',
+                  }}>
+                    {DAY_LABELS[day].slice(0, 3)}
+                  </span>
+                  <span className="font-display leading-none" style={{
+                    fontSize: '16px', minWidth: '28px', textAlign: 'center',
+                    borderRadius: '100px', padding: '1px 4px',
+                    backgroundColor: isToday && !isActive ? '#C09A3C' : 'transparent',
+                    color: isToday && !isActive ? '#0D0B09' : isActive ? '#C09A3C' : 'rgba(238,232,220,0.8)',
+                    transition: 'color 0.15s ease',
+                  }}>
+                    {dateNum}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* ── Empty state ── */}
       {!hasAny && (
@@ -844,14 +985,20 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
 
       {/* ── Time grid ── */}
       {hasAny && (
-        <TimeGrid
-          viewMode={viewMode}
-          activeDay={activeDay}
-          todayDay={todayDay}
-          getGroupedDay={getGroupedDay}
-          activeLocation={activeLocation}
-          allSessionsForDay={getGroupedDay}
-        />
+        <div
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          style={{ touchAction: 'pan-y' }}
+        >
+          <TimeGrid
+            viewMode={viewMode}
+            activeDay={activeDay}
+            todayDay={todayDay}
+            getGroupedDay={getGroupedDay}
+            activeLocation={activeLocation}
+            allSessionsForDay={getGroupedDay}
+          />
+        </div>
       )}
 
       {/* ── Compact disclaimer ── */}
