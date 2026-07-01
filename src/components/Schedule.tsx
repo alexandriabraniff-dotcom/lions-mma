@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, type RefObject } from 'react';
 import { schedule, DAY_LABELS, DAYS_ORDER } from '../data/schedule';
 import type { ClassSession, Day, Level } from '../data/schedule';
 import { disciplines } from '../data/disciplines';
@@ -11,29 +11,27 @@ type ScheduleProps = {
   compact?: boolean;
 };
 
-/**
- * GroupedSession collapses simultaneous classes that share the same
- * start time + discipline + location + note into one card.
- * e.g. Muay Thai Beginner 12pm + Muay Thai Int–Adv 12pm → one card showing
- * "Beginner / Int–Adv".
- */
 type GroupedSession = Omit<ClassSession, 'level'> & {
   levels: (Level | undefined)[];
 };
 
-type ClassCardProps = {
-  session: GroupedSession;
-  levelStr: string;       // pre-joined level label e.g. "Beginner / Int–Adv"
-  showLocation: boolean;
-  compact: boolean;
-  accentColor: string;
-  fmt12h: (t: string) => string;
-  isCurrentTime: (s: ClassSession) => boolean;
+type LaidOutSession = GroupedSession & {
+  col: number;
+  totalCols: number;
 };
 
-// ─── Accent colors per discipline ─────────────────────────────────────────────
+// ─── Grid constants ───────────────────────────────────────────────────────────
 
-const DISCIPLINE_ACCENT_COLORS: Record<string, string> = {
+const START_HOUR  = 6;                               // 6 AM
+const END_HOUR    = 22;                              // 10 PM
+const HOUR_PX     = 60;                              // 60 px = 1 hour = 1 px/min
+const TOTAL_H     = (END_HOUR - START_HOUR) * HOUR_PX;
+const HOURS       = Array.from({ length: END_HOUR - START_HOUR }, (_, i) => i + START_HOUR);
+const TIME_COL_W  = 52;                              // px — left time label column
+
+// ─── Discipline accent colours ────────────────────────────────────────────────
+
+const ACCENT: Record<string, string> = {
   'muay-thai':    '#C09A3C',
   'boxing':       '#8B7355',
   'dutch':        '#A07840',
@@ -47,7 +45,7 @@ const DISCIPLINE_ACCENT_COLORS: Record<string, string> = {
   'private':      '#6B6B4A',
 };
 
-// ─── Level label map ──────────────────────────────────────────────────────────
+// ─── Pure helpers ─────────────────────────────────────────────────────────────
 
 function getLevelLabel(level?: string): string {
   switch (level) {
@@ -62,21 +60,50 @@ function getLevelLabel(level?: string): string {
   }
 }
 
+function toMin(time: string): number {
+  const [h, m] = time.split(':').map(Number);
+  return h * 60 + m;
+}
+
+/** Pixel offset from the top of the grid for a given HH:MM string. */
+function toPx(time: string): number {
+  return toMin(time) - START_HOUR * 60; // 1px per minute
+}
+
+/** Height in px for a class that runs from start to end. */
+function heightPx(start: string, end: string): number {
+  return Math.max(toMin(end) - toMin(start), 24); // 24px minimum
+}
+
+function fmt12h(time: string): string {
+  const [hStr, mStr] = time.split(':');
+  const h = parseInt(hStr, 10);
+  const m = mStr ?? '00';
+  if (h === 0)  return `12:${m} AM`;
+  if (h === 12) return `12:${m} PM`;
+  if (h < 12)   return `${h}:${m} AM`;
+  return `${h - 12}:${m} PM`;
+}
+
+function fmtHour(h: number): string {
+  if (h === 0)  return '12 AM';
+  if (h === 12) return '12 PM';
+  if (h < 12)   return `${h} AM`;
+  return `${h - 12} PM`;
+}
+
 // ─── Grouping ─────────────────────────────────────────────────────────────────
 //
-// Sessions that share the same start time, discipline, location, AND note
-// are merged into one GroupedSession with multiple levels.
-// Kids classes at the same time but different notes (different age groups)
-// stay as separate cards since they are genuinely different programs.
+// Simultaneous sessions with the same discipline + location + note collapse
+// into one block showing combined levels (e.g. "Beginner / Int–Adv").
 
-function groupSessions(sessions: ClassSession[]): GroupedSession[] {
+function groupSessions(raw: ClassSession[]): GroupedSession[] {
   const map = new Map<string, GroupedSession>();
-  for (const s of sessions) {
+  for (const s of raw) {
     const key = `${s.start}|${s.discipline}|${s.location}|${s.note ?? ''}`;
     const existing = map.get(key);
     if (existing) {
       existing.levels.push(s.level);
-      // keep the later end time when sessions overlap (e.g. 1h vs 1.5h)
       if (s.end > existing.end) existing.end = s.end;
     } else {
       const { level, ...rest } = s;
@@ -86,148 +113,239 @@ function groupSessions(sessions: ClassSession[]): GroupedSession[] {
   return Array.from(map.values());
 }
 
-// ─── ClassCard ────────────────────────────────────────────────────────────────
+// ─── Overlap layout (interval-graph column assignment) ────────────────────────
+//
+// Assigns each event a `col` index so no two overlapping events share a column,
+// and a `totalCols` equal to the width of the maximum clique it belongs to.
+// This is the same algorithm Google Calendar uses internally.
 
-function ClassCard({
-  session,
-  levelStr,
-  showLocation,
-  compact,
-  accentColor,
-  fmt12h,
-  isCurrentTime,
-}: ClassCardProps) {
-  const isCurrent = isCurrentTime(session as ClassSession);
-  const disciplineName =
-    disciplines.find((d) => d.id === session.discipline)?.name ?? session.discipline;
-  const locationShort =
-    locations.find((l) => l.id === session.location)?.short ?? session.location;
+function layoutSessions(sessions: GroupedSession[]): LaidOutSession[] {
+  const sorted = [...sessions].sort((a, b) => toMin(a.start) - toMin(b.start));
+  const laid: LaidOutSession[] = sorted.map(s => ({ ...s, col: 0, totalCols: 1 }));
 
-  if (compact) {
-    // ── Week-view compact card ─────────────────────────────────────────────
-    return (
-      <div
-        className="mb-1.5 pl-3 pr-2 py-2 border-l-2 transition-colors"
-        style={{
-          borderLeftColor: accentColor,
-          backgroundColor: isCurrent ? 'rgba(192,154,60,0.08)' : 'transparent',
-        }}
-      >
-        <div className="font-mono text-[11px] text-smoke leading-none mb-0.5">
-          {fmt12h(session.start)}
-        </div>
-        <div className="font-display text-sm uppercase tracking-tight text-canvas leading-tight">
-          {disciplineName}
-        </div>
-        {session.note && (
-          <div className="font-mono text-[11px] mt-0.5 leading-none" style={{ color: '#8A8480' }}>
-            {session.note}
-          </div>
-        )}
-        <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-          {levelStr && (
-            <span
-              className="font-mono text-[11px] px-1 py-0.5 leading-none"
-              style={{ border: '1px solid #2C2824', color: '#8A8480' }}
-            >
-              {levelStr}
-            </span>
-          )}
-          {showLocation && (
-            <span className="font-mono text-[11px]" style={{ color: accentColor }}>
-              {locationShort}
-            </span>
-          )}
-          {isCurrent && (
-            <span
-              className="font-mono text-[9px] px-1 py-0.5 leading-none animate-pulse"
-              style={{ border: `1px solid ${accentColor}`, color: accentColor }}
-            >
-              NOW
-            </span>
-          )}
-        </div>
-      </div>
-    );
+  // Greedy column assignment
+  const colEnds: number[] = [];
+  for (const ev of laid) {
+    const start = toMin(ev.start);
+    const end   = toMin(ev.end);
+    let col = 0;
+    while (col < colEnds.length && colEnds[col] > start) col++;
+    ev.col = col;
+    colEnds[col] = end;
   }
 
-  // ── Day-view full card (mobile + desktop) ──────────────────────────────────
+  // Compute totalCols = size of largest clique each event participates in
+  for (const ev of laid) {
+    const s = toMin(ev.start);
+    const e = toMin(ev.end);
+    let maxCol = ev.col;
+    for (const other of laid) {
+      if (toMin(other.start) < e && toMin(other.end) > s) {
+        maxCol = Math.max(maxCol, other.col);
+      }
+    }
+    ev.totalCols = maxCol + 1;
+  }
+
+  return laid;
+}
+
+// ─── EventBlock ───────────────────────────────────────────────────────────────
+
+function EventBlock({
+  session,
+  isCurrent,
+  showLocation,
+  inWeekView,
+}: {
+  session:      LaidOutSession;
+  isCurrent:    boolean;
+  showLocation: boolean;
+  inWeekView:   boolean;
+}) {
+  const accent   = ACCENT[session.discipline] ?? '#C09A3C';
+  const name     = disciplines.find(d => d.id === session.discipline)?.name  ?? session.discipline;
+  const short    = disciplines.find(d => d.id === session.discipline)?.short ?? session.discipline;
+  const locShort = locations.find(l => l.id === session.location)?.short     ?? session.location;
+  const levels   = [...new Set(session.levels.map(getLevelLabel).filter(Boolean))].join(' / ');
+
+  const top    = toPx(session.start) + 1;
+  const h      = heightPx(session.start, session.end) - 2;
+  const leftPct = (session.col  / session.totalCols) * 100;
+  const wPct    = (1            / session.totalCols) * 100;
+
   return (
     <div
-      className="relative overflow-hidden transition-all duration-200"
+      className="absolute overflow-hidden select-none transition-opacity hover:opacity-90"
       style={{
-        backgroundColor: '#1A1714',
-        borderLeft: `3px solid ${accentColor}`,
-        boxShadow: isCurrent ? `0 0 0 1px ${accentColor}33` : 'none',
+        top:    top,
+        height: h,
+        left:   `calc(${leftPct}% + 1px)`,
+        width:  `calc(${wPct}%  - 2px)`,
+        backgroundColor: `${accent}1C`,
+        borderLeft:      `2px solid ${accent}`,
+        boxShadow:       isCurrent ? `inset 0 0 0 1px ${accent}55` : 'none',
       }}
     >
-      {isCurrent && (
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{ backgroundColor: `${accentColor}08` }}
-        />
-      )}
+      <div className="p-1.5 h-full overflow-hidden flex flex-col gap-0.5">
 
-      <div className="relative flex items-stretch">
-        {/* Time column */}
-        <div
-          className="flex flex-col justify-center items-end shrink-0 px-4 py-4 border-r"
-          style={{ borderColor: '#2C2824', minWidth: '88px' }}
+        {/* Discipline name */}
+        <span
+          className="font-display uppercase leading-tight truncate"
+          style={{ fontSize: inWeekView ? '10px' : '12px', fontWeight: 700, color: accent }}
         >
-          <span className="font-mono text-xs text-canvas leading-none">
+          {inWeekView ? short : name}
+        </span>
+
+        {/* Start time — only if tall enough */}
+        {h >= 30 && (
+          <span className="font-mono leading-none" style={{ fontSize: '10px', color: '#8A8480' }}>
             {fmt12h(session.start)}
           </span>
-          <span className="font-mono text-[11px] mt-1 leading-none" style={{ color: '#8A8480' }}>
-            {fmt12h(session.end)}
+        )}
+
+        {/* Level — day view only, if tall enough */}
+        {!inWeekView && h >= 48 && levels && (
+          <span className="font-mono leading-none" style={{ fontSize: '10px', color: '#8A8480' }}>
+            {levels}
           </span>
+        )}
+
+        {/* Location — day view, "All" filter, if tall enough */}
+        {!inWeekView && showLocation && h >= 62 && (
+          <span className="font-mono leading-none" style={{ fontSize: '10px', color: accent }}>
+            {locShort}
+          </span>
+        )}
+
+        {/* Note — day view, if tall enough */}
+        {!inWeekView && session.note && h >= 78 && (
+          <span className="font-mono leading-none" style={{ fontSize: '10px', color: accent }}>
+            {session.note}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── TimeGrid ─────────────────────────────────────────────────────────────────
+
+function TimeGrid({
+  viewMode,
+  activeDay,
+  todayDay,
+  getGroupedDay,
+  activeLocation,
+  scrollRef,
+}: {
+  viewMode:       'week' | 'day';
+  activeDay:      Day;
+  todayDay:       Day;
+  getGroupedDay:  (day: Day) => GroupedSession[];
+  activeLocation: string;
+  scrollRef:      RefObject<HTMLDivElement>;
+}) {
+  const inWeekView  = viewMode === 'week';
+  const daysToShow  = inWeekView ? DAYS_ORDER : [activeDay];
+
+  const nowMin  = new Date().getHours() * 60 + new Date().getMinutes();
+  const nowPx   = nowMin - START_HOUR * 60;
+  const showNow = nowMin >= START_HOUR * 60 && nowMin < END_HOUR * 60;
+
+  function isCurrent(s: GroupedSession): boolean {
+    return s.day === todayDay && nowMin >= toMin(s.start) && nowMin < toMin(s.end);
+  }
+
+  return (
+    <div
+      ref={scrollRef}
+      className="overflow-y-auto scrollbar-hide"
+      style={{ maxHeight: '640px', overscrollBehavior: 'contain' }}
+    >
+      <div className="flex" style={{ height: TOTAL_H, minHeight: TOTAL_H }}>
+
+        {/* ── Time label column ── */}
+        <div className="shrink-0 relative" style={{ width: TIME_COL_W, minWidth: TIME_COL_W }}>
+          {HOURS.map(h => (
+            <div
+              key={h}
+              className="absolute right-2 font-mono leading-none select-none"
+              style={{ top: (h - START_HOUR) * HOUR_PX - 7, fontSize: '10px', color: '#8A8480' }}
+            >
+              {fmtHour(h)}
+            </div>
+          ))}
         </div>
 
-        {/* Content */}
-        <div className="flex-1 px-4 py-4">
-          <div className="flex items-start justify-between gap-2">
-            <div className="flex-1 min-w-0">
-              <div className="font-display text-xl uppercase tracking-tight text-canvas leading-none">
-                {disciplineName}
-              </div>
-              {session.note && (
-                <div className="font-mono text-xs mt-1 leading-snug" style={{ color: '#C09A3C' }}>
-                  {session.note}
-                </div>
-              )}
-              {session.coach && (
-                <div className="font-mono text-xs mt-1" style={{ color: '#8A8480' }}>
-                  {session.coach}
-                </div>
-              )}
-            </div>
-            {isCurrent && (
-              <div
-                className="shrink-0 font-mono text-[11px] px-2 py-1 animate-pulse leading-none"
-                style={{ border: `1px solid ${accentColor}`, color: accentColor }}
-              >
-                NOW
-              </div>
-            )}
-          </div>
+        {/* ── Grid body ── */}
+        <div
+          className="flex-1 relative overflow-hidden"
+          style={{ borderLeft: '1px solid #2C2824' }}
+        >
+          {/* Hour lines */}
+          {HOURS.map(h => (
+            <div
+              key={`h-${h}`}
+              className="absolute left-0 right-0 pointer-events-none"
+              style={{ top: (h - START_HOUR) * HOUR_PX, borderTop: '1px solid #2C2824' }}
+            />
+          ))}
 
-          {/* Level + location tags */}
-          <div className="flex items-center gap-2 mt-3 flex-wrap">
-            {levelStr && (
-              <span
-                className="font-mono text-[11px] px-2 py-1 leading-none"
-                style={{ border: '1px solid #2C2824', color: '#8A8480' }}
-              >
-                {levelStr}
-              </span>
-            )}
-            {showLocation && (
-              <span
-                className="font-mono text-[11px] px-2 py-1 leading-none"
-                style={{ border: `1px solid ${accentColor}66`, color: accentColor }}
-              >
-                {locationShort} GRANVILLE
-              </span>
-            )}
+          {/* Half-hour lines (dimmer) */}
+          {HOURS.map(h => (
+            <div
+              key={`hh-${h}`}
+              className="absolute left-0 right-0 pointer-events-none"
+              style={{ top: (h - START_HOUR) * HOUR_PX + 30, borderTop: '1px solid #1A1714' }}
+            />
+          ))}
+
+          {/* Current-time indicator */}
+          {showNow && (
+            <div
+              className="absolute left-0 right-0 z-30 pointer-events-none"
+              style={{ top: nowPx }}
+            >
+              <div style={{ position: 'relative', height: 0, borderTop: '1.5px solid #C09A3C' }}>
+                <div
+                  style={{
+                    position: 'absolute', left: -4, top: -4,
+                    width: 8, height: 8, borderRadius: '50%',
+                    backgroundColor: '#C09A3C',
+                  }}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Day columns */}
+          <div className="flex absolute inset-0" style={{ height: TOTAL_H }}>
+            {daysToShow.map(day => {
+              const isToday  = day === todayDay;
+              const sessions = layoutSessions(getGroupedDay(day));
+              return (
+                <div
+                  key={day}
+                  className="flex-1 relative"
+                  style={{
+                    borderRight:     '1px solid #2C2824',
+                    backgroundColor: isToday ? 'rgba(192,154,60,0.025)' : 'transparent',
+                    minWidth:        inWeekView ? 0 : undefined,
+                  }}
+                >
+                  {sessions.map((s, i) => (
+                    <EventBlock
+                      key={i}
+                      session={s}
+                      isCurrent={isCurrent(s)}
+                      showLocation={activeLocation === 'all'}
+                      inWeekView={inWeekView}
+                    />
+                  ))}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -235,81 +353,58 @@ function ClassCard({
   );
 }
 
-// ─── Schedule component ───────────────────────────────────────────────────────
+// ─── Schedule ─────────────────────────────────────────────────────────────────
 
 export default function Schedule({ filterDiscipline, compact = false }: ScheduleProps) {
-  const dayTabsRef = useRef<HTMLDivElement>(null);
+  const dayTabsRef  = useRef<HTMLDivElement>(null);
+  const gridRef     = useRef<HTMLDivElement>(null);
 
   function getTodayDay(): Day {
-    const map: Record<number, Day> = { 0: 'sun', 1: 'mon', 2: 'tue', 3: 'wed', 4: 'thu', 5: 'fri', 6: 'sat' };
-    return map[new Date().getDay()] ?? 'mon';
+    const m: Record<number, Day> = { 0:'sun',1:'mon',2:'tue',3:'wed',4:'thu',5:'fri',6:'sat' };
+    return m[new Date().getDay()] ?? 'mon';
   }
 
-  const [activeLocation, setActiveLocation] = useState<'all' | '1256' | '1133'>('all');
+  const [activeLocation,   setActiveLocation]   = useState<'all' | '1256' | '1133'>('all');
   const [activeDiscipline, setActiveDiscipline] = useState<string>('all');
-  const [activeDay, setActiveDay] = useState<Day>(getTodayDay);
-  const [viewMode, setViewMode] = useState<'week' | 'day'>('day');
+  const [activeDay,        setActiveDay]        = useState<Day>(getTodayDay);
+  const [viewMode,         setViewMode]         = useState<'week' | 'day'>('day');
 
+  // Default to week view on large screens
   useEffect(() => {
-    setViewMode(window.innerWidth >= 768 ? 'week' : 'day');
+    setViewMode(window.innerWidth >= 1024 ? 'week' : 'day');
   }, []);
 
+  // On mount, scroll the grid so current time is visible (or 8 AM if earlier)
+  useEffect(() => {
+    if (!gridRef.current) return;
+    const h = Math.max(START_HOUR, new Date().getHours() - 1);
+    gridRef.current.scrollTop = (h - START_HOUR) * HOUR_PX;
+  }, []);
+
+  // Keep active day tab visible
   useEffect(() => {
     if (!dayTabsRef.current) return;
-    const btn = dayTabsRef.current.querySelector('[data-active="true"]') as HTMLElement;
+    const btn = dayTabsRef.current.querySelector('[data-active="true"]') as HTMLElement | null;
     btn?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
   }, [activeDay]);
 
-  function fmt12h(time: string): string {
-    const [hourStr, minuteStr] = time.split(':');
-    const hour = parseInt(hourStr, 10);
-    const minute = minuteStr ?? '00';
-    if (hour === 0)  return `12:${minute} AM`;
-    if (hour === 12) return `12:${minute} PM`;
-    if (hour < 12)   return `${hour}:${minute} AM`;
-    return `${hour - 12}:${minute} PM`;
-  }
-
-  function isCurrentDay(day: Day): boolean {
-    return day === getTodayDay();
-  }
-
-  function isCurrentTime(session: ClassSession): boolean {
-    if (!isCurrentDay(session.day)) return false;
-    const now = new Date();
-    const nowMins = now.getHours() * 60 + now.getMinutes();
-    const [sH, sM] = session.start.split(':').map(Number);
-    const [eH, eM] = session.end.split(':').map(Number);
-    return nowMins >= sH * 60 + sM && nowMins < eH * 60 + eM;
-  }
-
-  // ── Filtering + grouping ──────────────────────────────────────────────────
+  function isCurrentDay(day: Day): boolean { return day === getTodayDay(); }
 
   const effectiveDiscipline = filterDiscipline ?? activeDiscipline;
 
-  const filteredSessions = schedule.filter((s) => {
+  const filtered = schedule.filter(s => {
     const locOk  = activeLocation === 'all' || s.location === activeLocation;
     const discOk = effectiveDiscipline === 'all' || s.discipline === effectiveDiscipline;
     return locOk && discOk;
   });
 
-  function getGroupedDaySessions(day: Day): GroupedSession[] {
-    const daySessions = filteredSessions
-      .filter((s) => s.day === day)
-      .sort((a, b) => a.start.localeCompare(b.start));
-    return groupSessions(daySessions);
+  function getGroupedDay(day: Day): GroupedSession[] {
+    return groupSessions(
+      filtered.filter(s => s.day === day).sort((a, b) => a.start.localeCompare(b.start))
+    );
   }
 
-  function getDayCount(day: Day): number {
-    return getGroupedDaySessions(day).length;
-  }
-
-  function makeLevelStr(session: GroupedSession): string {
-    return [...new Set(session.levels.map(getLevelLabel).filter(Boolean))].join(' / ');
-  }
-
-  const hasAnySessions = filteredSessions.length > 0;
-  const showControls   = !(compact && filterDiscipline);
+  function getDayCount(day: Day): number { return getGroupedDay(day).length; }
 
   function resetFilters() {
     setActiveLocation('all');
@@ -317,26 +412,30 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
     setActiveDay(getTodayDay());
   }
 
-  // ─────────────────────────────────────────────────────────────────────────
+  const todayDay       = getTodayDay();
+  const hasAny         = filtered.length > 0;
+  const showControls   = !(compact && filterDiscipline);
+
+  // ──────────────────────────────────────────────────────────────────────────
   return (
     <div className={compact ? '' : 'py-2'}>
 
-      {/* ── CONTROLS ── */}
+      {/* ── Controls ── */}
       {showControls && (
-        <div className="mb-6 space-y-4">
+        <div className="mb-4 space-y-3">
 
           {/* Location toggle */}
           <div className="flex w-full">
-            {(['all', '1256', '1133'] as const).map((loc) => (
+            {(['all', '1256', '1133'] as const).map(loc => (
               <button
                 key={loc}
                 onClick={() => setActiveLocation(loc)}
                 className="flex-1 font-mono text-xs tracking-wider uppercase py-3 transition-colors"
                 style={{
                   backgroundColor: activeLocation === loc ? '#C09A3C' : 'transparent',
-                  color: activeLocation === loc ? '#0D0B09' : '#8A8480',
-                  border: '1px solid #2C2824',
-                  marginRight: '-1px',
+                  color:           activeLocation === loc ? '#0D0B09' : '#8A8480',
+                  border:          '1px solid #2C2824',
+                  marginRight:     '-1px',
                 }}
               >
                 {loc === 'all' ? 'ALL' : loc}
@@ -344,61 +443,61 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
             ))}
           </div>
 
-          {/* Discipline filter chips */}
+          {/* Discipline chips */}
           {!filterDiscipline && (
             <div
               className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide"
-              style={{ WebkitOverflowScrolling: 'touch' }}
+              style={{ WebkitOverflowScrolling: 'touch' } as React.CSSProperties}
             >
               <button
                 onClick={() => setActiveDiscipline('all')}
                 className="shrink-0 flex items-center gap-2 font-mono text-xs tracking-wider uppercase py-2 px-3 transition-colors whitespace-nowrap"
                 style={{
                   backgroundColor: activeDiscipline === 'all' ? '#C09A3C' : 'transparent',
-                  color: activeDiscipline === 'all' ? '#0D0B09' : '#8A8480',
-                  border: '1px solid #2C2824',
+                  color:           activeDiscipline === 'all' ? '#0D0B09' : '#8A8480',
+                  border:          '1px solid #2C2824',
                 }}
               >
                 All Disciplines
               </button>
-              {disciplines
-                .filter((d) => d.id !== 'private')
-                .map((d) => {
-                  const accent = DISCIPLINE_ACCENT_COLORS[d.id] ?? '#C09A3C';
-                  const isActive = activeDiscipline === d.id;
-                  return (
-                    <button
-                      key={d.id}
-                      onClick={() => setActiveDiscipline(d.id)}
-                      className="shrink-0 flex items-center gap-2 font-mono text-xs tracking-wider uppercase py-2 px-3 transition-colors whitespace-nowrap"
-                      style={{
-                        backgroundColor: isActive ? `${accent}22` : 'transparent',
-                        color: isActive ? accent : '#8A8480',
-                        border: `1px solid ${isActive ? accent : '#2C2824'}`,
-                      }}
-                    >
-                      <span
-                        className="w-1.5 h-1.5 rounded-full shrink-0"
-                        style={{ backgroundColor: accent }}
-                      />
-                      {d.name}
-                    </button>
-                  );
-                })}
+              {disciplines.filter(d => d.id !== 'private').map(d => {
+                const accent   = ACCENT[d.id] ?? '#C09A3C';
+                const isActive = activeDiscipline === d.id;
+                return (
+                  <button
+                    key={d.id}
+                    onClick={() => setActiveDiscipline(d.id)}
+                    className="shrink-0 flex items-center gap-2 font-mono text-xs tracking-wider uppercase py-2 px-3 transition-colors whitespace-nowrap"
+                    style={{
+                      backgroundColor: isActive ? `${accent}22` : 'transparent',
+                      color:           isActive ? accent : '#8A8480',
+                      border:          `1px solid ${isActive ? accent : '#2C2824'}`,
+                    }}
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: accent }} />
+                    {d.name}
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>
       )}
 
-      {/* ── DAY TABS ── */}
-      <div className="mb-4">
+      {/* ── Calendar header: day tabs + week toggle ── */}
+      <div className="flex items-stretch" style={{ borderBottom: '1px solid #2C2824' }}>
+
+        {/* Spacer — lines up with time-label column */}
+        <div className="shrink-0" style={{ width: TIME_COL_W }} />
+
+        {/* Day tabs */}
         <div
           ref={dayTabsRef}
-          className="flex gap-0 overflow-x-auto scrollbar-hide"
-          style={{ WebkitOverflowScrolling: 'touch' }}
+          className="flex flex-1 overflow-x-auto scrollbar-hide"
+          style={{ WebkitOverflowScrolling: 'touch' } as React.CSSProperties}
         >
-          {DAYS_ORDER.map((day) => {
-            const isActive = activeDay === day && viewMode === 'day';
+          {DAYS_ORDER.map(day => {
+            const isActive = viewMode === 'day' && activeDay === day;
             const isToday  = isCurrentDay(day);
             const count    = getDayCount(day);
             return (
@@ -406,19 +505,15 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
                 key={day}
                 data-active={isActive ? 'true' : 'false'}
                 onClick={() => { setActiveDay(day); setViewMode('day'); }}
-                className="shrink-0 flex flex-col items-center justify-center gap-1 py-3 transition-colors"
+                className="flex-1 shrink-0 flex flex-col items-center justify-center gap-1 py-3 transition-colors"
                 style={{
-                  minWidth: '56px',
-                  flex: '1 0 auto',
-                  maxWidth: '72px',
-                  backgroundColor: isActive ? '#EEE8DC' : 'transparent',
-                  color: isActive ? '#0D0B09' : isToday ? '#C09A3C' : '#8A8480',
-                  border: isActive
-                    ? '1px solid #EEE8DC'
-                    : isToday
-                    ? '1px solid #C09A3C'
-                    : '1px solid #2C2824',
-                  marginRight: '-1px',
+                  minWidth:        '52px',
+                  maxWidth:        '80px',
+                  backgroundColor: isActive  ? '#EEE8DC'    : 'transparent',
+                  color:           isActive  ? '#0D0B09'
+                                 : isToday  ? '#C09A3C'
+                                 :             '#8A8480',
+                  borderBottom:    isToday && !isActive ? '2px solid #C09A3C' : '2px solid transparent',
                 }}
               >
                 <span className="font-mono text-[11px] uppercase tracking-wider leading-none">
@@ -426,50 +521,53 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
                 </span>
                 <span
                   className="font-display text-lg leading-none"
-                  style={{ color: isActive ? '#0D0B09' : isToday ? '#C09A3C' : count > 0 ? '#EEE8DC' : '#2C2824' }}
+                  style={{
+                    color: isActive ? '#0D0B09'
+                         : isToday  ? '#C09A3C'
+                         : count > 0 ? '#EEE8DC'
+                         : '#2C2824',
+                  }}
                 >
                   {count}
                 </span>
               </button>
             );
           })}
-
-          {/* Week view toggle */}
-          <button
-            onClick={() => setViewMode(viewMode === 'week' ? 'day' : 'week')}
-            className="hidden md:flex shrink-0 flex-col items-center justify-center gap-1 py-3 px-3 transition-colors font-mono text-[11px] uppercase tracking-wider"
-            style={{
-              color: viewMode === 'week' ? '#C09A3C' : '#8A8480',
-              border: viewMode === 'week' ? '1px solid #C09A3C' : '1px solid #2C2824',
-              whiteSpace: 'nowrap',
-              marginLeft: '8px',
-            }}
-          >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ opacity: 0.7 }}>
-              <rect x="1"   y="1"   width="3" height="3" fill="currentColor" rx="0.5"/>
-              <rect x="5.5" y="1"   width="3" height="3" fill="currentColor" rx="0.5"/>
-              <rect x="10"  y="1"   width="3" height="3" fill="currentColor" rx="0.5"/>
-              <rect x="1"   y="5.5" width="3" height="3" fill="currentColor" rx="0.5"/>
-              <rect x="5.5" y="5.5" width="3" height="3" fill="currentColor" rx="0.5"/>
-              <rect x="10"  y="5.5" width="3" height="3" fill="currentColor" rx="0.5"/>
-              <rect x="1"   y="10"  width="3" height="3" fill="currentColor" rx="0.5"/>
-              <rect x="5.5" y="10"  width="3" height="3" fill="currentColor" rx="0.5"/>
-              <rect x="10"  y="10"  width="3" height="3" fill="currentColor" rx="0.5"/>
-            </svg>
-            Week
-          </button>
         </div>
+
+        {/* Week view toggle (desktop only) */}
+        <button
+          onClick={() => setViewMode(v => v === 'week' ? 'day' : 'week')}
+          className="hidden lg:flex shrink-0 items-center gap-2 px-4 font-mono text-[11px] uppercase tracking-wider transition-colors whitespace-nowrap"
+          style={{
+            color:      viewMode === 'week' ? '#C09A3C' : '#8A8480',
+            borderLeft: '1px solid #2C2824',
+          }}
+        >
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+            <rect x="1"   y="1"   width="3" height="3" fill="currentColor" rx="0.5"/>
+            <rect x="5.5" y="1"   width="3" height="3" fill="currentColor" rx="0.5"/>
+            <rect x="10"  y="1"   width="3" height="3" fill="currentColor" rx="0.5"/>
+            <rect x="1"   y="5.5" width="3" height="3" fill="currentColor" rx="0.5"/>
+            <rect x="5.5" y="5.5" width="3" height="3" fill="currentColor" rx="0.5"/>
+            <rect x="10"  y="5.5" width="3" height="3" fill="currentColor" rx="0.5"/>
+            <rect x="1"   y="10"  width="3" height="3" fill="currentColor" rx="0.5"/>
+            <rect x="5.5" y="10"  width="3" height="3" fill="currentColor" rx="0.5"/>
+            <rect x="10"  y="10"  width="3" height="3" fill="currentColor" rx="0.5"/>
+          </svg>
+          Week
+        </button>
       </div>
 
-      {/* ── EMPTY STATE ── */}
-      {!hasAnySessions && (
+      {/* ── Empty state ── */}
+      {!hasAny && (
         <div className="flex flex-col items-center justify-center py-16 gap-4">
-          <p className="font-mono text-sm text-smoke tracking-wider text-center">
+          <p className="font-mono text-sm tracking-wider text-center" style={{ color: '#8A8480' }}>
             No classes match the current filter.
           </p>
           <button
             onClick={resetFilters}
-            className="font-mono text-xs uppercase tracking-wider py-2 px-4 transition-colors"
+            className="font-mono text-xs uppercase tracking-wider py-2 px-4"
             style={{ border: '1px solid #2C2824', color: '#8A8480' }}
           >
             Reset Filters
@@ -477,106 +575,19 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
         </div>
       )}
 
-      {/* ── WEEK VIEW (desktop) ── */}
-      {hasAnySessions && viewMode === 'week' && (
-        <div className="grid grid-cols-7 gap-px" style={{ backgroundColor: '#2C2824' }}>
-          {DAYS_ORDER.map((day) => {
-            const grouped = getGroupedDaySessions(day);
-            const today   = isCurrentDay(day);
-            return (
-              <div
-                key={day}
-                className="p-3 min-h-48"
-                style={{ backgroundColor: today ? '#0D0B09' : '#1A1714' }}
-              >
-                <div
-                  className="font-mono text-[11px] uppercase tracking-wider mb-3 pb-2"
-                  style={{
-                    color: today ? '#C09A3C' : '#8A8480',
-                    borderBottom: `1px solid ${today ? '#C09A3C' : '#2C2824'}`,
-                  }}
-                >
-                  {DAY_LABELS[day].slice(0, 3)}{today && ' ·'}
-                </div>
-                {grouped.length === 0 ? (
-                  <div className="font-mono text-[11px] mt-2" style={{ color: '#2C2824' }}>—</div>
-                ) : (
-                  grouped.map((gs, i) => (
-                    <ClassCard
-                      key={i}
-                      session={gs}
-                      levelStr={makeLevelStr(gs)}
-                      showLocation={activeLocation === 'all'}
-                      compact={true}
-                      accentColor={DISCIPLINE_ACCENT_COLORS[gs.discipline] ?? '#C09A3C'}
-                      fmt12h={fmt12h}
-                      isCurrentTime={isCurrentTime}
-                    />
-                  ))
-                )}
-              </div>
-            );
-          })}
-        </div>
+      {/* ── Time grid ── */}
+      {hasAny && (
+        <TimeGrid
+          viewMode={viewMode}
+          activeDay={activeDay}
+          todayDay={todayDay}
+          getGroupedDay={getGroupedDay}
+          activeLocation={activeLocation}
+          scrollRef={gridRef}
+        />
       )}
 
-      {/* ── DAY VIEW ── */}
-      {hasAnySessions && viewMode === 'day' && (() => {
-        const grouped = getGroupedDaySessions(activeDay);
-        return (
-          <div>
-            {/* Day header */}
-            <div className="flex items-baseline gap-3 mb-4 pb-3" style={{ borderBottom: '1px solid #2C2824' }}>
-              <h3
-                className="font-display text-3xl uppercase tracking-tight leading-none"
-                style={{ color: isCurrentDay(activeDay) ? '#C09A3C' : '#EEE8DC' }}
-              >
-                {DAY_LABELS[activeDay]}
-              </h3>
-              {isCurrentDay(activeDay) && (
-                <span className="font-mono text-xs tracking-widest uppercase" style={{ color: '#C09A3C' }}>
-                  Today
-                </span>
-              )}
-              <span className="font-mono text-xs ml-auto" style={{ color: '#8A8480' }}>
-                {grouped.length} {grouped.length === 1 ? 'class' : 'classes'}
-              </span>
-            </div>
-
-            {grouped.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-16 gap-4">
-                <p className="font-mono text-sm tracking-wider text-center" style={{ color: '#8A8480' }}>
-                  No classes on {DAY_LABELS[activeDay]} with the current filters.
-                </p>
-                <button
-                  onClick={resetFilters}
-                  className="font-mono text-xs uppercase tracking-wider py-2 px-4 transition-colors"
-                  style={{ border: '1px solid #2C2824', color: '#8A8480' }}
-                >
-                  Reset Filters
-                </button>
-              </div>
-            ) : (
-              <div className="flex flex-col gap-px" style={{ backgroundColor: '#2C2824' }}>
-                {grouped.map((gs, i) => (
-                  <ClassCard
-                    key={i}
-                    session={gs}
-                    levelStr={makeLevelStr(gs)}
-                    showLocation={activeLocation === 'all'}
-                    compact={false}
-                    accentColor={DISCIPLINE_ACCENT_COLORS[gs.discipline] ?? '#C09A3C'}
-                    fmt12h={fmt12h}
-                    isCurrentTime={isCurrentTime}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        );
-      })()}
-
-      {/* ── EMBED DISCLAIMER ── */}
+      {/* ── Compact disclaimer ── */}
       {compact && filterDiscipline && (
         <p className="mt-4 font-mono text-[11px] tracking-wide" style={{ color: '#8A8480' }}>
           Times shown are from the current schedule. Confirm with the gym for any changes.
