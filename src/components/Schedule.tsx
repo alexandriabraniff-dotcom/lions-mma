@@ -590,6 +590,23 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
     return m[new Date().getDay()] ?? 'mon';
   }
 
+  // Returns the calendar date (1–31) for each day of the current week
+  function getWeekDates(): Record<Day, number> {
+    const today   = new Date();
+    const jsDay   = today.getDay(); // 0 = Sun
+    const fromMon = jsDay === 0 ? 6 : jsDay - 1; // days since Monday
+    const monday  = new Date(today);
+    monday.setDate(today.getDate() - fromMon);
+    const offsets: Record<Day, number> = { mon:0, tue:1, wed:2, thu:3, fri:4, sat:5, sun:6 };
+    const result = {} as Record<Day, number>;
+    for (const [day, offset] of Object.entries(offsets)) {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + offset);
+      result[day as Day] = d.getDate();
+    }
+    return result;
+  }
+
   const [activeLocation,   setActiveLocation]   = useState<'all' | '1256' | '1133'>('all');
   const [activeDiscipline, setActiveDiscipline] = useState<string>('all');
   const [activeDay,        setActiveDay]        = useState<Day>(getTodayDay);
@@ -619,6 +636,7 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
   }
 
   const todayDay     = getTodayDay();
+  const weekDates    = getWeekDates();
   const hasAny       = filtered.length > 0;
   const showControls = !(compact && filterDiscipline);
 
@@ -732,7 +750,7 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
           {DAYS_ORDER.map(day => {
             const isActive = viewMode === 'day' && activeDay === day;
             const isToday  = isCurrentDay(day);
-            const count    = getGroupedDay(day).length;
+            const dateNum  = weekDates[day];
             return (
               <button
                 key={day}
@@ -742,42 +760,42 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
                 style={{
                   minWidth:        '40px',
                   borderRight:     '1px solid rgba(255,255,255,0.08)',
-                  backgroundColor: isActive
-                    ? 'rgba(192,154,60,0.08)'
-                    : 'transparent',
-                  borderBottom:    isActive
-                    ? '2px solid #C09A3C'
-                    : '2px solid transparent',
-                  transition: 'background-color 0.15s ease',
+                  backgroundColor: isActive ? 'rgba(192,154,60,0.08)' : 'transparent',
+                  borderBottom:    isActive ? '2px solid #C09A3C' : '2px solid transparent',
+                  transition:      'background-color 0.15s ease',
                 }}
               >
+                {/* Day abbreviation */}
                 <span
                   className="font-mono uppercase leading-none"
                   style={{
                     fontSize:      '9px',
                     letterSpacing: '0.1em',
                     color:         isToday && !isActive ? '#C09A3C'
-                                 : isActive ? 'rgba(238,232,220,0.9)'
+                                 : isActive             ? 'rgba(238,232,220,0.9)'
                                  : 'rgba(138,132,128,0.6)',
                   }}
                 >
                   {DAY_LABELS[day].slice(0, 3)}
                 </span>
 
+                {/* Calendar date — circled on today */}
                 <span
                   className="font-display leading-none"
                   style={{
-                    fontSize:   '16px',
-                    minWidth:   '24px',
-                    textAlign:  'center',
-                    color:      isActive ? '#C09A3C'
-                               : isToday  ? '#C09A3C'
-                               : count > 0 ? 'rgba(238,232,220,0.8)'
-                               : 'rgba(60,55,50,0.9)',
-                    transition: 'color 0.15s ease',
+                    fontSize:        '16px',
+                    minWidth:        '28px',
+                    textAlign:       'center',
+                    borderRadius:    '100px',
+                    padding:         '1px 4px',
+                    backgroundColor: isToday && !isActive ? '#C09A3C' : 'transparent',
+                    color:           isToday && !isActive ? '#0D0B09'
+                                   : isActive             ? '#C09A3C'
+                                   : 'rgba(238,232,220,0.8)',
+                    transition:      'color 0.15s ease',
                   }}
                 >
-                  {count}
+                  {dateNum}
                 </span>
               </button>
             );
