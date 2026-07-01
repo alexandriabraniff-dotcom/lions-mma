@@ -188,20 +188,20 @@ function EventBlock({
         className="h-full overflow-hidden flex flex-col"
         style={{ padding: inWeekView ? '5px 6px' : '7px 9px', gap: '2px' }}
       >
-        {/* Class name */}
+        {/* Class name — full name in both views */}
         <span
           className="leading-tight font-semibold truncate"
           style={{
-            fontSize:   inWeekView ? '10px' : '12px',
+            fontSize:   inWeekView ? '11px' : '13px',
             color:      accent,
             fontFamily: "'Inter', sans-serif",
           }}
         >
-          {inWeekView ? short : name}
+          {name}
         </span>
 
-        {/* Start time */}
-        {h >= 32 && (
+        {/* Start time — show for any block taller than ~22px */}
+        {h >= 22 && (
           <span
             className="leading-none font-normal truncate"
             style={{ fontSize: '10px', color: 'rgba(238,232,220,0.6)', fontFamily: "'Inter', sans-serif" }}
@@ -210,14 +210,14 @@ function EventBlock({
           </span>
         )}
 
-        {/* Level pill */}
-        {!inWeekView && h >= 52 && levelStr && (
+        {/* Level — show in both views when there's room */}
+        {h >= 40 && levelStr && (
           <span
             className="leading-none truncate"
             style={{
-              fontSize: '10px',
-              color:    accent,
-              opacity:  0.85,
+              fontSize:   '10px',
+              color:      accent,
+              opacity:    0.85,
               fontFamily: "'Inter', sans-serif",
             }}
           >
@@ -225,8 +225,8 @@ function EventBlock({
           </span>
         )}
 
-        {/* Location */}
-        {!inWeekView && showLocation && h >= 68 && (
+        {/* Location — day view only */}
+        {!inWeekView && showLocation && h >= 56 && (
           <span
             className="leading-none truncate"
             style={{
@@ -239,8 +239,8 @@ function EventBlock({
           </span>
         )}
 
-        {/* Note */}
-        {!inWeekView && session.note && h >= 84 && (
+        {/* Note — day view only */}
+        {!inWeekView && session.note && h >= 72 && (
           <span
             className="leading-none truncate"
             style={{ fontSize: '10px', color: accent, opacity: 0.75, fontFamily: "'Inter', sans-serif" }}
@@ -305,7 +305,7 @@ function TimeGrid({
               key={h}
               className="absolute right-3 font-mono"
               style={{
-                top:      (h - START_HOUR) * HOUR_PX - 7,
+                top:      (h - START_HOUR) * HOUR_PX + 4,
                 fontSize: '10px',
                 color:    'rgba(138,132,128,0.6)',
                 letterSpacing: '0.03em',
