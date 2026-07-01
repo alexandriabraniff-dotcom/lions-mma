@@ -81,7 +81,7 @@ export const schedule: ClassSession[] = [
   { day: 'mon', start: '18:25', end: '19:25', discipline: 'muay-thai',    location: '1256', level: 'beginner' },
   { day: 'mon', start: '18:25', end: '19:25', discipline: 'muay-thai',    location: '1256', level: 'intermediate' },
   { day: 'mon', start: '19:35', end: '20:35', discipline: 'muay-thai',    location: '1256', level: 'beginner' },
-  { day: 'mon', start: '19:35', end: '20:35', discipline: 'muay-thai',    location: '1256', level: 'beginner',      note: 'Drills & Sparring' },
+  { day: 'mon', start: '19:35', end: '20:35', discipline: 'muay-thai',    location: '1256', level: 'intermediate',   note: 'Drills & Sparring' },
   { day: 'mon', start: '19:35', end: '21:00', discipline: 'dutch',        location: '1256', level: 'intermediate', note: 'Drills & Sparring' },
 
   // 1133 Granville — Monday
@@ -134,7 +134,7 @@ export const schedule: ClassSession[] = [
   { day: 'wed', start: '18:25', end: '19:25', discipline: 'muay-thai',    location: '1256', level: 'beginner' },
   { day: 'wed', start: '18:25', end: '19:25', discipline: 'muay-thai',    location: '1256', level: 'intermediate' },
   { day: 'wed', start: '19:35', end: '20:35', discipline: 'muay-thai',    location: '1256', level: 'beginner' },
-  { day: 'wed', start: '19:35', end: '20:35', discipline: 'muay-thai',    location: '1256', level: 'beginner',      note: 'Drills & Sparring' },
+  { day: 'wed', start: '19:35', end: '20:35', discipline: 'muay-thai',    location: '1256', level: 'intermediate',   note: 'Drills & Sparring' },
   { day: 'wed', start: '19:35', end: '21:00', discipline: 'mma',          location: '1256', level: 'intermediate' },
 
   // 1133 Granville — Wednesday
@@ -186,7 +186,7 @@ export const schedule: ClassSession[] = [
   { day: 'fri', start: '17:15', end: '18:15', discipline: 'muay-thai',    location: '1256', level: 'womens' },
   { day: 'fri', start: '18:25', end: '19:25', discipline: 'muay-thai',    location: '1256', level: 'beginner' },
   { day: 'fri', start: '18:25', end: '19:25', discipline: 'muay-thai',    location: '1256', level: 'intermediate' },
-  { day: 'fri', start: '19:35', end: '20:35', discipline: 'muay-thai',    location: '1256', level: 'beginner', note: 'Drills & Sparring' },
+  { day: 'fri', start: '19:35', end: '20:35', discipline: 'muay-thai',    location: '1256', level: 'intermediate', note: 'Drills & Sparring' },
   { day: 'fri', start: '19:35', end: '21:00', discipline: 'dutch',        location: '1256', level: 'intermediate', note: 'Drills & Sparring' },
 
   // 1133 Granville — Friday
