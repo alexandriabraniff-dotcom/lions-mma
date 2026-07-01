@@ -286,6 +286,188 @@ function CustomSelect({
   );
 }
 
+// ─── ClassModal ───────────────────────────────────────────────────────────────
+
+function ClassModal({
+  session,
+  onClose,
+}: {
+  session: LaidOutSession;
+  onClose: () => void;
+}) {
+  const accent   = ACCENT[session.discipline] ?? '#C09A3C';
+  const disc     = disciplines.find(d => d.id === session.discipline);
+  const name     = disc?.name ?? session.discipline;
+  const slug     = disc?.slug ?? session.discipline;
+  const locObj   = locations.find(l => l.id === session.location);
+  const locLabel = locObj ? `${locObj.short} Granville Street` : session.location;
+  const levelStr = [...new Set(session.levels.map(getLevelLabel).filter(Boolean))].join(' / ');
+
+  // Close on backdrop click
+  function handleBackdrop(e: React.MouseEvent) {
+    if (e.target === e.currentTarget) onClose();
+  }
+
+  // Close on Escape
+  useEffect(() => {
+    function handler(e: KeyboardEvent) { if (e.key === 'Escape') onClose(); }
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, []);
+
+  return (
+    <div
+      onClick={handleBackdrop}
+      style={{
+        position:        'fixed',
+        inset:           0,
+        zIndex:          1000,
+        backgroundColor: 'rgba(0,0,0,0.6)',
+        backdropFilter:  'blur(4px)',
+        WebkitBackdropFilter: 'blur(4px)',
+        display:         'flex',
+        alignItems:      'flex-end',
+        justifyContent:  'center',
+        padding:         '0',
+      } as React.CSSProperties}
+    >
+      {/* Sheet panel */}
+      <div
+        style={{
+          width:           '100%',
+          maxWidth:        '480px',
+          backgroundColor: '#1A1714',
+          borderRadius:    '20px 20px 0 0',
+          border:          `1px solid ${accent}30`,
+          borderBottom:    'none',
+          padding:         '0 0 env(safe-area-inset-bottom, 0)',
+          boxShadow:       `0 -4px 40px rgba(0,0,0,0.5), 0 0 0 1px ${accent}15`,
+          overflow:        'hidden',
+        } as React.CSSProperties}
+      >
+        {/* Accent bar */}
+        <div style={{ height: '3px', backgroundColor: accent, opacity: 0.8 }} />
+
+        {/* Drag handle */}
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '12px 0 4px' }}>
+          <div style={{ width: '36px', height: '4px', borderRadius: '2px', backgroundColor: 'rgba(255,255,255,0.15)' }} />
+        </div>
+
+        <div style={{ padding: '8px 24px 28px' }}>
+          {/* Header row */}
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '12px', marginBottom: '20px' }}>
+            <div>
+              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '11px', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase', color: accent, marginBottom: '4px' }}>
+                {disc?.tagline ?? 'Class'}
+              </p>
+              <h3 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '28px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.02em', color: '#EEE8DC', lineHeight: 1 }}>
+                {name}
+              </h3>
+            </div>
+            <button
+              onClick={onClose}
+              style={{ flexShrink: 0, marginTop: '2px', width: '28px', height: '28px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.08)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                <path d="M1.5 1.5L8.5 8.5M8.5 1.5L1.5 8.5" stroke="rgba(238,232,220,0.6)" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+            </button>
+          </div>
+
+          {/* Detail rows */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {/* Time */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '8px', backgroundColor: `${accent}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <circle cx="7" cy="7" r="5.5" stroke={accent} strokeWidth="1.3"/>
+                  <path d="M7 4V7L9 9" stroke={accent} strokeWidth="1.3" strokeLinecap="round"/>
+                </svg>
+              </div>
+              <div>
+                <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '15px', fontWeight: 600, color: '#EEE8DC' }}>
+                  {fmt12h(session.start)} – {fmt12h(session.end)}
+                </p>
+                <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '11px', color: 'rgba(138,132,128,0.8)', marginTop: '1px' }}>Class time</p>
+              </div>
+            </div>
+
+            {/* Location */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '8px', backgroundColor: `${accent}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path d="M7 1.5C5 1.5 3.5 3 3.5 5C3.5 7.5 7 12.5 7 12.5C7 12.5 10.5 7.5 10.5 5C10.5 3 9 1.5 7 1.5Z" stroke={accent} strokeWidth="1.3"/>
+                  <circle cx="7" cy="5" r="1.3" fill={accent}/>
+                </svg>
+              </div>
+              <div>
+                <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '15px', fontWeight: 600, color: '#EEE8DC' }}>{locLabel}</p>
+                <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '11px', color: 'rgba(138,132,128,0.8)', marginTop: '1px' }}>Location</p>
+              </div>
+            </div>
+
+            {/* Level */}
+            {levelStr && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '8px', backgroundColor: `${accent}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <rect x="1.5" y="8.5" width="2.5" height="4" rx="0.5" fill={accent}/>
+                    <rect x="5.75" y="5.5" width="2.5" height="7" rx="0.5" fill={accent}/>
+                    <rect x="10" y="2.5" width="2.5" height="10" rx="0.5" fill={accent}/>
+                  </svg>
+                </div>
+                <div>
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '15px', fontWeight: 600, color: '#EEE8DC' }}>{levelStr}</p>
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '11px', color: 'rgba(138,132,128,0.8)', marginTop: '1px' }}>Level</p>
+                </div>
+              </div>
+            )}
+
+            {/* Note */}
+            {session.note && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '8px', backgroundColor: `${accent}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <rect x="2" y="2" width="10" height="10" rx="1.5" stroke={accent} strokeWidth="1.3"/>
+                    <path d="M4.5 5H9.5M4.5 7H8" stroke={accent} strokeWidth="1.3" strokeLinecap="round"/>
+                  </svg>
+                </div>
+                <div>
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '15px', fontWeight: 600, color: '#EEE8DC' }}>{session.note}</p>
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '11px', color: 'rgba(138,132,128,0.8)', marginTop: '1px' }}>Note</p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* CTA */}
+          <a
+            href={`/programs/${slug}`}
+            style={{
+              display:         'block',
+              marginTop:       '24px',
+              padding:         '13px 24px',
+              borderRadius:    '10px',
+              backgroundColor: accent,
+              color:           '#0D0B09',
+              fontFamily:      "'Barlow Condensed', sans-serif",
+              fontSize:        '14px',
+              fontWeight:      700,
+              letterSpacing:   '0.08em',
+              textTransform:   'uppercase',
+              textAlign:       'center',
+              textDecoration:  'none',
+              transition:      'opacity 0.15s ease',
+            } as React.CSSProperties}
+          >
+            Learn More About {name}
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── EventBlock — Apple/ClassPass card style ──────────────────────────────────
 
 function EventBlock({
@@ -293,11 +475,13 @@ function EventBlock({
   isCurrent,
   showLocation,
   inWeekView,
+  onSelect,
 }: {
   session:      LaidOutSession;
   isCurrent:    boolean;
   showLocation: boolean;
   inWeekView:   boolean;
+  onSelect:     () => void;
 }) {
   const accent    = ACCENT[session.discipline] ?? '#C09A3C';
   const name      = disciplines.find(d => d.id === session.discipline)?.name  ?? session.discipline;
@@ -329,6 +513,7 @@ function EventBlock({
           : '0 1px 3px rgba(0,0,0,0.3)',
         transition:   'box-shadow 0.15s ease, transform 0.15s ease',
       }}
+      onClick={onSelect}
       onMouseEnter={e => {
         (e.currentTarget as HTMLElement).style.transform = 'scaleY(1.005) scaleX(1.01)';
         (e.currentTarget as HTMLElement).style.zIndex = '10';
@@ -411,6 +596,7 @@ function TimeGrid({
   getGroupedDay,
   activeLocation,
   allSessionsForDay,
+  onSelect,
 }: {
   viewMode:           'week' | 'day';
   activeDay:          Day;
@@ -418,6 +604,7 @@ function TimeGrid({
   getGroupedDay:      (day: Day) => GroupedSession[];
   activeLocation:     string;
   allSessionsForDay:  (day: Day) => GroupedSession[];
+  onSelect:           (s: LaidOutSession) => void;
 }) {
   const inWeekView = viewMode === 'week';
   const days       = inWeekView ? DAYS_ORDER : [activeDay];
@@ -580,6 +767,7 @@ function TimeGrid({
                         isCurrent={isCurrent(s)}
                         showLocation={activeLocation === 'all'}
                         inWeekView={inWeekView}
+                        onSelect={() => onSelect(s)}
                       />
                     ))}
                   </div>
@@ -639,6 +827,7 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
   const [activeDay,        setActiveDay]        = useState<Day>(getTodayDay);
   const [viewMode,         setViewMode]         = useState<'week' | 'day'>('day');
   const [isMobile,         setIsMobile]         = useState(false);
+  const [selected,         setSelected]         = useState<LaidOutSession | null>(null);
 
   useEffect(() => {
     const check = () => {
@@ -997,6 +1186,7 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
             getGroupedDay={getGroupedDay}
             activeLocation={activeLocation}
             allSessionsForDay={getGroupedDay}
+            onSelect={s => setSelected(s)}
           />
         </div>
       )}
@@ -1014,6 +1204,14 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
         >
           Times are subject to change. Confirm with the gym before visiting.
         </p>
+      )}
+
+      {/* ── Class detail modal ── */}
+      {selected && (
+        <ClassModal
+          session={selected}
+          onClose={() => setSelected(null)}
+        />
       )}
     </div>
   );
