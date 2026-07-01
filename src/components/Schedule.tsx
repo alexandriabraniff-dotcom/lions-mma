@@ -24,12 +24,12 @@ type LaidOutSession = GroupedSession & {
 
 const START_HOUR = 6;
 const END_HOUR   = 22;
-const HOUR_PX    = 64;   // px per hour (1.067 px/min — rounder number for gaps)
+const HOUR_PX    = 64;
 const TOTAL_H    = (END_HOUR - START_HOUR) * HOUR_PX;
 const HOURS      = Array.from({ length: END_HOUR - START_HOUR }, (_, i) => i + START_HOUR);
-const TIME_COL   = 56;   // px — time-label column width
+const TIME_COL   = 56;
 
-// ─── Discipline accent colours (slightly more saturated for the card fills) ───
+// ─── Discipline accent colours ────────────────────────────────────────────────
 
 const ACCENT: Record<string, string> = {
   'muay-thai':    '#C09A3C',
@@ -129,6 +129,163 @@ function layoutSessions(sessions: GroupedSession[]): LaidOutSession[] {
   return laid;
 }
 
+// ─── CustomSelect ─────────────────────────────────────────────────────────────
+
+type SelectOption = { value: string; label: string; accent?: string };
+
+function CustomSelect({
+  options,
+  value,
+  onChange,
+}: {
+  options:  SelectOption[];
+  value:    string;
+  onChange: (v: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function handler(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open]);
+
+  const selected = options.find(o => o.value === value) ?? options[0];
+
+  return (
+    <div ref={ref} style={{ position: 'relative', flex: '1 1 0', minWidth: 0 }}>
+      {/* Trigger */}
+      <button
+        onClick={() => setOpen(o => !o)}
+        style={{
+          width:           '100%',
+          display:         'flex',
+          alignItems:      'center',
+          justifyContent:  'space-between',
+          gap:             '8px',
+          padding:         '9px 14px',
+          borderRadius:    '10px',
+          backgroundColor: 'rgba(44,40,36,0.7)',
+          border:          '1px solid rgba(255,255,255,0.08)',
+          cursor:          'pointer',
+          backdropFilter:  'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          transition:      'border-color 0.15s ease',
+        } as React.CSSProperties}
+        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.15)'; }}
+        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.08)'; }}
+      >
+        <span style={{
+          fontFamily:    "'Inter', sans-serif",
+          fontSize:      '12px',
+          fontWeight:    500,
+          color:         'rgba(238,232,220,0.85)',
+          letterSpacing: '0.01em',
+          overflow:      'hidden',
+          textOverflow:  'ellipsis',
+          whiteSpace:    'nowrap',
+        }}>
+          {selected.label}
+        </span>
+        {/* Chevron */}
+        <svg
+          width="10" height="10" viewBox="0 0 10 10" fill="none"
+          style={{ flexShrink: 0, transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }}
+        >
+          <path d="M2 3.5L5 6.5L8 3.5" stroke="rgba(138,132,128,0.7)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </button>
+
+      {/* Dropdown panel */}
+      {open && (
+        <div
+          style={{
+            position:        'absolute',
+            top:             'calc(100% + 6px)',
+            left:            0,
+            right:           0,
+            zIndex:          100,
+            borderRadius:    '12px',
+            backgroundColor: 'rgba(26,23,20,0.96)',
+            border:          '1px solid rgba(255,255,255,0.1)',
+            backdropFilter:  'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            boxShadow:       '0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3)',
+            overflow:        'hidden',
+            minWidth:        '160px',
+          } as React.CSSProperties}
+        >
+          {options.map((opt, i) => {
+            const isSelected = opt.value === value;
+            return (
+              <button
+                key={opt.value}
+                onClick={() => { onChange(opt.value); setOpen(false); }}
+                style={{
+                  width:          '100%',
+                  display:        'flex',
+                  alignItems:     'center',
+                  gap:            '10px',
+                  padding:        '10px 14px',
+                  textAlign:      'left',
+                  backgroundColor: isSelected
+                    ? 'rgba(192,154,60,0.12)'
+                    : 'transparent',
+                  borderBottom:   i < options.length - 1
+                    ? '1px solid rgba(255,255,255,0.05)'
+                    : 'none',
+                  cursor:         'pointer',
+                  transition:     'background-color 0.1s ease',
+                } as React.CSSProperties}
+                onMouseEnter={e => {
+                  if (!isSelected) (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(255,255,255,0.04)';
+                }}
+                onMouseLeave={e => {
+                  if (!isSelected) (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent';
+                }}
+              >
+                {/* Colour dot (if discipline option) */}
+                {opt.accent && (
+                  <span style={{
+                    flexShrink:      0,
+                    width:           7,
+                    height:          7,
+                    borderRadius:    '50%',
+                    backgroundColor: opt.accent,
+                    opacity:         isSelected ? 1 : 0.6,
+                  }}/>
+                )}
+                <span style={{
+                  fontFamily:    "'Inter', sans-serif",
+                  fontSize:      '12px',
+                  fontWeight:    isSelected ? 600 : 400,
+                  color:         isSelected
+                    ? (opt.accent ?? '#C09A3C')
+                    : 'rgba(238,232,220,0.75)',
+                  flex:          1,
+                  letterSpacing: '0.01em',
+                }}>
+                  {opt.label}
+                </span>
+                {/* Checkmark */}
+                {isSelected && (
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style={{ flexShrink: 0 }}>
+                    <path d="M2 6L5 9L10 3" stroke="#C09A3C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── EventBlock — Apple/ClassPass card style ──────────────────────────────────
 
 function EventBlock({
@@ -144,18 +301,16 @@ function EventBlock({
 }) {
   const accent    = ACCENT[session.discipline] ?? '#C09A3C';
   const name      = disciplines.find(d => d.id === session.discipline)?.name  ?? session.discipline;
-  const short     = disciplines.find(d => d.id === session.discipline)?.short ?? session.discipline;
   const locShort  = locations.find(l => l.id === session.location)?.short    ?? session.location;
   const levelStr  = [...new Set(session.levels.map(getLevelLabel).filter(Boolean))].join(' / ');
 
-  const top    = toPx(session.start) + 1;
-  const h      = durPx(session.start, session.end) - 2;
-  const lPct   = (session.col  / session.totalCols) * 100;
-  const wPct   = (1            / session.totalCols) * 100;
+  const top  = toPx(session.start) + 1;
+  const h    = durPx(session.start, session.end) - 2;
+  const lPct = (session.col  / session.totalCols) * 100;
+  const wPct = (1            / session.totalCols) * 100;
 
-  // Hex alpha helpers
-  const bg     = `${accent}28`;    // ~16% fill
-  const border = `${accent}55`;    // ~33% border
+  const bg     = `${accent}28`;
+  const border = `${accent}55`;
   const glow   = `${accent}40`;
 
   return (
@@ -188,7 +343,6 @@ function EventBlock({
         className="h-full overflow-hidden flex flex-col"
         style={{ padding: inWeekView ? '5px 6px' : '7px 9px', gap: '2px' }}
       >
-        {/* Class name — full name in both views */}
         <span
           className="leading-tight font-semibold truncate"
           style={{
@@ -200,7 +354,6 @@ function EventBlock({
           {name}
         </span>
 
-        {/* Start time — show for any block taller than ~22px */}
         {h >= 22 && (
           <span
             className="leading-none font-normal truncate"
@@ -210,7 +363,6 @@ function EventBlock({
           </span>
         )}
 
-        {/* Level — show in both views when there's room */}
         {h >= 40 && levelStr && (
           <span
             className="leading-none truncate"
@@ -225,7 +377,6 @@ function EventBlock({
           </span>
         )}
 
-        {/* Location — day view only */}
         {!inWeekView && showLocation && h >= 56 && (
           <span
             className="leading-none truncate"
@@ -239,7 +390,6 @@ function EventBlock({
           </span>
         )}
 
-        {/* Note — day view only */}
         {!inWeekView && session.note && h >= 72 && (
           <span
             className="leading-none truncate"
@@ -288,7 +438,6 @@ function TimeGrid({
       style={{
         maxHeight:          '660px',
         overscrollBehavior: 'contain',
-        // Fade out the last 48px so the scroll end feels natural
         maskImage:          'linear-gradient(to bottom, black calc(100% - 48px), transparent 100%)',
         WebkitMaskImage:    'linear-gradient(to bottom, black calc(100% - 48px), transparent 100%)',
       } as React.CSSProperties}
@@ -321,31 +470,22 @@ function TimeGrid({
           className="flex-1 relative overflow-hidden"
           style={{ borderLeft: '1px solid rgba(255,255,255,0.06)' }}
         >
-          {/* Hour lines */}
           {HOURS.map(h => (
             <div
               key={`h-${h}`}
               className="absolute left-0 right-0 pointer-events-none"
-              style={{
-                top:       (h - START_HOUR) * HOUR_PX,
-                borderTop: '1px solid rgba(255,255,255,0.05)',
-              }}
+              style={{ top: (h - START_HOUR) * HOUR_PX, borderTop: '1px solid rgba(255,255,255,0.05)' }}
             />
           ))}
 
-          {/* Half-hour lines */}
           {HOURS.map(h => (
             <div
               key={`hh-${h}`}
               className="absolute left-0 right-0 pointer-events-none"
-              style={{
-                top:       (h - START_HOUR) * HOUR_PX + HOUR_PX / 2,
-                borderTop: '1px solid rgba(255,255,255,0.025)',
-              }}
+              style={{ top: (h - START_HOUR) * HOUR_PX + HOUR_PX / 2, borderTop: '1px solid rgba(255,255,255,0.025)' }}
             />
           ))}
 
-          {/* Current-time indicator */}
           {showNow && (
             <div
               className="absolute left-0 right-0 z-30 pointer-events-none"
@@ -386,9 +526,7 @@ function TimeGrid({
                   className="flex-1 relative"
                   style={{
                     borderRight:     '1px solid rgba(255,255,255,0.04)',
-                    backgroundColor: isToday
-                      ? 'rgba(192,154,60,0.03)'
-                      : 'transparent',
+                    backgroundColor: isToday ? 'rgba(192,154,60,0.03)' : 'transparent',
                   }}
                 >
                   {sessions.map((s, i) => (
@@ -459,6 +597,21 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
   const hasAny       = filtered.length > 0;
   const showControls = !(compact && filterDiscipline);
 
+  // ── Dropdown options ──────────────────────────────────────────────────────
+
+  const locationOptions: SelectOption[] = [
+    { value: 'all',  label: 'Both Locations' },
+    { value: '1256', label: '1256 Granville' },
+    { value: '1133', label: '1133 Granville' },
+  ];
+
+  const disciplineOptions: SelectOption[] = [
+    { value: 'all', label: 'All Classes' },
+    ...disciplines
+      .filter(d => d.id !== 'private')
+      .map(d => ({ value: d.id, label: d.name, accent: ACCENT[d.id] ?? '#C09A3C' })),
+  ];
+
   // ──────────────────────────────────────────────────────────────────────────
   return (
     <div
@@ -474,95 +627,76 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
       {/* ── Controls ── */}
       {showControls && (
         <div
-          className="space-y-3"
-          style={{ padding: '16px 16px 0 16px' }}
+          className="flex items-center gap-2"
+          style={{ padding: '14px 14px 0 14px' }}
         >
-          {/* Location — pill buttons with gap */}
-          <div className="flex gap-2">
-            {(['all', '1256', '1133'] as const).map(loc => (
-              <button
-                key={loc}
-                onClick={() => setActiveLocation(loc)}
-                className="font-mono text-xs tracking-wider uppercase transition-all"
-                style={{
-                  flex:            loc === 'all' ? '1 1 auto' : '0 0 auto',
-                  padding:         '8px 20px',
-                  borderRadius:    '100px',
-                  backgroundColor: activeLocation === loc ? '#C09A3C' : 'rgba(44,40,36,0.8)',
-                  color:           activeLocation === loc ? '#0D0B09' : 'rgba(138,132,128,0.9)',
-                  border:          `1px solid ${activeLocation === loc ? '#C09A3C' : 'rgba(255,255,255,0.08)'}`,
-                  fontWeight:      activeLocation === loc ? 600 : 400,
-                  transition:      'all 0.2s ease',
-                }}
-              >
-                {loc === 'all' ? 'All Locations' : `${loc} Granville`}
-              </button>
-            ))}
-          </div>
+          {/* Location dropdown */}
+          <CustomSelect
+            options={locationOptions}
+            value={activeLocation}
+            onChange={v => setActiveLocation(v as 'all' | '1256' | '1133')}
+          />
 
-          {/* Discipline chips — pill style */}
+          {/* Discipline dropdown */}
           {!filterDiscipline && (
-            <div
-              className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide"
-              style={{ overflowX: 'auto' } as React.CSSProperties}
-            >
-              <button
-                onClick={() => setActiveDiscipline('all')}
-                className="shrink-0 font-mono text-xs tracking-wider uppercase transition-all whitespace-nowrap"
-                style={{
-                  padding:         '6px 14px',
-                  borderRadius:    '100px',
-                  backgroundColor: activeDiscipline === 'all' ? '#C09A3C' : 'rgba(44,40,36,0.8)',
-                  color:           activeDiscipline === 'all' ? '#0D0B09' : 'rgba(138,132,128,0.9)',
-                  border:          `1px solid ${activeDiscipline === 'all' ? '#C09A3C' : 'rgba(255,255,255,0.08)'}`,
-                  transition:      'all 0.2s ease',
-                }}
-              >
-                All
-              </button>
-              {disciplines.filter(d => d.id !== 'private').map(d => {
-                const accent   = ACCENT[d.id] ?? '#C09A3C';
-                const isActive = activeDiscipline === d.id;
-                return (
-                  <button
-                    key={d.id}
-                    onClick={() => setActiveDiscipline(d.id)}
-                    className="shrink-0 flex items-center gap-1.5 font-mono text-xs tracking-wider uppercase transition-all whitespace-nowrap"
-                    style={{
-                      padding:         '6px 14px',
-                      borderRadius:    '100px',
-                      backgroundColor: isActive ? `${accent}30` : 'rgba(44,40,36,0.8)',
-                      color:           isActive ? accent : 'rgba(138,132,128,0.9)',
-                      border:          `1px solid ${isActive ? `${accent}70` : 'rgba(255,255,255,0.08)'}`,
-                      transition:      'all 0.2s ease',
-                    }}
-                  >
-                    <span
-                      className="shrink-0 rounded-full"
-                      style={{ width: 6, height: 6, backgroundColor: accent, opacity: isActive ? 1 : 0.5 }}
-                    />
-                    {d.name}
-                  </button>
-                );
-              })}
-            </div>
+            <CustomSelect
+              options={disciplineOptions}
+              value={activeDiscipline}
+              onChange={v => setActiveDiscipline(v)}
+            />
           )}
+
+          {/* Week view toggle */}
+          <button
+            onClick={() => setViewMode(v => v === 'week' ? 'day' : 'week')}
+            className="hidden lg:flex shrink-0 items-center gap-2 transition-all"
+            title={viewMode === 'week' ? 'Switch to day view' : 'Switch to week view'}
+            style={{
+              padding:         '9px 14px',
+              borderRadius:    '10px',
+              backgroundColor: viewMode === 'week'
+                ? 'rgba(192,154,60,0.15)'
+                : 'rgba(44,40,36,0.7)',
+              border:          `1px solid ${viewMode === 'week' ? 'rgba(192,154,60,0.35)' : 'rgba(255,255,255,0.08)'}`,
+              fontFamily:      "'Inter', sans-serif",
+              fontSize:        '12px',
+              fontWeight:      500,
+              letterSpacing:   '0.01em',
+              color:           viewMode === 'week' ? '#C09A3C' : 'rgba(138,132,128,0.8)',
+              whiteSpace:      'nowrap',
+              backdropFilter:  'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
+              cursor:          'pointer',
+            } as React.CSSProperties}
+          >
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+              <rect x="1"   y="1"   width="3" height="3" fill="currentColor" rx="0.5"/>
+              <rect x="5.5" y="1"   width="3" height="3" fill="currentColor" rx="0.5"/>
+              <rect x="10"  y="1"   width="3" height="3" fill="currentColor" rx="0.5"/>
+              <rect x="1"   y="5.5" width="3" height="3" fill="currentColor" rx="0.5"/>
+              <rect x="5.5" y="5.5" width="3" height="3" fill="currentColor" rx="0.5"/>
+              <rect x="10"  y="5.5" width="3" height="3" fill="currentColor" rx="0.5"/>
+              <rect x="1"   y="10"  width="3" height="3" fill="currentColor" rx="0.5"/>
+              <rect x="5.5" y="10"  width="3" height="3" fill="currentColor" rx="0.5"/>
+              <rect x="10"  y="10"  width="3" height="3" fill="currentColor" rx="0.5"/>
+            </svg>
+            Week
+          </button>
         </div>
       )}
 
-      {/* ── Calendar header: day tabs + week toggle ── */}
+      {/* ── Calendar header: day tabs ── */}
       <div
         className="flex items-stretch"
         style={{
           marginTop:    showControls ? '12px' : 0,
           borderBottom: '1px solid rgba(255,255,255,0.06)',
-          padding:      '0 4px',
         }}
       >
-        {/* Spacer aligning with time-label column */}
-        <div className="shrink-0" style={{ width: TIME_COL - 4 }} />
+        {/* Spacer — exactly TIME_COL wide to align with time-label column */}
+        <div className="shrink-0" style={{ width: TIME_COL }} />
 
-        {/* Day tabs */}
+        {/* Day tabs — flex-1 so each tab gets exactly the same width as a grid column */}
         <div
           ref={dayTabsRef}
           className="flex flex-1 overflow-x-auto scrollbar-hide"
@@ -577,9 +711,8 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
                 data-active={isActive ? 'true' : 'false'}
                 onClick={() => { setActiveDay(day); setViewMode('day'); }}
                 className="flex-1 shrink-0 flex flex-col items-center justify-center gap-1.5 py-3 transition-colors"
-                style={{ minWidth: '48px', maxWidth: '76px' }}
+                style={{ minWidth: '40px' }}
               >
-                {/* Day abbreviation */}
                 <span
                   className="font-mono uppercase leading-none"
                   style={{
@@ -593,7 +726,6 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
                   {DAY_LABELS[day].slice(0, 3)}
                 </span>
 
-                {/* Count — pill background on active, brass dot on today */}
                 <span
                   className="font-display leading-none"
                   style={{
@@ -602,9 +734,7 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
                     textAlign:       'center',
                     borderRadius:    '100px',
                     padding:         '1px 6px',
-                    backgroundColor: isActive
-                      ? '#C09A3C'
-                      : 'transparent',
+                    backgroundColor: isActive ? '#C09A3C' : 'transparent',
                     color:           isActive ? '#0D0B09'
                                    : isToday  ? '#C09A3C'
                                    : count > 0 ? 'rgba(238,232,220,0.85)'
@@ -618,32 +748,6 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
             );
           })}
         </div>
-
-        {/* Week view toggle */}
-        <button
-          onClick={() => setViewMode(v => v === 'week' ? 'day' : 'week')}
-          className="hidden lg:flex shrink-0 items-center gap-2 px-4 transition-all whitespace-nowrap"
-          style={{
-            fontFamily:    "'Inter', sans-serif",
-            fontSize:      '11px',
-            letterSpacing: '0.04em',
-            color:         viewMode === 'week' ? '#C09A3C' : 'rgba(138,132,128,0.7)',
-            borderLeft:    '1px solid rgba(255,255,255,0.06)',
-          }}
-        >
-          <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
-            <rect x="1"   y="1"   width="3" height="3" fill="currentColor" rx="0.5"/>
-            <rect x="5.5" y="1"   width="3" height="3" fill="currentColor" rx="0.5"/>
-            <rect x="10"  y="1"   width="3" height="3" fill="currentColor" rx="0.5"/>
-            <rect x="1"   y="5.5" width="3" height="3" fill="currentColor" rx="0.5"/>
-            <rect x="5.5" y="5.5" width="3" height="3" fill="currentColor" rx="0.5"/>
-            <rect x="10"  y="5.5" width="3" height="3" fill="currentColor" rx="0.5"/>
-            <rect x="1"   y="10"  width="3" height="3" fill="currentColor" rx="0.5"/>
-            <rect x="5.5" y="10"  width="3" height="3" fill="currentColor" rx="0.5"/>
-            <rect x="10"  y="10"  width="3" height="3" fill="currentColor" rx="0.5"/>
-          </svg>
-          Week
-        </button>
       </div>
 
       {/* ── Empty state ── */}
@@ -663,6 +767,7 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
               border:          '1px solid rgba(255,255,255,0.1)',
               color:           'rgba(138,132,128,0.8)',
               backgroundColor: 'transparent',
+              cursor:          'pointer',
             }}
           >
             Reset filters
