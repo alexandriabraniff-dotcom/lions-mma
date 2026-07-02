@@ -1,15 +1,15 @@
 import { useRef, useState, useEffect } from 'react';
 
 const disciplines = [
-  { id: 'muay-thai',    name: 'Muay Thai',        tagline: 'The Art of 8 Limbs',             slug: 'muay-thai',       img: 'https://picsum.photos/seed/mt1/800/1000' },
-  { id: 'boxing',       name: 'Boxing',            tagline: 'The Sweet Science',              slug: 'boxing',          img: 'https://picsum.photos/seed/bx1/800/1000' },
-  { id: 'bjj-gi',       name: 'BJJ (Gi)',          tagline: 'The Gentle Art',                 slug: 'bjj-gi',          img: 'https://picsum.photos/seed/gi1/800/1000' },
-  { id: 'nogi',         name: 'No-Gi',             tagline: 'Submission Grappling',           slug: 'nogi',            img: 'https://picsum.photos/seed/ng1/800/1000' },
-  { id: 'wrestling',    name: 'Wrestling',          tagline: 'Hardest Sport in the World',    slug: 'wrestling',       img: 'https://picsum.photos/seed/wr1/800/1000' },
-  { id: 'mma',          name: 'MMA',               tagline: 'Train Like a Pro',               slug: 'mma',             img: 'https://picsum.photos/seed/mm1/800/1000' },
-  { id: 'womens',       name: "Women's Only",       tagline: 'Safe, Inclusive, Empowering',   slug: 'womens-only',     img: 'https://picsum.photos/seed/wo1/800/1000' },
-  { id: 'kids',         name: 'Kids',              tagline: 'Anti-Bullying, Respect, Values', slug: 'kids',            img: 'https://picsum.photos/seed/kd1/800/1000' },
-  { id: 'private',      name: 'Private Training',  tagline: 'Level Up',                       slug: 'private-training',img: 'https://picsum.photos/seed/pv1/800/1000' },
+  { id: 'muay-thai',    name: 'Muay Thai',        tagline: 'The Art of 8 Limbs',             slug: 'muay-thai',       img: '/images/muay-thai.jpg' },
+  { id: 'boxing',       name: 'Boxing',            tagline: 'The Sweet Science',              slug: 'boxing',          img: '/images/boxing.jpg' },
+  { id: 'bjj-gi',       name: 'BJJ (Gi)',          tagline: 'The Gentle Art',                 slug: 'bjj-gi',          img: '/images/bjj-gi.jpg' },
+  { id: 'nogi',         name: 'No-Gi',             tagline: 'Submission Grappling',           slug: 'nogi',            img: '/images/nogi.jpg' },
+  { id: 'wrestling',    name: 'Wrestling',          tagline: 'Hardest Sport in the World',    slug: 'wrestling',       img: '/images/wrestling.jpg' },
+  { id: 'mma',          name: 'MMA',               tagline: 'Train Like a Pro',               slug: 'mma',             img: '/images/mma.jpg' },
+  { id: 'womens',       name: "Women's Only",       tagline: 'Safe, Inclusive, Empowering',   slug: 'womens-only',     img: '/images/womens-only.jpg' },
+  { id: 'kids',         name: 'Kids',              tagline: 'Anti-Bullying, Respect, Values', slug: 'kids',            img: '/images/kids.jpg' },
+  { id: 'private',      name: 'Private Training',  tagline: 'Level Up',                       slug: 'private-training',img: '/images/private-training.jpg' },
 ];
 
 export default function ProgramCarousel() {
