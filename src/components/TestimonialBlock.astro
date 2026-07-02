@@ -1,46 +1,23 @@
 ---
-import { testimonials } from '../data/testimonials';
 ---
 
-<section class="relative py-24 overflow-hidden">
+<section class="py-24 bg-vault">
+  <div class="max-w-3xl mx-auto px-6 text-center reveal">
 
-  <!-- Background photo -->
-  <img
-    src="https://picsum.photos/seed/gym-atmo/1920/1200"
-    alt=""
-    class="absolute inset-0 w-full h-full object-cover"
-    loading="lazy"
-  />
-  <div class="absolute inset-0 bg-vault/92"></div>
+    <!-- Decorative mark -->
+    <span class="font-display text-[8rem] leading-none text-brass/15 block -mb-8" aria-hidden="true">&ldquo;</span>
 
-  <div class="relative z-10 px-6 md:px-12 lg:px-20 max-w-7xl mx-auto">
+    <!-- Quote -->
+    <blockquote class="font-display text-[clamp(1.4rem,3vw,2.2rem)] uppercase tracking-tight text-canvas leading-tight">
+      Best training, best classes, best instructors, best team in Vancouver. I have been a member for 19 years and will never go anywhere else.
+    </blockquote>
 
-    <!-- Section label -->
-    <p class="font-mono text-xs tracking-widest uppercase text-smoke mb-16 text-center">
-      IN THEIR OWN WORDS
-    </p>
-
-    <!-- Testimonials -->
-    <div class="flex flex-col gap-16">
-      {testimonials.map((testimonial, index) => {
-        const isEven = index % 2 === 0;
-        return (
-          <div class:list={['reveal', isEven ? 'text-left max-w-2xl' : 'text-right max-w-2xl ml-auto']}>
-            <!-- Decorative quote mark -->
-            <span class="font-display text-8xl leading-none text-brass/20 block" aria-hidden="true">&ldquo;</span>
-
-            <!-- Quote text -->
-            <blockquote class="font-display text-2xl md:text-3xl uppercase tracking-tight text-canvas leading-tight">
-              {testimonial.quote}
-            </blockquote>
-
-            <!-- Attribution -->
-            <p class="font-mono text-xs text-smoke mt-4">
-              {testimonial.name}, {testimonial.detail}
-            </p>
-          </div>
-        );
-      })}
+    <!-- Attribution -->
+    <div class="mt-8 flex flex-col items-center gap-2">
+      <div class="w-8 h-px bg-brass"></div>
+      <p class="font-mono text-xs text-smoke tracking-widest uppercase">
+        Johnny Tesoro &middot; 19-Year Member
+      </p>
     </div>
 
   </div>

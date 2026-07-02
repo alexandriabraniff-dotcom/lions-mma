@@ -2,27 +2,25 @@
 import { locations } from '../data/locations';
 ---
 
-<section class="reveal py-24 bg-void" id="locations">
+<section class="py-24 bg-void" id="locations">
   <div class="px-6 md:px-12 lg:px-20 max-w-7xl mx-auto">
 
     <!-- Section header -->
-    <h2 class="font-display text-5xl text-canvas mb-2">TWO LOCATIONS.</h2>
-    <p class="font-body text-canvas/50 mb-16">Both on Granville Street.</p>
+    <p class="font-mono text-xs tracking-widest uppercase text-smoke mb-3">Where to find us</p>
+    <h2 class="font-display text-5xl text-canvas mb-16 reveal">TWO LOCATIONS.</h2>
 
     <!-- Locations grid -->
-    <div class="grid md:grid-cols-2 gap-px bg-iron">
+    <div class="grid md:grid-cols-2 gap-px bg-iron reveal">
       {locations.map((location) => (
         <div class="bg-void p-8 md:p-12">
 
-          <!-- Street number -->
-          <p class="font-display text-6xl text-canvas mb-2">{location.short}</p>
+          <p class="font-display text-6xl text-canvas mb-1">{location.short}</p>
+          <p class="font-mono text-xs tracking-widest text-brass mb-6">GRANVILLE STREET</p>
 
-          <!-- Street name label -->
-          <p class="font-mono text-xs tracking-widest text-brass mb-6">GRANVILLE</p>
-
-          <!-- Address -->
-          <p class="font-mono text-sm text-canvas/70 mb-2">{location.address}</p>
-          <p class="font-mono text-sm text-canvas/70 mb-6">{location.city}</p>
+          <p class="font-mono text-sm text-canvas/65 leading-relaxed mb-6">
+            {location.address}<br />
+            {location.city}
+          </p>
 
           <!-- Map embed -->
           <div class="aspect-video bg-vault border border-iron mb-6 overflow-hidden">
@@ -30,7 +28,7 @@ import { locations } from '../data/locations';
               src={location.mapUrl}
               width="100%"
               height="100%"
-              class="w-full h-full grayscale opacity-70 hover:opacity-100 hover:grayscale-0 transition-all duration-500"
+              class="w-full h-full grayscale opacity-60 hover:opacity-100 hover:grayscale-0 transition-all duration-500"
               allowfullscreen
               loading="lazy"
               referrerpolicy="no-referrer-when-downgrade"
@@ -38,18 +36,44 @@ import { locations } from '../data/locations';
             ></iframe>
           </div>
 
-          <!-- Directions link -->
           <a
             href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location.full)}`}
             target="_blank"
             rel="noopener noreferrer"
             class="font-mono text-xs tracking-widest uppercase text-brass hover:text-canvas transition-colors"
           >
-            GET DIRECTIONS
+            GET DIRECTIONS &rarr;
           </a>
 
         </div>
       ))}
+    </div>
+
+    <!-- Pricing CTA strip -->
+    <div class="reveal mt-px bg-vault p-10 md:p-14 flex flex-col md:flex-row items-center justify-between gap-8 border-t border-iron">
+      <div>
+        <p class="font-mono text-xs tracking-widest uppercase text-smoke mb-2">Membership</p>
+        <p class="font-display text-[clamp(2rem,5vw,3.5rem)] uppercase leading-none text-canvas">
+          FROM $115 / MONTH.
+        </p>
+        <p class="font-body text-sm text-canvas/55 mt-2">
+          Gear pack included. Both locations. Every discipline. Month-to-month available.
+        </p>
+      </div>
+      <div class="flex gap-3 flex-wrap shrink-0">
+        <a
+          href="/pricing"
+          class="bg-brass text-void font-display text-sm tracking-wider uppercase py-3 px-7 hover:brightness-110 transition"
+        >
+          SEE ALL PLANS
+        </a>
+        <a
+          href="/free-trial"
+          class="border border-canvas/30 text-canvas font-display text-sm tracking-wider uppercase py-3 px-7 hover:border-canvas transition"
+        >
+          TRAIN FREE
+        </a>
+      </div>
     </div>
 
   </div>
