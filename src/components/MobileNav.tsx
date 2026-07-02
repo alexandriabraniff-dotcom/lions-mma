@@ -12,19 +12,23 @@ const programs = [
   { label: "Private Training", href: "/programs/private-training" },
 ];
 
+const aboutLinks = [
+  { label: "Team", href: "/team" },
+  { label: "Testimonials", href: "/faq" },
+  { label: "FAQ", href: "/faq" },
+];
+
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "Schedule", href: "/schedule" },
-  { label: "Pricing", href: "/pricing" },
-  { label: "Team", href: "/team" },
-  { label: "FAQ", href: "/faq" },
-  { label: "Blog", href: "/blog" },
+  { label: "Memberships", href: "/pricing" },
   { label: "Find Us", href: "/contact" },
 ];
 
 export default function MobileNav() {
   const [isOpen, setIsOpen] = useState(false);
   const [programsOpen, setProgramsOpen] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
 
   const prefersReducedMotion =
     typeof window !== "undefined"
@@ -46,6 +50,7 @@ export default function MobileNav() {
   const close = () => {
     setIsOpen(false);
     setProgramsOpen(false);
+    setAboutOpen(false);
   };
 
   return (
@@ -179,6 +184,57 @@ export default function MobileNav() {
                 {programs.map((p) => (
                   <a
                     key={p.href}
+                    href={p.href}
+                    onClick={close}
+                    className="font-body text-lg text-canvas/70 hover:text-brass transition-colors uppercase tracking-wide"
+                  >
+                    {p.label}
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* About Us expandable */}
+          <div>
+            <button
+              onClick={() => setAboutOpen((prev) => !prev)}
+              className="font-display text-4xl text-canvas uppercase leading-tight hover:text-brass transition-colors flex items-center gap-3 w-full text-left"
+              style={
+                prefersReducedMotion
+                  ? {}
+                  : {
+                      opacity: isOpen ? 1 : 0,
+                      transform: isOpen ? "translateX(0)" : "translateX(20px)",
+                      transition: prefersReducedMotion
+                        ? "none"
+                        : `opacity 300ms ease ${(navLinks.length + 1) * 40}ms, transform 300ms ease ${(navLinks.length + 1) * 40}ms`,
+                    }
+              }
+            >
+              About Us
+              <svg
+                className="w-5 h-5 transition-transform duration-200"
+                style={{ transform: aboutOpen ? "rotate(180deg)" : "rotate(0deg)" }}
+                viewBox="0 0 12 12"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M2 4L6 8L10 4"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+
+            {aboutOpen && (
+              <div className="ml-4 mt-3 flex flex-col gap-2 border-l border-iron pl-4">
+                {aboutLinks.map((p) => (
+                  <a
+                    key={p.label}
                     href={p.href}
                     onClick={close}
                     className="font-body text-lg text-canvas/70 hover:text-brass transition-colors uppercase tracking-wide"
