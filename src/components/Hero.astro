@@ -64,15 +64,13 @@ const stats = [
   <div class="relative z-40 px-6 md:px-10">
     <div class="max-w-7xl mx-auto flex items-center justify-between h-16">
 
-      <!-- Logo + wordmark -->
-      <a href="/" class="flex items-center gap-2.5">
+      <!-- Logo -->
+      <a href="/" class="flex items-center">
         <img
           src="/images/logo.png"
-          alt=""
-          aria-hidden="true"
-          class="h-9 w-9 shrink-0"
+          alt="Lions MMA"
+          class="h-16 w-16 shrink-0"
         />
-        <span class="font-display text-canvas text-xl tracking-tight leading-none">LIONS MMA</span>
       </a>
 
       <!-- Desktop links -->
@@ -122,14 +120,8 @@ const stats = [
         ))}
       </nav>
 
-      <!-- Right: Free Trial + mobile nav -->
-      <div class="flex items-center gap-4">
-        <a
-          href="/free-trial"
-          class="hidden md:inline-block border border-canvas/25 text-canvas/70 text-xs font-display tracking-wider uppercase px-4 py-2 hover:border-brass hover:text-brass transition-all duration-200"
-        >
-          Free Trial
-        </a>
+      <!-- Right: mobile nav only -->
+      <div class="flex items-center">
         <div class="md:hidden">
           <MobileNav client:load />
         </div>
@@ -140,14 +132,6 @@ const stats = [
 
   <!-- ── Main hero content (flex-1 centres between nav and stats) ─────────── -->
   <div class="relative z-30 flex-1 flex flex-col items-center justify-center px-6 text-center py-16 md:py-20">
-
-    <!-- Logo image — transparent PNG, no blend mode needed -->
-    <img
-      src="/images/logo.png"
-      alt="Lions MMA"
-      class="w-40 md:w-60 mb-8 mask-wipe"
-      style="animation-delay: 0.1s;"
-    />
 
     <!-- Eyebrow -->
     <p
