@@ -31,8 +31,9 @@ const navLinks = [
 
 <!-- DESIGNER CREDIT BANNER - remove only after client payment -->
 {!isHome && (
-  <div class="bg-iron text-smoke text-xs font-mono text-center py-1 w-full">
-    Website designed by Alexandria Braniff · AlexandriaBraniff@gmail.com
+  <div class="bg-iron text-smoke font-mono text-center w-full h-7 flex items-center justify-center overflow-hidden">
+    <span class="hidden sm:block text-xs">Website designed by Alexandria Braniff · AlexandriaBraniff@gmail.com</span>
+    <span class="sm:hidden text-[10px] truncate px-3">Website designed by Alexandria Braniff</span>
   </div>
 )}
 
@@ -41,7 +42,7 @@ const navLinks = [
   class={`fixed left-0 right-0 z-50 bg-void/95 backdrop-blur-sm border-b border-iron/60 ${isHome ? 'top-0' : 'top-7'}`}
   style={isHome ? 'transform: translateY(-100%); transition: transform 0.35s cubic-bezier(0.2,0,0,1);' : 'transition: transform 0.35s cubic-bezier(0.2,0,0,1);'}
 >
-  <div class="max-w-7xl mx-auto px-6 flex items-center justify-between h-16">
+  <div class="max-w-7xl mx-auto px-6 flex items-center justify-between h-20">
 
     <!-- Logo + wordmark -->
     <a href="/" class="flex items-center gap-2.5">

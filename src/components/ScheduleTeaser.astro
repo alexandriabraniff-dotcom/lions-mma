@@ -56,28 +56,27 @@ const levelLabels: Record<string, string> = {
         {todaySessions.map((session) => {
           const discipline = disciplineMap[session.discipline];
           return (
-            <li class="flex items-center gap-6 py-4">
-              <!-- Time -->
-              <span class="font-mono text-sm text-canvas w-24 shrink-0">
-                {fmt12h(session.start)}
-              </span>
-
-              <!-- Discipline name -->
-              <span class="font-display text-xl uppercase text-canvas">
-                {discipline?.name ?? session.discipline}
-              </span>
-
-              <!-- Level badge -->
-              {session.level && session.level !== 'all' && (
-                <span class="font-mono text-xs border border-iron text-smoke px-2 py-0.5 rounded-none shrink-0">
-                  {levelLabels[session.level] ?? session.level.toUpperCase()}
+            <li class="py-4 flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-6">
+              <!-- Time + name row -->
+              <div class="flex items-center gap-4">
+                <span class="font-mono text-sm text-canvas w-20 shrink-0">
+                  {fmt12h(session.start)}
                 </span>
-              )}
-
-              <!-- Location tag -->
-              <span class="font-mono text-xs text-brass ml-auto shrink-0">
-                {session.location} GRANVILLE
-              </span>
+                <span class="font-display text-lg uppercase text-canvas leading-tight">
+                  {discipline?.name ?? session.discipline}
+                </span>
+              </div>
+              <!-- Badge + location row -->
+              <div class="flex items-center gap-3 sm:contents">
+                {session.level && session.level !== 'all' && (
+                  <span class="font-mono text-xs border border-iron text-smoke px-2 py-0.5 shrink-0">
+                    {levelLabels[session.level] ?? session.level.toUpperCase()}
+                  </span>
+                )}
+                <span class="font-mono text-xs text-brass sm:ml-auto shrink-0">
+                  {session.location} GRANVILLE
+                </span>
+              </div>
             </li>
           );
         })}
