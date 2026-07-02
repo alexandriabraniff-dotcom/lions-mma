@@ -19,7 +19,7 @@ const navLinks = [
   { label: "Team", href: "/team" },
   { label: "FAQ", href: "/faq" },
   { label: "Blog", href: "/blog" },
-  { label: "Contact", href: "/contact" },
+  { label: "Find Us", href: "/contact" },
 ];
 
 export default function MobileNav() {
@@ -198,7 +198,7 @@ export default function MobileNav() {
             onClick={close}
             className="block w-full text-center bg-brass text-void font-display text-2xl uppercase tracking-wide py-4 hover:brightness-110 transition"
           >
-            Train Free — 7 Days
+            Train Free · 7 Days
           </a>
           <a
             href="tel:+16046840991"

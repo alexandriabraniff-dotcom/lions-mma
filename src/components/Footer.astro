@@ -1,4 +1,6 @@
 ---
+import { locations } from '../data/locations';
+
 const programs = [
   { label: "Muay Thai", href: "/programs/muay-thai" },
   { label: "Boxing", href: "/programs/boxing" },
@@ -17,7 +19,7 @@ const quickLinks = [
   { label: "Team", href: "/team" },
   { label: "FAQ", href: "/faq" },
   { label: "Blog", href: "/blog" },
-  { label: "Contact", href: "/contact" },
+  { label: "Find Us", href: "/contact" },
   { label: "Free Trial", href: "/free-trial" },
 ];
 ---
@@ -85,20 +87,15 @@ const quickLinks = [
       <div>
         <h3 class="font-display text-xs tracking-widest uppercase text-smoke mb-4">Locations</h3>
         <div class="flex flex-col gap-5">
-          <div>
-            <p class="font-mono text-sm text-canvas/80 leading-relaxed">
-              798 Helmcken St<br />
-              Vancouver, BC V6Z 1B4<br />
-              <span class="text-canvas/50 text-xs">Downtown</span>
-            </p>
-          </div>
-          <div>
-            <p class="font-mono text-sm text-canvas/80 leading-relaxed">
-              2301 Kingsway<br />
-              Vancouver, BC V5R 5J6<br />
-              <span class="text-canvas/50 text-xs">East Vancouver</span>
-            </p>
-          </div>
+          {locations.map((loc) => (
+            <div>
+              <p class="font-mono text-sm text-canvas/80 leading-relaxed">
+                {loc.address}<br />
+                {loc.city}<br />
+                <span class="text-canvas/50 text-xs">{loc.short} Granville</span>
+              </p>
+            </div>
+          ))}
           <a
             href="tel:+16046840991"
             class="font-mono text-sm text-canvas/80 hover:text-canvas transition"
@@ -141,7 +138,7 @@ const quickLinks = [
     <!-- Bottom bar -->
     <div class="border-t border-iron mt-12 pt-6 flex flex-col sm:flex-row justify-between items-center gap-3">
       <p class="text-canvas/60 text-sm">
-        &copy; 2025 Lions MMA. All rights reserved.
+        &copy; 2026 Lions MMA. All rights reserved.
       </p>
       <p class="font-mono text-xs text-smoke">
         Website designed by Alexandria Braniff

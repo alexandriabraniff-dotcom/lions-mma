@@ -16,18 +16,19 @@ const programs = [
 ];
 
 const navLinks = [
+  ...(isHome ? [] : [{ label: "Home", href: "/" }]),
   { label: "Schedule", href: "/schedule" },
   { label: "Pricing",  href: "/pricing" },
   { label: "Team",     href: "/team" },
   { label: "FAQ",      href: "/faq" },
-  { label: "Contact",  href: "/contact" },
+  { label: "Find Us",  href: "/contact" },
 ];
 ---
 
 <!-- DESIGNER CREDIT BANNER - remove only after client payment -->
 {!isHome && (
   <div class="bg-iron text-smoke text-xs font-mono text-center py-1 w-full">
-    Website designed by Alexandria Braniff &mdash; AlexandriaBraniff@gmail.com
+    Website designed by Alexandria Braniff · AlexandriaBraniff@gmail.com
   </div>
 )}
 

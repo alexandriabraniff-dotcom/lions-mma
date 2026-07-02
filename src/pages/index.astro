@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
-import ProgramGrid from '../components/ProgramGrid.astro';
+import ProgramCarousel from '../components/ProgramCarousel';
 import ScheduleTeaser from '../components/ScheduleTeaser.astro';
 import TestimonialBlock from '../components/TestimonialBlock.astro';
 import LocationsBlock from '../components/LocationsBlock.astro';
@@ -9,7 +9,7 @@ import LocationsBlock from '../components/LocationsBlock.astro';
 
 <Base title="Lions MMA Vancouver" description="Vancouver's premier MMA and BJJ gym. Two locations on Granville Street. Training since 2001. Memberships from $115/month.">
   <Hero />
-  <ProgramGrid />
+  <ProgramCarousel client:load />
   <ScheduleTeaser />
   <TestimonialBlock />
   <LocationsBlock />
