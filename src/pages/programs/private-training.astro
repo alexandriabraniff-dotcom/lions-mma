@@ -5,47 +5,79 @@ import Schedule from '../../components/Schedule';
 
 <Base title="Private Training" description="Private training sessions at Lions MMA Vancouver. One-on-one with a Lions MMA instructor. Book at the front desk.">
 
-  <!-- Header -->
-  <div class="pt-32 pb-0 max-w-7xl mx-auto px-6">
-    <p class="font-mono text-xs tracking-widest uppercase text-smoke mb-3">LEVEL UP</p>
-    <h1 class="font-display text-7xl md:text-9xl uppercase tracking-tight text-canvas leading-none">PRIVATE TRAINING.</h1>
-    <div class="w-full aspect-video mt-8 overflow-hidden">
-      <img src="https://picsum.photos/seed/pv-hero/1920/1080" alt="Private Training at Lions MMA" class="w-full h-full object-cover" loading="eager" />
+  <!-- Full-width hero image with text overlay -->
+  <div class="relative w-full h-[280px] md:h-[520px] overflow-hidden">
+    <!-- Image placeholder (swap for real <img> when photos arrive) -->
+    <div class="absolute inset-0 bg-iron/60 flex flex-col items-center justify-center gap-3">
+      <svg class="w-10 h-10 text-smoke/20" viewBox="0 0 24 24" fill="none"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2v11z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="1.5"/></svg>
+      <p class="font-mono text-[10px] tracking-widest text-smoke/30 uppercase">Image Coming Soon</p>
+    </div>
+    <!-- Dark overlay so text is readable -->
+    <div class="absolute inset-0 bg-void/50"></div>
+    <!-- Nav spacer + text pinned to bottom-left -->
+    <div class="relative z-10 h-full flex flex-col justify-end pb-14 px-6 md:px-12 lg:px-20 max-w-7xl mx-auto w-full" style="padding-top: 96px;">
+      <p class="font-mono text-xs tracking-widest uppercase text-canvas/60 mb-4">LEVEL UP</p>
+      <h1 class="font-display text-[clamp(3.5rem,7vw,7rem)] uppercase tracking-tight text-canvas leading-none">PRIVATE TRAINING.</h1>
     </div>
   </div>
 
   <!-- Content -->
-  <div class="py-24 max-w-4xl mx-auto px-6">
+  <div class="py-24 max-w-7xl mx-auto px-6">
 
-    <div class="mb-16">
-      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHAT IT IS</p>
-      <div class="space-y-6 font-body text-canvas/80 leading-relaxed">
-        <p>Private training is one instructor, one student, one session with a specific purpose. No class structure to follow, no waiting for technique demonstrations to apply to you. Every minute of the session is pointed directly at whatever you need — fixing a mechanical problem, building a specific game plan, accelerating toward a competition, or getting your first month of training compressed into a focused foundation.</p>
-        <p>Privates at Lions are available with any instructor on the coaching staff, depending on your goals and their schedule. Striking privates, grappling privates, MMA-specific work, kids sessions — all available. The front desk can match you with the right coach based on what you are trying to accomplish.</p>
-        <p>Private training is the fastest way to improve in any discipline, particularly when you are stuck on something specific. One good private session can unlock movement patterns or conceptual understanding that would have taken months of group classes to find. Students preparing for competition use privates to sharpen game plans. New students use them to build confidence before stepping into group classes. Both are equally valid uses of the format.</p>
+    <!-- What it is -->
+    <div class="grid md:grid-cols-2 gap-16 mb-24">
+      <div>
+        <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHAT IT IS</p>
+        <div class="space-y-6 font-body text-canvas/80 leading-relaxed">
+          <p>Private training is one instructor, one student, one session with a specific purpose. No class structure to follow, no waiting for technique demonstrations to apply to you. Every minute of the session is pointed directly at whatever you need: fixing a mechanical problem, building a specific game plan, accelerating toward a competition, or getting your first month of training compressed into a focused foundation.</p>
+          <p>Privates at Lions are available with any instructor on the coaching staff, depending on your goals and their schedule. Striking privates, grappling privates, MMA-specific work, kids sessions, all available. The front desk can match you with the right coach based on what you are trying to accomplish.</p>
+          <p>Private training is the fastest way to improve in any discipline, particularly when you are stuck on something specific. One good private session can unlock movement patterns or conceptual understanding that would have taken months of group classes to find.</p>
+        </div>
+      </div>
+      <div class="flex flex-col gap-6">
+        <div class="flex-1 min-h-52 bg-iron/30 border border-iron flex flex-col items-center justify-center gap-3">
+          <svg class="w-8 h-8 text-smoke/30" viewBox="0 0 24 24" fill="none"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2v11z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="1.5"/></svg>
+          <p class="font-mono text-[10px] tracking-widest text-smoke/40 uppercase">Image Coming Soon</p>
+        </div>
+        <div class="flex-1 min-h-52 bg-iron/30 border border-iron flex flex-col items-center justify-center gap-3">
+          <svg class="w-8 h-8 text-smoke/30" viewBox="0 0 24 24" fill="none"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2v11z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="1.5"/></svg>
+          <p class="font-mono text-[10px] tracking-widest text-smoke/40 uppercase">Image Coming Soon</p>
+        </div>
       </div>
     </div>
 
-    <div class="mb-16">
+    <!-- Who it is for -->
+    <div class="mb-20 max-w-4xl">
       <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHO IT IS FOR</p>
       <ul class="space-y-3 font-body text-canvas/80 leading-relaxed">
-        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Beginners who want an introduction to the gym before joining group classes</span></li>
-        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Intermediate students stuck on a specific technical or conceptual problem</span></li>
-        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Competitors building a game plan in the weeks before an event</span></li>
-        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Athletes who travel or have irregular schedules and cannot commit to regular class times</span></li>
-        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Anyone who wants to accelerate their development with focused, undivided coaching attention</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1 shrink-0">+</span><span>Beginners who want an introduction to the gym before joining group classes</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1 shrink-0">+</span><span>Intermediate students stuck on a specific technical or conceptual problem</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1 shrink-0">+</span><span>Competitors building a game plan in the weeks before an event</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1 shrink-0">+</span><span>Athletes who travel or have irregular schedules and cannot commit to regular class times</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1 shrink-0">+</span><span>Anyone who wants to accelerate their development with focused, undivided coaching attention</span></li>
       </ul>
     </div>
 
-    <div class="mb-16">
+    <!-- 3-image gallery strip -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-24">
+      {[1,2,3].map(() => (
+        <div class="h-56 bg-iron/30 border border-iron flex flex-col items-center justify-center gap-3">
+          <svg class="w-8 h-8 text-smoke/30" viewBox="0 0 24 24" fill="none"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2v11z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="1.5"/></svg>
+          <p class="font-mono text-[10px] tracking-widest text-smoke/40 uppercase">Image Coming Soon</p>
+        </div>
+      ))}
+    </div>
+
+    <!-- What a session looks like -->
+    <div class="mb-16 max-w-4xl">
       <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHAT A SESSION LOOKS LIKE</p>
       <p class="font-body text-canvas/80 leading-relaxed">Sessions are typically 60 minutes. You set the agenda with your coach before the session starts: what you want to work, where you feel the gaps, what you are preparing for. The coach builds the session around that. Warm-up, technique, drilling, and live work as appropriate. Private sessions can be booked as one-offs or in blocks. Pricing and availability are confirmed at the front desk.</p>
     </div>
 
-    <!-- Schedule -->
-    <div class="mb-16">
-      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">AVAILABILITY</p>
-      <Schedule client:load filterDiscipline="private" compact={true} />
+    <!-- Wide image -->
+    <div class="w-full h-64 bg-iron/30 border border-iron flex flex-col items-center justify-center gap-3 mb-24">
+      <svg class="w-8 h-8 text-smoke/30" viewBox="0 0 24 24" fill="none"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2v11z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="1.5"/></svg>
+      <p class="font-mono text-[10px] tracking-widest text-smoke/40 uppercase">Image Coming Soon</p>
     </div>
 
     <!-- CTA -->

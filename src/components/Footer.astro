@@ -19,99 +19,114 @@ const quickLinks = [
   { label: "Team", href: "/team" },
   { label: "FAQ", href: "/faq" },
   { label: "Blog", href: "/blog" },
-  { label: "Find Us", href: "/contact" },
+  { label: "Find Us", href: "/#find-us" },
   { label: "Free Trial", href: "/free-trial" },
 ];
 ---
 
-<footer class="bg-vault border-t border-iron">
-  <div class="max-w-7xl mx-auto px-6 py-16">
+<footer class="bg-void border-t border-iron">
+  <div class="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 py-16">
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
-
-      <!-- Column 1: Brand -->
+    <!-- Top row: brand + social -->
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-8 mb-14 pb-14 border-b border-iron">
       <div>
-        <a href="/" class="font-display text-canvas text-4xl uppercase tracking-tight block mb-4">
-          Lions MMA
+        <a href="/" class="block mb-4">
+          <img
+            src="/images/logo.png"
+            alt="Lions MMA"
+            class="h-28 w-28"
+          />
         </a>
-        <p class="text-canvas/80 text-sm leading-relaxed mb-6">
-          Training since 2001. Vancouver's premier MMA and BJJ gym.
+        <p class="font-mono text-xs text-smoke tracking-wide">
+          Training since 2001 &middot; Vancouver, BC
         </p>
-        <div class="flex items-center gap-4">
-
-          <!-- Instagram -->
-          <a
-            href="https://www.instagram.com/lionsmma"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Lions MMA on Instagram"
-            class="text-canvas/65 hover:text-brass transition-colors"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="2" y="2" width="20" height="20" rx="5" stroke="currentColor" stroke-width="1.5"/>
-              <circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="1.5"/>
-              <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
-            </svg>
-          </a>
-
-          <!-- Facebook -->
-          <a
-            href="https://www.facebook.com/lionsmma"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Lions MMA on Facebook"
-            class="text-canvas/65 hover:text-brass transition-colors"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M18 2H15C13.6739 2 12.4021 2.52678 11.4645 3.46447C10.5268 4.40215 10 5.67392 10 7V10H7V14H10V22H14V14H17L18 10H14V7C14 6.73478 14.1054 6.48043 14.2929 6.29289C14.4804 6.10536 14.7348 6 15 6H18V2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </a>
-
-          <!-- X / Twitter -->
-          <a
-            href="https://twitter.com/lionsmma"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Lions MMA on X"
-            class="text-canvas/65 hover:text-brass transition-colors"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M4 4L10.5 12.5M4 4H7.5L20 20H16.5L10.5 12.5M4 4L10.5 12.5M20 4L13.5 11.5M13.5 11.5L10.5 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </a>
-
-        </div>
       </div>
+      <div class="flex items-center gap-5">
+        <!-- Instagram -->
+        <a
+          href="https://www.instagram.com/lionsmma"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Lions MMA on Instagram"
+          class="text-canvas/50 hover:text-brass transition-colors duration-200"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="2" width="20" height="20" rx="5" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
+          </svg>
+        </a>
+        <!-- Facebook -->
+        <a
+          href="https://www.facebook.com/lionsmma"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Lions MMA on Facebook"
+          class="text-canvas/50 hover:text-brass transition-colors duration-200"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 2H15C13.6739 2 12.4021 2.52678 11.4645 3.46447C10.5268 4.40215 10 5.67392 10 7V10H7V14H10V22H14V14H17L18 10H14V7C14 6.73478 14.1054 6.48043 14.2929 6.29289C14.4804 6.10536 14.7348 6 15 6H18V2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+        <!-- X / Twitter -->
+        <a
+          href="https://twitter.com/lionsmma"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Lions MMA on X"
+          class="text-canvas/50 hover:text-brass transition-colors duration-200"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 4L10.5 12.5M4 4H7.5L20 20H16.5L10.5 12.5M4 4L10.5 12.5M20 4L13.5 11.5M13.5 11.5L10.5 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+    </div>
 
-      <!-- Column 2: Locations -->
+    <!-- Link columns -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-10">
+
+      <!-- Column 1: Locations -->
       <div>
-        <h3 class="font-display text-xs tracking-widest uppercase text-smoke mb-4">Locations</h3>
-        <div class="flex flex-col gap-5">
+        <h3 class="font-mono text-[10px] tracking-widest uppercase text-smoke mb-5">Locations</h3>
+        <div class="flex flex-col gap-6">
           {locations.map((loc) => (
             <div>
-              <p class="font-mono text-sm text-canvas/80 leading-relaxed">
-                {loc.address}<br />
-                {loc.city}<br />
-                <span class="text-canvas/50 text-xs">{loc.short} Granville</span>
+              <p class="font-display text-xs uppercase tracking-widest text-canvas/50 mb-1.5">
+                {loc.label}
               </p>
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc.full)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="font-mono text-sm text-canvas/70 hover:text-brass transition-colors duration-200 leading-relaxed block"
+              >
+                {loc.address}<br />{loc.city}
+              </a>
             </div>
           ))}
           <a
             href="tel:+16046840991"
-            class="font-mono text-sm text-canvas/80 hover:text-canvas transition"
+            class="font-mono text-sm text-canvas/70 hover:text-brass transition-colors duration-200"
           >
             +1 604-684-0991
+          </a>
+          <a
+            href="mailto:info@lionsmma.ca"
+            class="font-mono text-sm text-canvas/70 hover:text-brass transition-colors duration-200"
+          >
+            info@lionsmma.ca
           </a>
         </div>
       </div>
 
-      <!-- Column 3: Programs -->
+      <!-- Column 2: Programs -->
       <div>
-        <h3 class="font-display text-xs tracking-widest uppercase text-smoke mb-4">Programs</h3>
-        <ul class="flex flex-col gap-2">
+        <h3 class="font-mono text-[10px] tracking-widest uppercase text-smoke mb-5">Programs</h3>
+        <ul class="flex flex-col gap-2.5">
           {programs.map((p) => (
             <li>
-              <a href={p.href} class="text-canvas/80 hover:text-canvas transition text-sm">
+              <a href={p.href} class="font-mono text-sm text-canvas/70 hover:text-canvas transition-colors duration-200">
                 {p.label}
               </a>
             </li>
@@ -119,13 +134,13 @@ const quickLinks = [
         </ul>
       </div>
 
-      <!-- Column 4: Quick Links -->
+      <!-- Column 3: Quick Links -->
       <div>
-        <h3 class="font-display text-xs tracking-widest uppercase text-smoke mb-4">Quick Links</h3>
-        <ul class="flex flex-col gap-2">
+        <h3 class="font-mono text-[10px] tracking-widest uppercase text-smoke mb-5">Quick Links</h3>
+        <ul class="flex flex-col gap-2.5">
           {quickLinks.map((link) => (
             <li>
-              <a href={link.href} class="text-canvas/80 hover:text-canvas transition text-sm">
+              <a href={link.href} class="font-mono text-sm text-canvas/70 hover:text-canvas transition-colors duration-200">
                 {link.label}
               </a>
             </li>
@@ -133,15 +148,38 @@ const quickLinks = [
         </ul>
       </div>
 
+      <!-- Column 4: CTA -->
+      <div>
+        <h3 class="font-mono text-[10px] tracking-widest uppercase text-smoke mb-5">Get Started</h3>
+        <div class="flex flex-col gap-3">
+          <a
+            href="/free-trial"
+            class="block text-center bg-brass text-void font-display text-sm tracking-wider uppercase py-3 px-6 hover:brightness-110 transition"
+          >
+            TRAIN FREE
+          </a>
+          <a
+            href="/pricing"
+            class="block text-center border border-canvas/20 text-canvas font-display text-sm tracking-wider uppercase py-3 px-6 hover:border-canvas/60 transition"
+          >
+            SEE PLANS
+          </a>
+          <p class="font-mono text-xs text-smoke mt-2 leading-relaxed">
+            From $125/month.<br />
+            Both locations included.
+          </p>
+        </div>
+      </div>
+
     </div>
 
     <!-- Bottom bar -->
-    <div class="border-t border-iron mt-12 pt-6 flex flex-col sm:flex-row justify-between items-center gap-3">
-      <p class="text-canvas/60 text-sm">
+    <div class="border-t border-iron mt-14 pt-6 flex flex-col sm:flex-row justify-between items-center gap-3">
+      <p class="font-mono text-xs text-canvas/40">
         &copy; 2026 Lions MMA. All rights reserved.
       </p>
       <p class="font-mono text-xs text-smoke">
-        Website designed by Alexandria Braniff
+        Website by Alexandria Braniff
       </p>
     </div>
 

@@ -1,6 +1,7 @@
 export const locations = [
   {
     id: '1256',
+    label: 'Location 1',
     name: '1256 Granville',
     short: '1256',
     address: '1256 Granville St',
@@ -10,6 +11,7 @@ export const locations = [
   },
   {
     id: '1133',
+    label: 'Location 2',
     name: '1133 Granville',
     short: '1133',
     address: '1133 Granville St',

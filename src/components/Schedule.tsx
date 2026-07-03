@@ -126,6 +126,32 @@ function layoutSessions(sessions: GroupedSession[]): LaidOutSession[] {
     }
     ev.totalCols = max + 1;
   }
+  // Post-process: if a 1133 session ended up left of an overlapping 1256 session,
+  // swap their columns so 1256 is always visually left of 1133 — but only if the
+  // swap won't cause either session to collide with a third session in its new column.
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const a of laid) {
+      if (a.location !== '1133') continue;
+      for (const b of laid) {
+        if (b.location !== '1256') continue;
+        const overlaps = toMin(a.start) < toMin(b.end) && toMin(b.start) < toMin(a.end);
+        if (!overlaps || a.col >= b.col) continue;
+        // Check whether swapping would create a collision with any third session
+        const wouldCollide = laid.some(s =>
+          s !== a && s !== b && (
+            (s.col === b.col && toMin(a.start) < toMin(s.end) && toMin(s.start) < toMin(a.end)) ||
+            (s.col === a.col && toMin(b.start) < toMin(s.end) && toMin(s.start) < toMin(b.end))
+          )
+        );
+        if (!wouldCollide) {
+          [a.col, b.col] = [b.col, a.col];
+          changed = true;
+        }
+      }
+    }
+  }
   return laid;
 }
 
@@ -300,7 +326,7 @@ function ClassModal({
   const name     = disc?.name ?? session.discipline;
   const slug     = disc?.slug ?? session.discipline;
   const locObj   = locations.find(l => l.id === session.location);
-  const locLabel = locObj ? `${locObj.short} Granville Street` : session.location;
+  const locLabel = locObj ? locObj.address : session.location;
   const levelStr = [...new Set(session.levels.map(getLevelLabel).filter(Boolean))].join(' / ');
 
   // Close on backdrop click
@@ -341,7 +367,7 @@ function ClassModal({
       <div
         style={{
           width:           '100%',
-          maxWidth:        '480px',
+          maxWidth:        'min(480px, calc(100vw - 32px))',
           backgroundColor: '#1A1714',
           borderRadius:    '16px',
           border:          `1px solid ${accent}30`,
@@ -366,7 +392,7 @@ function ClassModal({
             </div>
             <button
               onClick={onClose}
-              style={{ flexShrink: 0, marginTop: '2px', width: '28px', height: '28px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.08)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+              style={{ flexShrink: 0, marginTop: '2px', width: '44px', height: '44px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.08)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
             >
               <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
                 <path d="M1.5 1.5L8.5 8.5M8.5 1.5L1.5 8.5" stroke="rgba(238,232,220,0.6)" strokeWidth="1.5" strokeLinecap="round"/>
@@ -487,7 +513,7 @@ function EventBlock({
 }) {
   const accent    = ACCENT[session.discipline] ?? '#C09A3C';
   const name      = disciplines.find(d => d.id === session.discipline)?.name  ?? session.discipline;
-  const locShort  = locations.find(l => l.id === session.location)?.short    ?? session.location;
+  const locShort  = locations.find(l => l.id === session.location)?.address  ?? session.location;
   const levelStr  = [...new Set(session.levels.map(getLevelLabel).filter(Boolean))].join(' / ');
 
   const top  = toPx(session.start) + 1;
@@ -573,7 +599,7 @@ function EventBlock({
               fontFamily: "'Inter', sans-serif",
             }}
           >
-            {locShort} Granville
+            {locShort}
           </span>
         )}
 
@@ -895,8 +921,8 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
 
   const locationOptions: SelectOption[] = [
     { value: 'all',  label: 'Both Locations' },
-    { value: '1256', label: '1256 Granville' },
-    { value: '1133', label: '1133 Granville' },
+    { value: '1256', label: 'Location 1' },
+    { value: '1133', label: 'Location 2' },
   ];
 
   const disciplineOptions: SelectOption[] = [
@@ -1072,8 +1098,8 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
                   onClick={dir === 'prev' ? prevDay : nextDay}
                   disabled={dir === 'prev' ? DAYS_ORDER.indexOf(activeDay) === 0 : DAYS_ORDER.indexOf(activeDay) === DAYS_ORDER.length - 1}
                   style={{
-                    width:           '28px',
-                    height:          '28px',
+                    width:           '44px',
+                    height:          '44px',
                     borderRadius:    '50%',
                     backgroundColor: 'rgba(44,40,36,0.7)',
                     border:          '1px solid rgba(255,255,255,0.08)',

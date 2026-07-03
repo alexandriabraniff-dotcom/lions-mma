@@ -13,29 +13,31 @@ const programs = [
 ];
 
 const aboutLinks = [
-  { label: "Team", href: "/team" },
-  { label: "Testimonials", href: "/faq" },
+  { label: "Our Team", href: "/team" },
+  { label: "Testimonials", href: "/testimonials" },
   { label: "FAQ", href: "/faq" },
 ];
 
-const navLinks = [
-  { label: "Home", href: "/" },
+const baseNavLinks = [
   { label: "Schedule", href: "/schedule" },
   { label: "Memberships", href: "/pricing" },
-  { label: "Find Us", href: "/contact" },
+  { label: "Find Us", href: "/#find-us" },
 ];
 
-export default function MobileNav() {
+export default function MobileNav({ isHome = false }: { isHome?: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
   const [programsOpen, setProgramsOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
+
+  const navLinks = isHome
+    ? baseNavLinks
+    : [{ label: "Home", href: "/" }, ...baseNavLinks];
 
   const prefersReducedMotion =
     typeof window !== "undefined"
       ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
       : false;
 
-  // Body scroll lock
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";

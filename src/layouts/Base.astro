@@ -32,6 +32,18 @@ const { title, description, ogImage } = Astro.props;
     <Footer />
 
     <script>
+      // Disable browser scroll restoration so pages always load at the top.
+      // Use behavior:'instant' to override the CSS scroll-behavior:smooth on <html>.
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      window.addEventListener('load', () => {
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      });
+    </script>
+
+    <script>
       const observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {

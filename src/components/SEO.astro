@@ -8,7 +8,7 @@ interface Props {
 
 const { title, description, ogImage, noindex = false } = Astro.props;
 
-const siteTitle = title.includes("Lions MMA") ? title : `${title} — Lions MMA`;
+const siteTitle = title.includes("Lions MMA") ? title : `${title}, Lions MMA`;
 const canonicalURL = Astro.url;
 const ogImageURL = ogImage ?? "/og-default.jpg";
 
@@ -26,7 +26,7 @@ const jsonLd = {
   "location": [
     {
       "@type": "Place",
-      "name": "Lions MMA — Downtown Vancouver",
+      "name": "Lions MMA, Downtown Vancouver",
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "798 Helmcken St",
@@ -38,7 +38,7 @@ const jsonLd = {
     },
     {
       "@type": "Place",
-      "name": "Lions MMA — East Vancouver",
+      "name": "Lions MMA, East Vancouver",
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "2301 Kingsway",

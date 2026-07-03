@@ -5,25 +5,34 @@ import { team } from '../data/team';
 const headInstructors = team.filter(c => c.role.includes('Head Instructor'));
 const otherInstructors = team.filter(c => !c.role.includes('Head Instructor'));
 
-// Placeholder portraits — swap for real photos in public/images/team/{id}.jpg
+// Placeholder portraits, swap for real photos in public/images/team/{id}.jpg
 const coachPhotos: Record<string, string> = {
-  'amir-ghassemi':     'https://randomuser.me/api/portraits/men/32.jpg',
-  'guilherme-falcao':  'https://randomuser.me/api/portraits/men/45.jpg',
-  'alex-coles':        'https://randomuser.me/api/portraits/men/22.jpg',
-  'gabrielle-stan':    'https://randomuser.me/api/portraits/women/44.jpg',
-  'alberto-garcia':    'https://randomuser.me/api/portraits/men/67.jpg',
-  'jessica-wilson':    'https://randomuser.me/api/portraits/women/28.jpg',
-  'adam-karse':        'https://randomuser.me/api/portraits/men/55.jpg',
-  'rodrigo-sezinando': 'https://randomuser.me/api/portraits/men/11.jpg',
-  'merck-milne':       'https://randomuser.me/api/portraits/men/38.jpg',
-  'lucio-tavares':     'https://randomuser.me/api/portraits/men/77.jpg',
-  'daniel-osario':     'https://randomuser.me/api/portraits/men/14.jpg',
-  'daria-preradovic':  'https://randomuser.me/api/portraits/women/62.jpg',
-  'emma-stecklov':     'https://randomuser.me/api/portraits/women/17.jpg',
+  'amir-ghassemi':     '/images/team/amir-ghassemi.jpg',
+  'guilherme-falcao':  '/images/team/guilherme-falcao.jpg',
+  'alex-coles':        '/images/team/alex-coles.jpg',
+  'gabrielle-stan':    '/images/team/gabrielle-stan.jpg',
+  'alberto-garcia':    '/images/team/alberto-garcia.jpg',
+  'jessica-wilson':    '',
+  'adam-karse':        '/images/team/adam-karse.jpg',
+  'rodrigo-sezinando': '/images/team/rodrigo-sezinando.jpg',
+  'merck-milne':       '/images/team/merck-milne.jpg',
+  'lucio-tavares':     '/images/team/lucio-tavares.jpg',
+  'daniel-osario':     '',
+  'daria-preradovic':  '/images/team/daria-preradovic.jpg',
+  'emma-stecklov':     '/images/team/emma-stecklov.jpg',
+  'nathan-rerup':      '',
+  'michal-zobac':      '',
+  'christian-casadei': '',
+  'sina-maani':        '',
+  'hugh-gleeson':      '',
+  'bia-miranda':       '',
+  'nick-davis':        '',
+  'tony-doyle':        '',
+  'luthfi-dhofier':    '',
 };
 ---
 
-<Base title="The Team" description="Meet the coaches at Lions MMA Vancouver. Head instructors and staff across striking, grappling, kids, and conditioning.">
+<Base title="Our Team" description="Meet the coaches at Lions MMA Vancouver. Head instructors and staff across striking, grappling, kids, and conditioning.">
 
   <!-- Page header with background photo -->
   <div class="relative pt-48 pb-24 overflow-hidden">
@@ -40,29 +49,51 @@ const coachPhotos: Record<string, string> = {
     </div>
   </div>
 
-  <div class="pb-24 max-w-7xl mx-auto px-6">
+  <div class="pb-32 max-w-7xl mx-auto px-6">
 
     <!-- Head Instructors -->
     <div class="mt-4">
-      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">HEAD INSTRUCTORS</p>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-iron">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-10">HEAD INSTRUCTORS</p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         {headInstructors.map(coach => (
-          <div class="bg-vault">
-            <div class="w-full aspect-[4/5] overflow-hidden bg-iron">
-              <img
-                src={coachPhotos[coach.id] ?? 'https://randomuser.me/api/portraits/men/1.jpg'}
-                alt={coach.name}
-                class="w-full h-full object-cover object-top"
-                loading="lazy"
-              />
+          <div
+            class="bg-vault border border-iron rounded-2xl overflow-hidden flex flex-col cursor-pointer group"
+            data-coach={JSON.stringify({
+              name: coach.name,
+              role: coach.role,
+              credentials: coach.credentials ?? null,
+              bio: coach.bio,
+              photo: coachPhotos[coach.id] ?? 'https://randomuser.me/api/portraits/men/1.jpg',
+            })}
+            onclick="openCoachModal(this)"
+          >
+            <div class="p-10 bg-iron/30">
+              <div class="w-full aspect-[4/5] overflow-hidden bg-iron rounded-xl">
+                {coachPhotos[coach.id] ? (
+                  <img
+                    src={coachPhotos[coach.id]}
+                    alt={coach.name}
+                    class="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div class="w-full h-full flex items-center justify-center bg-iron">
+                    <span class="font-display text-3xl text-canvas/20 uppercase">{coach.name.split(' ').map((n: string) => n[0]).join('')}</span>
+                  </div>
+                )}
+              </div>
             </div>
-            <div class="p-8">
+            <div class="p-10 flex flex-col flex-1">
               <p class="font-display text-2xl uppercase text-canvas">{coach.name}</p>
-              <p class="font-mono text-xs text-brass tracking-wider uppercase mt-1">{coach.role}</p>
+              <p class="font-mono text-xs text-brass tracking-wider uppercase mt-2">{coach.role}</p>
               {coach.credentials && (
                 <p class="font-mono text-xs text-smoke mt-1">{coach.credentials}</p>
               )}
-              <p class="font-body text-sm text-canvas/80 mt-4 leading-relaxed">{coach.bio}</p>
+              <div class="mt-auto pt-8">
+                <span class="inline-block font-mono text-xs tracking-widest uppercase text-canvas/50 border-b border-canvas/20 pb-0.5 group-hover:text-brass group-hover:border-brass transition-colors duration-200">
+                  Learn More +
+                </span>
+              </div>
             </div>
           </div>
         ))}
@@ -70,26 +101,48 @@ const coachPhotos: Record<string, string> = {
     </div>
 
     <!-- Other Instructors -->
-    <div class="mt-20">
-      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">INSTRUCTORS</p>
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-px bg-iron">
+    <div class="mt-24">
+      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-10">INSTRUCTORS</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
         {otherInstructors.map(coach => (
-          <div class="bg-vault">
-            <div class="w-full aspect-square overflow-hidden bg-iron">
-              <img
-                src={coachPhotos[coach.id] ?? 'https://randomuser.me/api/portraits/men/1.jpg'}
-                alt={coach.name}
-                class="w-full h-full object-cover object-top"
-                loading="lazy"
-              />
+          <div
+            class="bg-vault border border-iron rounded-2xl overflow-hidden flex flex-col cursor-pointer group"
+            data-coach={JSON.stringify({
+              name: coach.name,
+              role: coach.role,
+              credentials: coach.credentials ?? null,
+              bio: coach.bio,
+              photo: coachPhotos[coach.id] ?? 'https://randomuser.me/api/portraits/men/1.jpg',
+            })}
+            onclick="openCoachModal(this)"
+          >
+            <div class="p-10 bg-iron/30">
+              <div class="w-full aspect-square overflow-hidden bg-iron rounded-xl">
+                {coachPhotos[coach.id] ? (
+                  <img
+                    src={coachPhotos[coach.id]}
+                    alt={coach.name}
+                    class="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div class="w-full h-full flex items-center justify-center bg-iron">
+                    <span class="font-display text-3xl text-canvas/20 uppercase">{coach.name.split(' ').map((n: string) => n[0]).join('')}</span>
+                  </div>
+                )}
+              </div>
             </div>
-            <div class="p-8">
-              <p class="font-display text-2xl uppercase text-canvas">{coach.name}</p>
-              <p class="font-mono text-xs text-brass tracking-wider uppercase mt-1">{coach.role}</p>
+            <div class="p-10 flex flex-col flex-1">
+              <p class="font-display text-xl uppercase text-canvas">{coach.name}</p>
+              <p class="font-mono text-[10px] text-brass tracking-wider uppercase mt-2">{coach.role}</p>
               {coach.credentials && (
-                <p class="font-mono text-xs text-smoke mt-1">{coach.credentials}</p>
+                <p class="font-mono text-[10px] text-smoke mt-1">{coach.credentials}</p>
               )}
-              <p class="font-body text-sm text-canvas/80 mt-4 leading-relaxed">{coach.bio}</p>
+              <div class="mt-auto pt-6">
+                <span class="inline-block font-mono text-xs tracking-widest uppercase text-canvas/50 border-b border-canvas/20 pb-0.5 group-hover:text-brass group-hover:border-brass transition-colors duration-200">
+                  Learn More +
+                </span>
+              </div>
             </div>
           </div>
         ))}
@@ -97,4 +150,87 @@ const coachPhotos: Record<string, string> = {
     </div>
 
   </div>
+
+  <!-- Modal overlay -->
+  <div
+    id="coach-modal"
+    class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-void/90 backdrop-blur-sm"
+    style="display:none;"
+    onclick="handleModalClick(event)"
+  >
+    <div class="relative bg-vault border border-iron w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <!-- Close button -->
+      <button
+        onclick="closeCoachModal()"
+        aria-label="Close"
+        class="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center font-mono text-sm text-smoke hover:text-canvas transition-colors"
+      >
+        &#x2715;
+      </button>
+
+      <!-- Modal content -->
+      <div class="flex flex-col sm:flex-row">
+        <!-- Photo -->
+        <div class="sm:w-56 shrink-0">
+          <img
+            id="modal-photo"
+            src=""
+            alt=""
+            class="w-full h-64 sm:h-full object-cover object-top"
+          />
+        </div>
+        <!-- Info -->
+        <div class="p-6 sm:p-10 flex flex-col">
+          <p id="modal-name" class="font-display text-3xl uppercase text-canvas leading-tight"></p>
+          <p id="modal-role" class="font-mono text-xs text-brass tracking-wider uppercase mt-2"></p>
+          <p id="modal-credentials" class="font-mono text-xs text-smoke mt-1"></p>
+          <p id="modal-bio" class="font-body text-sm text-canvas/80 leading-relaxed mt-6"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </Base>
+
+<script>
+  function openCoachModal(el: HTMLElement) {
+    const raw = el.getAttribute('data-coach');
+    if (!raw) return;
+    const coach = JSON.parse(raw);
+
+    const modal = document.getElementById('coach-modal') as HTMLElement;
+    (document.getElementById('modal-photo') as HTMLImageElement).src = coach.photo;
+    (document.getElementById('modal-photo') as HTMLImageElement).alt = coach.name;
+    (document.getElementById('modal-name') as HTMLElement).textContent = coach.name;
+    (document.getElementById('modal-role') as HTMLElement).textContent = coach.role;
+    const credEl = document.getElementById('modal-credentials') as HTMLElement;
+    credEl.textContent = coach.credentials ?? '';
+    credEl.style.display = coach.credentials ? '' : 'none';
+    (document.getElementById('modal-bio') as HTMLElement).textContent = coach.bio;
+
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeCoachModal() {
+    const modal = document.getElementById('coach-modal') as HTMLElement;
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  function handleModalClick(e: MouseEvent) {
+    // Close if clicking the backdrop (not the inner panel)
+    if ((e.target as HTMLElement).id === 'coach-modal') {
+      closeCoachModal();
+    }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeCoachModal();
+  });
+
+  // Expose to inline onclick
+  (window as any).openCoachModal = openCoachModal;
+  (window as any).closeCoachModal = closeCoachModal;
+  (window as any).handleModalClick = handleModalClick;
+</script>

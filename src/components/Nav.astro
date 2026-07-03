@@ -16,16 +16,15 @@ const programs = [
 ];
 
 const aboutLinks = [
-  { label: "Team",         href: "/team" },
-  { label: "Testimonials", href: "/faq" },
+  { label: "Our Team",     href: "/team" },
+  { label: "Testimonials", href: "/testimonials" },
   { label: "FAQ",          href: "/faq" },
 ];
 
 const navLinks = [
-  ...(isHome ? [] : [{ label: "Home", href: "/" }]),
   { label: "Schedule",    href: "/schedule" },
   { label: "Memberships", href: "/pricing" },
-  { label: "Find Us",     href: "/contact" },
+  { label: "Find Us",     href: "/#find-us" },
 ];
 ---
 
@@ -56,6 +55,18 @@ const navLinks = [
     </a>
 
     <div class="hidden md:flex items-center gap-7">
+
+      <!-- Home — only on non-homepage pages, first in line -->
+      {!isHome && (
+        <a
+          href="/"
+          class="relative text-sm font-body text-canvas/75 hover:text-canvas transition-colors duration-200 uppercase tracking-wide pb-0.5 after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-brass after:transition-transform after:duration-200 hover:after:scale-x-100"
+        >
+          Home
+        </a>
+      )}
+
+      <!-- Programs dropdown -->
       <div class="relative group">
         <button
           class="relative text-sm font-body text-canvas/75 hover:text-canvas transition-colors duration-200 uppercase tracking-wide flex items-center gap-1 pb-0.5 after:absolute after:bottom-0 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-brass after:transition-transform after:duration-200 group-hover:after:scale-x-100"
@@ -112,7 +123,7 @@ const navLinks = [
         Train Free
       </a>
       <div class="md:hidden">
-        <MobileNav client:load />
+        <MobileNav client:load isHome={isHome} />
       </div>
     </div>
 

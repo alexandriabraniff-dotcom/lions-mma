@@ -5,41 +5,79 @@ import Schedule from '../../components/Schedule';
 
 <Base title="Wrestling" description="Wrestling classes at Lions MMA Vancouver. Takedowns, scrambles, conditioning. Led by Rodrigo Sezinando and Daniel Osario.">
 
-  <!-- Header -->
-  <div class="pt-32 pb-0 max-w-7xl mx-auto px-6">
-    <p class="font-mono text-xs tracking-widest uppercase text-smoke mb-3">HARDEST SPORT IN THE WORLD</p>
-    <h1 class="font-display text-7xl md:text-9xl uppercase tracking-tight text-canvas leading-none">WRESTLING.</h1>
-    <div class="w-full aspect-video mt-8 overflow-hidden">
-      <img src="https://picsum.photos/seed/wr-hero/1920/1080" alt="Wrestling at Lions MMA" class="w-full h-full object-cover" loading="eager" />
+  <!-- Full-width hero image with text overlay -->
+  <div class="relative w-full h-[280px] md:h-[520px] overflow-hidden">
+    <!-- Image placeholder (swap for real <img> when photos arrive) -->
+    <div class="absolute inset-0 bg-iron/60 flex flex-col items-center justify-center gap-3">
+      <svg class="w-10 h-10 text-smoke/20" viewBox="0 0 24 24" fill="none"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2v11z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="1.5"/></svg>
+      <p class="font-mono text-[10px] tracking-widest text-smoke/30 uppercase">Image Coming Soon</p>
+    </div>
+    <!-- Dark overlay so text is readable -->
+    <div class="absolute inset-0 bg-void/50"></div>
+    <!-- Nav spacer + text pinned to bottom-left -->
+    <div class="relative z-10 h-full flex flex-col justify-end pb-14 px-6 md:px-12 lg:px-20 max-w-7xl mx-auto w-full" style="padding-top: 96px;">
+      <p class="font-mono text-xs tracking-widest uppercase text-canvas/60 mb-4">HARDEST SPORT IN THE WORLD</p>
+      <h1 class="font-display text-[clamp(3.5rem,7vw,7rem)] uppercase tracking-tight text-canvas leading-none">WRESTLING.</h1>
     </div>
   </div>
 
   <!-- Content -->
-  <div class="py-24 max-w-4xl mx-auto px-6">
+  <div class="py-24 max-w-7xl mx-auto px-6">
 
-    <div class="mb-16">
-      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHAT IT IS</p>
-      <div class="space-y-6 font-body text-canvas/80 leading-relaxed">
-        <p>Wrestling is the oldest combat sport in recorded history and the most athletically demanding discipline in this gym. It is built around controlling where the fight happens — taking opponents down, holding them there, and turning physical dominance into points, position, or submission setups. In a grappling context, the person who controls the takedown largely controls the match.</p>
-        <p>The wrestling curriculum at Lions is coached by Rodrigo Sezinando and Daniel Osario. It covers single legs, double legs, and high-crotch attacks from the tie-up and open stance; sprawl and scramble defense; and the chain wrestling that connects one attack to the next. The conditioning demands are real. Wrestling fitness is its own category and it will expose any gaps in your base.</p>
-        <p>For BJJ and No-Gi grapplers, wrestling solves the takedown problem — the gap in most ground fighters' games that becomes obvious the moment they face a wrestler. For MMA athletes, it provides cage control, takedowns, and the ability to dictate where every round goes. As a standalone discipline it is extraordinarily demanding and one of the most effective physical development tools on the floor.</p>
+    <!-- What it is -->
+    <div class="grid md:grid-cols-2 gap-16 mb-24">
+      <div>
+        <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHAT IT IS</p>
+        <div class="space-y-6 font-body text-canvas/80 leading-relaxed">
+          <p>Wrestling is the oldest combat sport in recorded history and the most athletically demanding discipline in this gym. It is built around controlling where the fight happens, taking opponents down, holding them there, and turning physical dominance into points, position, or submission setups. In a grappling context, the person who controls the takedown largely controls the match.</p>
+          <p>The wrestling curriculum at Lions is coached by Rodrigo Sezinando and Daniel Osario. It covers single legs, double legs, and high-crotch attacks from the tie-up and open stance; sprawl and scramble defense; and the chain wrestling that connects one attack to the next. The conditioning demands are real. Wrestling fitness is its own category and it will expose any gaps in your base.</p>
+          <p>For BJJ and No-Gi grapplers, wrestling solves the takedown problem, the gap in most ground fighters' games that becomes obvious the moment they face a wrestler. For MMA athletes, it provides cage control, takedowns, and the ability to dictate where every round goes.</p>
+        </div>
+      </div>
+      <div class="flex flex-col gap-6">
+        <div class="flex-1 min-h-52 bg-iron/30 border border-iron flex flex-col items-center justify-center gap-3">
+          <svg class="w-8 h-8 text-smoke/30" viewBox="0 0 24 24" fill="none"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2v11z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="1.5"/></svg>
+          <p class="font-mono text-[10px] tracking-widest text-smoke/40 uppercase">Image Coming Soon</p>
+        </div>
+        <div class="flex-1 min-h-52 bg-iron/30 border border-iron flex flex-col items-center justify-center gap-3">
+          <svg class="w-8 h-8 text-smoke/30" viewBox="0 0 24 24" fill="none"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2v11z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="1.5"/></svg>
+          <p class="font-mono text-[10px] tracking-widest text-smoke/40 uppercase">Image Coming Soon</p>
+        </div>
       </div>
     </div>
 
-    <div class="mb-16">
+    <!-- Who it is for -->
+    <div class="mb-20 max-w-4xl">
       <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHO IT IS FOR</p>
       <ul class="space-y-3 font-body text-canvas/80 leading-relaxed">
-        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>BJJ and No-Gi grapplers who need to solve the takedown gap</span></li>
-        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>MMA fighters building cage control and fight dictation skills</span></li>
-        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Athletes looking for serious conditioning built through real sport movement</span></li>
-        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Beginners who want to build a grappling base from the floor up</span></li>
-        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Competitors in any grappling format who want more dominance in scrambles</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1 shrink-0">+</span><span>BJJ and No-Gi grapplers who need to solve the takedown gap</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1 shrink-0">+</span><span>MMA fighters building cage control and fight dictation skills</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1 shrink-0">+</span><span>Athletes looking for serious conditioning built through real sport movement</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1 shrink-0">+</span><span>Beginners who want to build a grappling base from the floor up</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1 shrink-0">+</span><span>Competitors in any grappling format who want more dominance in scrambles</span></li>
       </ul>
     </div>
 
-    <div class="mb-16">
+    <!-- 3-image gallery strip -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-24">
+      {[1,2,3].map(() => (
+        <div class="h-56 bg-iron/30 border border-iron flex flex-col items-center justify-center gap-3">
+          <svg class="w-8 h-8 text-smoke/30" viewBox="0 0 24 24" fill="none"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2v11z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="1.5"/></svg>
+          <p class="font-mono text-[10px] tracking-widest text-smoke/40 uppercase">Image Coming Soon</p>
+        </div>
+      ))}
+    </div>
+
+    <!-- What a class looks like -->
+    <div class="mb-16 max-w-4xl">
       <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHAT A CLASS LOOKS LIKE</p>
       <p class="font-body text-canvas/80 leading-relaxed">Wrestling classes start with a demanding warm-up: level changes, penetration steps, sprawls, and movement patterns that build the athleticism the sport requires. Technique work covers the day's attack or defensive sequence, drilled at progressive speed with a partner. Classes close with live wrestling in timed rounds. Expect the hardest cardio session in the gym. Expect to learn something every single time.</p>
+    </div>
+
+    <!-- Wide image -->
+    <div class="w-full h-64 bg-iron/30 border border-iron flex flex-col items-center justify-center gap-3 mb-24">
+      <svg class="w-8 h-8 text-smoke/30" viewBox="0 0 24 24" fill="none"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2v11z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="1.5"/></svg>
+      <p class="font-mono text-[10px] tracking-widest text-smoke/40 uppercase">Image Coming Soon</p>
     </div>
 
     <!-- Schedule -->

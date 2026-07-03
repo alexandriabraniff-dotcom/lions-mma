@@ -1,12 +1,24 @@
 ---
 import { schedule, DAY_LABELS, type Day } from '../data/schedule';
 import { disciplines } from '../data/disciplines';
+import { locations } from '../data/locations';
+
+const locationMap = Object.fromEntries(locations.map((l) => [l.id, l]));
 
 // Determine today's day key
-const jsDay = new Date().getDay(); // 0=Sun, 1=Mon, ...
+const now = new Date();
+const jsDay = now.getDay(); // 0=Sun, 1=Mon, ...
 const dayMap: Day[] = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 const todayKey: Day = dayMap[jsDay];
 const todayLabel = DAY_LABELS[todayKey];
+
+// Current time in minutes since midnight
+const nowMinutes = now.getHours() * 60 + now.getMinutes();
+
+function toMin(t: string): number {
+  const [h, m] = t.split(':').map(Number);
+  return h * 60 + m;
+}
 
 // Get today's sessions sorted by start time
 const todaySessions = schedule
@@ -37,59 +49,85 @@ const levelLabels: Record<string, string> = {
 };
 ---
 
-<section class="py-24 bg-vault" id="schedule-preview">
+<section class="pt-8 pb-24 bg-vault" id="schedule-preview">
   <div class="px-6 md:px-12 lg:px-20 max-w-7xl mx-auto">
 
-    <!-- Header -->
+    <!-- Header sits above both columns -->
     <h2 class="font-display text-5xl text-canvas mb-2">ON TODAY.</h2>
-    <p class="font-mono text-sm text-smoke mb-12">{todayLabel.toUpperCase()}</p>
+    <p class="font-mono text-sm text-smoke mb-6">{todayLabel.toUpperCase()}</p>
 
-    {todaySessions.length === 0 ? (
-      <p class="font-body text-canvas/60">
-        No classes scheduled today.{' '}
-        <a href="/schedule" class="text-brass hover:text-canvas transition-colors">
-          See the full week &rarr;
+    <!-- Two columns — schedule box and image perfectly aligned -->
+    <div class="grid md:grid-cols-2 gap-12 md:gap-16 items-start">
+
+      <!-- Left: schedule list -->
+      <div>
+        <!-- Scrollable box -->
+        <div class="h-72 overflow-y-auto border border-iron bg-void/40 scrollbar-thin">
+          {todaySessions.length === 0 ? (
+            <div class="h-full flex items-center justify-center px-6">
+              <p class="font-body text-canvas/50 text-sm text-center">
+                No classes scheduled today.
+              </p>
+            </div>
+          ) : (
+            <ul class="divide-y divide-iron">
+              {todaySessions.map((session) => {
+                const discipline = disciplineMap[session.discipline];
+                const sessionStart = toMin(session.start);
+                const sessionEnd = toMin(session.end);
+                const isLive = nowMinutes >= sessionStart && nowMinutes < sessionEnd;
+                return (
+                  <li class={`py-4 px-5 flex flex-col gap-1 ${isLive ? 'bg-brass/10 border-l-2 border-l-brass' : ''}`}>
+                    <div class="flex items-center gap-4">
+                      <span class={`font-mono text-sm w-20 shrink-0 ${isLive ? 'text-brass' : 'text-canvas/60'}`}>
+                        {fmt12h(session.start)}
+                      </span>
+                      <span class="font-display text-base uppercase text-canvas leading-tight">
+                        {discipline?.name ?? session.discipline}
+                      </span>
+                      {isLive && (
+                        <span class="ml-auto font-mono text-[9px] tracking-widest bg-brass text-void px-2 py-0.5 shrink-0">
+                          LIVE
+                        </span>
+                      )}
+                    </div>
+                    <div class="flex items-center gap-3 pl-24">
+                      {session.level && session.level !== 'all' && (
+                        <span class="font-mono text-[10px] border border-iron text-smoke px-2 py-0.5 shrink-0">
+                          {levelLabels[session.level] ?? session.level.toUpperCase()}
+                        </span>
+                      )}
+                      <span class="font-mono text-[10px] text-brass shrink-0">
+                        {locationMap[session.location]?.address ?? session.location}
+                      </span>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+
+        <!-- Button below -->
+        <a
+          href="/schedule"
+          class="mt-6 inline-block bg-brass text-void font-display text-sm tracking-wider uppercase py-3 px-8 hover:brightness-110 transition-all duration-200"
+        >
+          SEE FULL SCHEDULE
         </a>
-      </p>
-    ) : (
-      <ul class="max-w-2xl divide-y divide-iron border-t border-iron">
-        {todaySessions.map((session) => {
-          const discipline = disciplineMap[session.discipline];
-          return (
-            <li class="py-4 flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-6">
-              <!-- Time + name row -->
-              <div class="flex items-center gap-4">
-                <span class="font-mono text-sm text-canvas w-20 shrink-0">
-                  {fmt12h(session.start)}
-                </span>
-                <span class="font-display text-lg uppercase text-canvas leading-tight">
-                  {discipline?.name ?? session.discipline}
-                </span>
-              </div>
-              <!-- Badge + location row -->
-              <div class="flex items-center gap-3 sm:contents">
-                {session.level && session.level !== 'all' && (
-                  <span class="font-mono text-xs border border-iron text-smoke px-2 py-0.5 shrink-0">
-                    {levelLabels[session.level] ?? session.level.toUpperCase()}
-                  </span>
-                )}
-                <span class="font-mono text-xs text-brass sm:ml-auto shrink-0">
-                  {session.location} GRANVILLE
-                </span>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
-    )}
+      </div>
 
-    <!-- Full schedule link -->
-    <a
-      href="/schedule"
-      class="mt-8 inline-block font-mono text-sm text-brass hover:text-canvas tracking-widest uppercase transition-colors"
-    >
-      SEE FULL SCHEDULE &rarr;
-    </a>
+      <!-- Right: image — same h-72 as scroll box, aligned perfectly -->
+      <div class="hidden md:block">
+        <div class="h-72 bg-void border border-iron overflow-hidden">
+          <img
+            src="/images/schedule-teaser.jpg"
+            alt="Lions MMA training"
+            class="w-full h-full object-cover opacity-60"
+          />
+        </div>
+      </div>
 
+    </div>
   </div>
 </section>

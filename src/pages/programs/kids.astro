@@ -5,41 +5,79 @@ import Schedule from '../../components/Schedule';
 
 <Base title="Kids" description="Kids martial arts classes at Lions MMA Vancouver. Ages 4 and up. Confidence, character, anti-bullying values. Led by Alex Coles and Emma Stecklov.">
 
-  <!-- Header -->
-  <div class="pt-32 pb-0 max-w-7xl mx-auto px-6">
-    <p class="font-mono text-xs tracking-widest uppercase text-smoke mb-3">ANTI-BULLYING, RESPECT, VALUES</p>
-    <h1 class="font-display text-7xl md:text-9xl uppercase tracking-tight text-canvas leading-none">KIDS.</h1>
-    <div class="w-full aspect-video mt-8 overflow-hidden">
-      <img src="https://picsum.photos/seed/kd-hero/1920/1080" alt="Kids at Lions MMA" class="w-full h-full object-cover" loading="eager" />
+  <!-- Full-width hero image with text overlay -->
+  <div class="relative w-full h-[280px] md:h-[520px] overflow-hidden">
+    <!-- Image placeholder (swap for real <img> when photos arrive) -->
+    <div class="absolute inset-0 bg-iron/60 flex flex-col items-center justify-center gap-3">
+      <svg class="w-10 h-10 text-smoke/20" viewBox="0 0 24 24" fill="none"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2v11z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="1.5"/></svg>
+      <p class="font-mono text-[10px] tracking-widest text-smoke/30 uppercase">Image Coming Soon</p>
+    </div>
+    <!-- Dark overlay so text is readable -->
+    <div class="absolute inset-0 bg-void/50"></div>
+    <!-- Nav spacer + text pinned to bottom-left -->
+    <div class="relative z-10 h-full flex flex-col justify-end pb-14 px-6 md:px-12 lg:px-20 max-w-7xl mx-auto w-full" style="padding-top: 96px;">
+      <p class="font-mono text-xs tracking-widest uppercase text-canvas/60 mb-4">ANTI-BULLYING, RESPECT, VALUES</p>
+      <h1 class="font-display text-[clamp(3.5rem,7vw,7rem)] uppercase tracking-tight text-canvas leading-none">KIDS.</h1>
     </div>
   </div>
 
   <!-- Content -->
-  <div class="py-24 max-w-4xl mx-auto px-6">
+  <div class="py-24 max-w-7xl mx-auto px-6">
 
-    <div class="mb-16">
-      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHAT IT IS</p>
-      <div class="space-y-6 font-body text-canvas/80 leading-relaxed">
-        <p>The Kids program at Lions teaches martial arts the right way: with genuine technical instruction, real values, and no tolerance for ego — from children or from adults. Classes are for ages 4 and up and cover the fundamentals of Muay Thai and BJJ adapted for young students. The goal is not to produce child fighters. The goal is to develop confident, disciplined, capable young people who know how to handle themselves and treat others with respect.</p>
-        <p>Alex Coles built the program from the ground up and remains its primary driver. His approach is direct and effective: high standards, consistent expectations, and the kind of encouragement that produces genuine results rather than empty praise. Emma Stecklov brings the same level of patience and precision to her classes and is a favourite among the younger students in the program.</p>
-        <p>Anti-bullying is a specific and deliberate focus. Students learn how to de-escalate, when to walk away, and what to do if they cannot. They also learn the physical skills to back that up. The combination builds a quiet confidence that shows up in school, at home, and in every room they walk into.</p>
+    <!-- What it is -->
+    <div class="grid md:grid-cols-2 gap-16 mb-24">
+      <div>
+        <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHAT IT IS</p>
+        <div class="space-y-6 font-body text-canvas/80 leading-relaxed">
+          <p>The Kids program at Lions teaches martial arts the right way: with genuine technical instruction, real values, and no tolerance for ego. Classes are for ages 4 and up and cover the fundamentals of Muay Thai and BJJ adapted for young students. The goal is not to produce child fighters. The goal is to develop confident, disciplined, capable young people who know how to handle themselves and treat others with respect.</p>
+          <p>Alex Coles built the program from the ground up and remains its primary driver. His approach is direct and effective: high standards, consistent expectations, and the kind of encouragement that produces genuine results rather than empty praise. Emma Stecklov brings the same level of patience and precision to her classes and is a favourite among the younger students.</p>
+          <p>Anti-bullying is a specific and deliberate focus. Students learn how to de-escalate, when to walk away, and what to do if they cannot. They also learn the physical skills to back that up. The combination builds a quiet confidence that shows up in school, at home, and in every room they walk into.</p>
+        </div>
+      </div>
+      <div class="flex flex-col gap-6">
+        <div class="flex-1 min-h-52 bg-iron/30 border border-iron flex flex-col items-center justify-center gap-3">
+          <svg class="w-8 h-8 text-smoke/30" viewBox="0 0 24 24" fill="none"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2v11z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="1.5"/></svg>
+          <p class="font-mono text-[10px] tracking-widest text-smoke/40 uppercase">Image Coming Soon</p>
+        </div>
+        <div class="flex-1 min-h-52 bg-iron/30 border border-iron flex flex-col items-center justify-center gap-3">
+          <svg class="w-8 h-8 text-smoke/30" viewBox="0 0 24 24" fill="none"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2v11z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="1.5"/></svg>
+          <p class="font-mono text-[10px] tracking-widest text-smoke/40 uppercase">Image Coming Soon</p>
+        </div>
       </div>
     </div>
 
-    <div class="mb-16">
+    <!-- Who it is for -->
+    <div class="mb-20 max-w-4xl">
       <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHO IT IS FOR</p>
       <ul class="space-y-3 font-body text-canvas/80 leading-relaxed">
-        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Children ages 4 and up with no prior martial arts experience</span></li>
-        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Kids dealing with confidence issues, social anxiety, or bullying situations</span></li>
-        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Young athletes looking for a structured, demanding physical outlet</span></li>
-        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Families who want their children trained in a respectful, well-run environment</span></li>
-        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Kids who want to compete at the youth level when they are ready</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1 shrink-0">+</span><span>Children ages 4 and up with no prior martial arts experience</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1 shrink-0">+</span><span>Kids dealing with confidence issues, social anxiety, or bullying situations</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1 shrink-0">+</span><span>Young athletes looking for a structured, demanding physical outlet</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1 shrink-0">+</span><span>Families who want their children trained in a respectful, well-run environment</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1 shrink-0">+</span><span>Kids who want to compete at the youth level when they are ready</span></li>
       </ul>
     </div>
 
-    <div class="mb-16">
+    <!-- 3-image gallery strip -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-24">
+      {[1,2,3].map(() => (
+        <div class="h-56 bg-iron/30 border border-iron flex flex-col items-center justify-center gap-3">
+          <svg class="w-8 h-8 text-smoke/30" viewBox="0 0 24 24" fill="none"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2v11z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="1.5"/></svg>
+          <p class="font-mono text-[10px] tracking-widest text-smoke/40 uppercase">Image Coming Soon</p>
+        </div>
+      ))}
+    </div>
+
+    <!-- What a class looks like -->
+    <div class="mb-16 max-w-4xl">
       <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHAT A CLASS LOOKS LIKE</p>
-      <p class="font-body text-canvas/80 leading-relaxed">Kids classes are structured, active, and age-appropriate. Warm-ups involve games and movement challenges that build coordination. Technique instruction is clear, hands-on, and reinforced through fun drills that keep younger students engaged without compromising the material. Classes close with controlled partner work and positive reinforcement. Parents are welcome to watch from the viewing area. No phones on the mat, no exceptions.</p>
+      <p class="font-body text-canvas/80 leading-relaxed">Kids classes are structured, active, and age-appropriate. Warm-ups involve games and movement challenges that build coordination. Technique instruction is clear, hands-on, and reinforced through fun drills that keep younger students engaged without compromising the material. Classes close with controlled partner work and positive reinforcement. Parents are welcome to watch from the viewing area.</p>
+    </div>
+
+    <!-- Wide image -->
+    <div class="w-full h-64 bg-iron/30 border border-iron flex flex-col items-center justify-center gap-3 mb-24">
+      <svg class="w-8 h-8 text-smoke/30" viewBox="0 0 24 24" fill="none"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2v11z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="1.5"/></svg>
+      <p class="font-mono text-[10px] tracking-widest text-smoke/40 uppercase">Image Coming Soon</p>
     </div>
 
     <!-- Schedule -->

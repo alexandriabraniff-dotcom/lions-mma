@@ -5,41 +5,79 @@ import Schedule from '../../components/Schedule';
 
 <Base title="Women's Only" description="Women's Only Muay Thai, BJJ, and No-Gi classes at Lions MMA Vancouver. Taught by female instructors. Led by Jessica Wilson.">
 
-  <!-- Header -->
-  <div class="pt-32 pb-0 max-w-7xl mx-auto px-6">
-    <p class="font-mono text-xs tracking-widest uppercase text-smoke mb-3">SAFE, INCLUSIVE, EMPOWERING</p>
-    <h1 class="font-display text-7xl md:text-9xl uppercase tracking-tight text-canvas leading-none">WOMEN'S ONLY.</h1>
-    <div class="w-full aspect-video mt-8 overflow-hidden">
-      <img src="https://picsum.photos/seed/wo-hero/1920/1080" alt="Womens Only at Lions MMA" class="w-full h-full object-cover" loading="eager" />
+  <!-- Full-width hero image with text overlay -->
+  <div class="relative w-full h-[280px] md:h-[520px] overflow-hidden">
+    <!-- Image placeholder (swap for real <img> when photos arrive) -->
+    <div class="absolute inset-0 bg-iron/60 flex flex-col items-center justify-center gap-3">
+      <svg class="w-10 h-10 text-smoke/20" viewBox="0 0 24 24" fill="none"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2v11z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="1.5"/></svg>
+      <p class="font-mono text-[10px] tracking-widest text-smoke/30 uppercase">Image Coming Soon</p>
+    </div>
+    <!-- Dark overlay so text is readable -->
+    <div class="absolute inset-0 bg-void/50"></div>
+    <!-- Nav spacer + text pinned to bottom-left -->
+    <div class="relative z-10 h-full flex flex-col justify-end pb-14 px-6 md:px-12 lg:px-20 max-w-7xl mx-auto w-full" style="padding-top: 96px;">
+      <p class="font-mono text-xs tracking-widest uppercase text-canvas/60 mb-4">SAFE, INCLUSIVE, EMPOWERING</p>
+      <h1 class="font-display text-[clamp(3.5rem,7vw,7rem)] uppercase tracking-tight text-canvas leading-none">WOMEN'S ONLY.</h1>
     </div>
   </div>
 
   <!-- Content -->
-  <div class="py-24 max-w-4xl mx-auto px-6">
+  <div class="py-24 max-w-7xl mx-auto px-6">
 
-    <div class="mb-16">
-      <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHAT IT IS</p>
-      <div class="space-y-6 font-body text-canvas/80 leading-relaxed">
-        <p>The Women's Only program at Lions runs all-female classes in Muay Thai, BJJ, and No-Gi. Classes are taught by female instructors. The same technical standards apply as every other class in the gym. The difference is the environment — purpose-built for women, with no performance anxiety around training alongside men for the first time.</p>
-        <p>Jessica Wilson runs the program with genuine investment in the students who come through it. She has trained Muay Thai for years, competes, and understands the specific experience of being a woman navigating a historically male-dominated space. Her classes are technically demanding, supportive, and designed to develop real skill — not a modified version of it.</p>
-        <p>The program is one of the most active in the gym. Students range from complete beginners who have never trained any martial art, to experienced grapplers who prefer an all-female training environment for at least part of their week. Both are equally welcome. The program has produced competitors and built a community that extends well beyond the mats.</p>
+    <!-- What it is -->
+    <div class="grid md:grid-cols-2 gap-16 mb-24">
+      <div>
+        <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHAT IT IS</p>
+        <div class="space-y-6 font-body text-canvas/80 leading-relaxed">
+          <p>The Women's Only program at Lions runs all-female classes in Muay Thai, BJJ, and No-Gi. Classes are taught by female instructors. The same technical standards apply as every other class in the gym. The difference is the environment, purpose-built for women, with no performance anxiety around training alongside men for the first time.</p>
+          <p>Jessica Wilson runs the program with genuine investment in the students who come through it. She has trained Muay Thai for years, competes, and understands the specific experience of being a woman navigating a historically male-dominated space. Her classes are technically demanding, supportive, and designed to develop real skill, not a modified version of it.</p>
+          <p>The program is one of the most active in the gym. Students range from complete beginners to experienced grapplers who prefer an all-female training environment. Both are equally welcome. The program has produced competitors and built a community that extends well beyond the mats.</p>
+        </div>
+      </div>
+      <div class="flex flex-col gap-6">
+        <div class="flex-1 min-h-52 bg-iron/30 border border-iron flex flex-col items-center justify-center gap-3">
+          <svg class="w-8 h-8 text-smoke/30" viewBox="0 0 24 24" fill="none"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2v11z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="1.5"/></svg>
+          <p class="font-mono text-[10px] tracking-widest text-smoke/40 uppercase">Image Coming Soon</p>
+        </div>
+        <div class="flex-1 min-h-52 bg-iron/30 border border-iron flex flex-col items-center justify-center gap-3">
+          <svg class="w-8 h-8 text-smoke/30" viewBox="0 0 24 24" fill="none"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2v11z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="1.5"/></svg>
+          <p class="font-mono text-[10px] tracking-widest text-smoke/40 uppercase">Image Coming Soon</p>
+        </div>
       </div>
     </div>
 
-    <div class="mb-16">
+    <!-- Who it is for -->
+    <div class="mb-20 max-w-4xl">
       <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHO IT IS FOR</p>
       <ul class="space-y-3 font-body text-canvas/80 leading-relaxed">
-        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Women who are new to martial arts and want a lower-pressure starting point</span></li>
-        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Experienced training partners who prefer an all-female class environment</span></li>
-        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Anyone who has had a negative experience in mixed martial arts settings before</span></li>
-        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Women interested in self-defense through real, functional technique</span></li>
-        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1">—</span><span>Athletes who want to cross-train across Muay Thai, BJJ, and No-Gi in one program</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1 shrink-0">+</span><span>Women who are new to martial arts and want a lower-pressure starting point</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1 shrink-0">+</span><span>Experienced training partners who prefer an all-female class environment</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1 shrink-0">+</span><span>Anyone who has had a negative experience in mixed martial arts settings before</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1 shrink-0">+</span><span>Women interested in self-defense through real, functional technique</span></li>
+        <li class="flex gap-3"><span class="text-brass font-mono text-xs mt-1 shrink-0">+</span><span>Athletes who want to cross-train across Muay Thai, BJJ, and No-Gi in one program</span></li>
       </ul>
     </div>
 
-    <div class="mb-16">
+    <!-- 3-image gallery strip -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-24">
+      {[1,2,3].map(() => (
+        <div class="h-56 bg-iron/30 border border-iron flex flex-col items-center justify-center gap-3">
+          <svg class="w-8 h-8 text-smoke/30" viewBox="0 0 24 24" fill="none"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2v11z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="1.5"/></svg>
+          <p class="font-mono text-[10px] tracking-widest text-smoke/40 uppercase">Image Coming Soon</p>
+        </div>
+      ))}
+    </div>
+
+    <!-- What a class looks like -->
+    <div class="mb-16 max-w-4xl">
       <p class="font-mono text-xs tracking-widest uppercase text-smoke border-b border-iron pb-2 mb-8">WHAT A CLASS LOOKS LIKE</p>
       <p class="font-body text-canvas/80 leading-relaxed">Class format mirrors the standard program for each discipline: warm-up, technique instruction, drilling, and live work or controlled sparring. The environment is direct, encouraging, and holds the same technical standard as any other class. New students are introduced to the basics at an appropriate pace. There is no dumbing-down of the material and no tolerance for condescension from anyone on the floor.</p>
+    </div>
+
+    <!-- Wide image -->
+    <div class="w-full h-64 bg-iron/30 border border-iron flex flex-col items-center justify-center gap-3 mb-24">
+      <svg class="w-8 h-8 text-smoke/30" viewBox="0 0 24 24" fill="none"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2v11z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="1.5"/></svg>
+      <p class="font-mono text-[10px] tracking-widest text-smoke/40 uppercase">Image Coming Soon</p>
     </div>
 
     <!-- Schedule -->

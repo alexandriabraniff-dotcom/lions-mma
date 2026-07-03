@@ -2,79 +2,138 @@
 import { locations } from '../data/locations';
 ---
 
-<section class="py-24 bg-void" id="locations">
+<section class="py-24 bg-void" id="find-us">
   <div class="px-6 md:px-12 lg:px-20 max-w-7xl mx-auto">
 
-    <!-- Section header -->
-    <p class="font-mono text-xs tracking-widest uppercase text-smoke mb-3">Where to find us</p>
-    <h2 class="font-display text-5xl text-canvas mb-16 reveal">TWO LOCATIONS.</h2>
+    <div class="grid md:grid-cols-2 gap-16 md:gap-24 items-start reveal">
 
-    <!-- Locations grid -->
-    <div class="grid md:grid-cols-2 gap-px bg-iron reveal">
-      {locations.map((location) => (
-        <div class="bg-void p-8 md:p-12">
-
-          <p class="font-display text-6xl text-canvas mb-1">{location.short}</p>
-          <p class="font-mono text-xs tracking-widest text-brass mb-6">GRANVILLE STREET</p>
-
-          <p class="font-mono text-sm text-canvas/65 leading-relaxed mb-6">
-            {location.address}<br />
-            {location.city}
-          </p>
-
-          <!-- Map embed -->
-          <div class="aspect-video bg-vault border border-iron mb-6 overflow-hidden">
-            <iframe
-              src={location.mapUrl}
-              width="100%"
-              height="100%"
-              class="w-full h-full grayscale opacity-60 hover:opacity-100 hover:grayscale-0 transition-all duration-500"
-              allowfullscreen
-              loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade"
-              title={`Map for ${location.name}`}
-            ></iframe>
-          </div>
-
-          <a
-            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location.full)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="font-mono text-xs tracking-widest uppercase text-brass hover:text-canvas transition-colors"
-          >
-            GET DIRECTIONS &rarr;
-          </a>
-
-        </div>
-      ))}
-    </div>
-
-    <!-- Pricing CTA strip -->
-    <div class="reveal mt-px bg-vault p-10 md:p-14 flex flex-col md:flex-row items-center justify-between gap-8 border-t border-iron">
+      <!-- Left: Contact & social info -->
       <div>
-        <p class="font-mono text-xs tracking-widest uppercase text-smoke mb-2">Membership</p>
-        <p class="font-display text-[clamp(2rem,5vw,3.5rem)] uppercase leading-none text-canvas">
-          FROM $115 / MONTH.
-        </p>
-        <p class="font-body text-sm text-canvas/55 mt-2">
-          Gear pack included. Both locations. Every discipline. Month-to-month available.
-        </p>
+        <p class="font-mono text-xs tracking-widest uppercase text-smoke mb-3">Where to find us</p>
+        <h2 class="font-display text-5xl text-canvas mb-12">FIND US.</h2>
+
+        <!-- Phone -->
+        <div class="mb-8">
+          <p class="font-mono text-[10px] tracking-widest uppercase text-smoke mb-2">Phone</p>
+          <a
+            href="tel:+16046840991"
+            class="font-display text-2xl text-canvas hover:text-brass transition-colors duration-200"
+          >
+            +1 604-684-0991
+          </a>
+        </div>
+
+        <!-- Email -->
+        <div class="mb-8">
+          <p class="font-mono text-[10px] tracking-widest uppercase text-smoke mb-2">Email</p>
+          <a
+            href="mailto:info@lionsmma.ca"
+            class="font-display text-2xl text-canvas hover:text-brass transition-colors duration-200"
+          >
+            info@lionsmma.ca
+          </a>
+        </div>
+
+        <!-- Social -->
+        <div class="mb-12">
+          <p class="font-mono text-[10px] tracking-widest uppercase text-smoke mb-4">Follow Us</p>
+          <div class="flex items-center gap-5">
+
+            <!-- Instagram -->
+            <a
+              href="https://www.instagram.com/lionsmma"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Lions MMA on Instagram"
+              class="text-canvas/60 hover:text-brass transition-colors duration-200"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="2" y="2" width="20" height="20" rx="5" stroke="currentColor" stroke-width="1.5"/>
+                <circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="1.5"/>
+                <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
+              </svg>
+            </a>
+
+            <!-- Facebook -->
+            <a
+              href="https://www.facebook.com/lionsmma"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Lions MMA on Facebook"
+              class="text-canvas/60 hover:text-brass transition-colors duration-200"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 2H15C13.6739 2 12.4021 2.52678 11.4645 3.46447C10.5268 4.40215 10 5.67392 10 7V10H7V14H10V22H14V14H17L18 10H14V7C14 6.73478 14.1054 6.48043 14.2929 6.29289C14.4804 6.10536 14.7348 6 15 6H18V2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+
+            <!-- X / Twitter -->
+            <a
+              href="https://twitter.com/lionsmma"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Lions MMA on X"
+              class="text-canvas/60 hover:text-brass transition-colors duration-200"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 4L10.5 12.5M4 4H7.5L20 20H16.5L10.5 12.5M4 4L10.5 12.5M20 4L13.5 11.5M13.5 11.5L10.5 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+
+          </div>
+        </div>
+
+        <!-- CTAs -->
+        <div class="flex gap-3 flex-wrap">
+          <a
+            href="/pricing"
+            class="bg-brass text-void font-display text-sm tracking-wider uppercase py-3 px-7 hover:brightness-110 transition"
+          >
+            SEE ALL PLANS
+          </a>
+          <a
+            href="/free-trial"
+            class="border border-canvas/30 text-canvas font-display text-sm tracking-wider uppercase py-3 px-7 hover:border-canvas transition"
+          >
+            TRAIN FREE
+          </a>
+        </div>
       </div>
-      <div class="flex gap-3 flex-wrap shrink-0">
-        <a
-          href="/pricing"
-          class="bg-brass text-void font-display text-sm tracking-wider uppercase py-3 px-7 hover:brightness-110 transition"
-        >
-          SEE ALL PLANS
-        </a>
-        <a
-          href="/free-trial"
-          class="border border-canvas/30 text-canvas font-display text-sm tracking-wider uppercase py-3 px-7 hover:border-canvas transition"
-        >
-          TRAIN FREE
-        </a>
+
+      <!-- Right: Two locations -->
+      <div class="flex flex-col gap-10">
+        {locations.map((location, i) => (
+          <div>
+            <p class="font-mono text-[10px] tracking-widest uppercase text-smoke mb-1">Location {i + 1}</p>
+
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location.full)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="font-display text-xl text-canvas hover:text-brass transition-colors duration-200 block mb-4"
+            >
+              {location.address}, {location.city}
+            </a>
+
+            <!-- Map embed — smaller -->
+            <div class="h-44 bg-vault border border-iron overflow-hidden">
+              <iframe
+                src={location.mapUrl}
+                width="100%"
+                height="100%"
+                class="w-full h-full grayscale opacity-60 hover:opacity-100 hover:grayscale-0 transition-all duration-500"
+                allowfullscreen
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                title={`Map for ${location.name}`}
+              ></iframe>
+            </div>
+          </div>
+        ))}
       </div>
+
     </div>
+
 
   </div>
 </section>
