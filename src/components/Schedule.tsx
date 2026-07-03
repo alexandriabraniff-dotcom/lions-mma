@@ -946,15 +946,6 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
     }
   }, [activeDay]);
 
-  const [announcement, setAnnouncement] = useState('');
-  useEffect(() => {
-    setAnnouncement('');
-    const t = setTimeout(() => {
-      setAnnouncement(`Showing ${filtered.length} class${filtered.length !== 1 ? 'es' : ''}`);
-    }, 150);
-    return () => clearTimeout(t);
-  }, [activeLocation, activeDiscipline, activeDay, filterDiscipline, filtered.length]);
-
   function isCurrentDay(day: Day) { return day === getTodayDay(); }
 
   // Day navigation helpers
@@ -985,6 +976,15 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
     (disc === 'all'
       || (disc === 'womens' ? s.level === 'womens' : s.discipline === disc))
   );
+
+  const [announcement, setAnnouncement] = useState('');
+  useEffect(() => {
+    setAnnouncement('');
+    const t = setTimeout(() => {
+      setAnnouncement(`Showing ${filtered.length} class${filtered.length !== 1 ? 'es' : ''}`);
+    }, 150);
+    return () => clearTimeout(t);
+  }, [activeLocation, activeDiscipline, activeDay, filterDiscipline, filtered.length]);
 
   function getGroupedDay(day: Day): GroupedSession[] {
     return groupSessions(
