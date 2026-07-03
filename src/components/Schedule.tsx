@@ -638,7 +638,8 @@ function TimeGrid({
   const inWeekView = viewMode === 'week';
   const days       = inWeekView ? DAYS_ORDER : [activeDay];
 
-  const nowMin  = new Date().getHours() * 60 + new Date().getMinutes();
+  const _vanNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Vancouver' }));
+  const nowMin  = _vanNow.getHours() * 60 + _vanNow.getMinutes();
   const nowPx   = ((nowMin - START_HOUR * 60) / 60) * HOUR_PX;
   const showNow = nowMin >= START_HOUR * 60 && nowMin < END_HOUR * 60;
 
@@ -816,14 +817,18 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
   const dayTabsRef  = useRef<HTMLDivElement>(null);
   const touchStartX = useRef<number | null>(null);
 
+  function getVancouverNow(): Date {
+    return new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Vancouver' }));
+  }
+
   function getTodayDay(): Day {
     const m: Record<number, Day> = { 0:'sun',1:'mon',2:'tue',3:'wed',4:'thu',5:'fri',6:'sat' };
-    return m[new Date().getDay()] ?? 'mon';
+    return m[getVancouverNow().getDay()] ?? 'mon';
   }
 
   // Returns the calendar date (1–31) for each day of the current week
   function getWeekDates(): Record<Day, number> {
-    const today   = new Date();
+    const today   = getVancouverNow();
     const jsDay   = today.getDay();
     const fromMon = jsDay === 0 ? 6 : jsDay - 1;
     const monday  = new Date(today);
@@ -840,7 +845,7 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
 
   // Returns "Wednesday, July 1" for a given Day
   function getFullDateLabel(day: Day): string {
-    const today   = new Date();
+    const today   = getVancouverNow();
     const jsDay   = today.getDay();
     const fromMon = jsDay === 0 ? 6 : jsDay - 1;
     const monday  = new Date(today);
@@ -872,7 +877,10 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
   useEffect(() => {
     if (!dayTabsRef.current) return;
     const btn = dayTabsRef.current.querySelector('[data-active="true"]') as HTMLElement | null;
-    btn?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+    if (btn) {
+      const container = dayTabsRef.current;
+      container.scrollLeft = btn.offsetLeft - container.offsetWidth / 2 + btn.offsetWidth / 2;
+    }
   }, [activeDay]);
 
   function isCurrentDay(day: Day) { return day === getTodayDay(); }

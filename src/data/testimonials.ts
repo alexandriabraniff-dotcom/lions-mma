@@ -3,6 +3,7 @@ export type Testimonial = {
   detail: string;
   quote: string;
   reviewUrl: string; // Individual Google review URL — replace with actual link from Google Maps
+  image?: string;   // Path to member photo, e.g. '/images/testimonials/johnny-tesoro.jpg'
 };
 
 export const testimonials: Testimonial[] = [
