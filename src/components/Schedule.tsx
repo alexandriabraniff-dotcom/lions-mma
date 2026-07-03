@@ -921,8 +921,8 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
 
   const locationOptions: SelectOption[] = [
     { value: 'all',  label: 'Both Locations' },
-    { value: '1256', label: 'Location 1' },
-    { value: '1133', label: 'Location 2' },
+    { value: '1256', label: '1256 Granville St' },
+    { value: '1133', label: '1133 Granville St' },
   ];
 
   const disciplineOptions: SelectOption[] = [
