@@ -27,8 +27,16 @@ const { title, description, ogImage } = Astro.props;
     <SEO title={title} description={description} ogImage={ogImage} />
   </head>
   <body class="bg-void text-canvas font-body antialiased">
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-brass focus:text-void focus:font-display focus:text-sm focus:tracking-wider focus:uppercase focus:py-2 focus:px-4"
+    >
+      Skip to main content
+    </a>
     <Nav />
-    <slot />
+    <main id="main-content">
+      <slot />
+    </main>
     <Footer />
 
     <script>

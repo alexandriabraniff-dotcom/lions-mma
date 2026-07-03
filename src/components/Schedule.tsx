@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useId } from 'react';
 import { schedule, DAY_LABELS, DAYS_ORDER } from '../data/schedule';
 import type { ClassSession, Day, Level } from '../data/schedule';
 import { disciplines } from '../data/disciplines';
@@ -163,13 +163,16 @@ function CustomSelect({
   options,
   value,
   onChange,
+  label,
 }: {
   options:  SelectOption[];
   value:    string;
   onChange: (v: string) => void;
+  label:    string;
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const listboxId = useId();
 
   useEffect(() => {
     if (!open) return;
@@ -180,6 +183,19 @@ function CustomSelect({
     return () => document.removeEventListener('mousedown', handler);
   }, [open]);
 
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (e.key === 'Escape') { setOpen(false); return; }
+    if (!open && (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown')) {
+      e.preventDefault(); setOpen(true); return;
+    }
+    if (open) {
+      const idx = options.findIndex(o => o.value === value);
+      if (e.key === 'ArrowDown') { e.preventDefault(); if (idx < options.length - 1) onChange(options[idx + 1].value); }
+      if (e.key === 'ArrowUp')   { e.preventDefault(); if (idx > 0) onChange(options[idx - 1].value); }
+      if (e.key === 'Enter')     { setOpen(false); }
+    }
+  }
+
   const selected = options.find(o => o.value === value) ?? options[0];
 
   return (
@@ -187,6 +203,11 @@ function CustomSelect({
       {/* Trigger */}
       <button
         onClick={() => setOpen(o => !o)}
+        onKeyDown={handleKeyDown}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={listboxId}
+        aria-label={`${label}: ${selected.label}`}
         style={{
           width:           '100%',
           display:         'flex',
@@ -229,6 +250,9 @@ function CustomSelect({
       {/* Dropdown panel */}
       {open && (
         <div
+          id={listboxId}
+          role="listbox"
+          aria-label={label}
           style={{
             position:        'absolute',
             top:             'calc(100% + 6px)',
@@ -250,6 +274,8 @@ function CustomSelect({
             return (
               <button
                 key={opt.value}
+                role="option"
+                aria-selected={isSelected}
                 onClick={() => { onChange(opt.value); setOpen(false); }}
                 style={{
                   width:          '100%',
@@ -328,11 +354,18 @@ function ClassModal({
   const locObj   = locations.find(l => l.id === session.location);
   const locLabel = locObj ? locObj.address : session.location;
   const levelStr = [...new Set(session.levels.map(getLevelLabel).filter(Boolean))].join(' / ');
+  const headingId = useId();
 
-  // Close on backdrop click
-  function handleBackdrop(e: React.MouseEvent) {
-    if (e.target === e.currentTarget) onClose();
-  }
+  const panelRef   = useRef<HTMLDivElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const prevFocusRef = useRef<HTMLElement | null>(null);
+
+  // Save focus, move to close button on open, restore on close
+  useEffect(() => {
+    prevFocusRef.current = document.activeElement as HTMLElement;
+    closeBtnRef.current?.focus();
+    return () => { prevFocusRef.current?.focus(); };
+  }, []);
 
   // Close on Escape
   useEffect(() => {
@@ -340,6 +373,23 @@ function ClassModal({
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
   }, []);
+
+  // Focus trap
+  function handlePanelKeyDown(e: React.KeyboardEvent) {
+    if (e.key !== 'Tab' || !panelRef.current) return;
+    const focusable = Array.from(panelRef.current.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    ));
+    if (focusable.length === 0) return;
+    const first = focusable[0], last = focusable[focusable.length - 1];
+    if (e.shiftKey) { if (document.activeElement === first) { e.preventDefault(); last.focus(); } }
+    else            { if (document.activeElement === last)  { e.preventDefault(); first.focus(); } }
+  }
+
+  // Close on backdrop click
+  function handleBackdrop(e: React.MouseEvent) {
+    if (e.target === e.currentTarget) onClose();
+  }
 
   return (
     <>
@@ -349,6 +399,9 @@ function ClassModal({
       `}</style>
     <div
       onClick={handleBackdrop}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={headingId}
       style={{
         position:        'fixed',
         inset:           0,
@@ -365,6 +418,8 @@ function ClassModal({
     >
       {/* Panel */}
       <div
+        ref={panelRef}
+        onKeyDown={handlePanelKeyDown}
         style={{
           width:           '100%',
           maxWidth:        'min(480px, calc(100vw - 32px))',
@@ -386,12 +441,14 @@ function ClassModal({
               <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '11px', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase', color: accent, marginBottom: '4px' }}>
                 {disc?.tagline ?? 'Class'}
               </p>
-              <h3 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '28px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.02em', color: '#EEE8DC', lineHeight: 1 }}>
+              <h3 id={headingId} style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: '28px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.02em', color: '#EEE8DC', lineHeight: 1 }}>
                 {name}
               </h3>
             </div>
             <button
+              ref={closeBtnRef}
               onClick={onClose}
+              aria-label="Close class details"
               style={{ flexShrink: 0, marginTop: '2px', width: '44px', height: '44px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.08)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
             >
               <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
@@ -525,8 +582,13 @@ function EventBlock({
   const border = `${accent}55`;
   const glow   = `${accent}40`;
 
+  const ariaLabel = `${name}, ${fmt12h(session.start)} to ${fmt12h(session.end)}, ${locShort}${levelStr ? `, ${levelStr}` : ''}`;
+
   return (
     <div
+      role="button"
+      tabIndex={0}
+      aria-label={ariaLabel}
       className="absolute overflow-hidden"
       style={{
         top,
@@ -543,6 +605,7 @@ function EventBlock({
         cursor:       'pointer',
       }}
       onClick={onSelect}
+      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(); } }}
       onMouseEnter={e => {
         (e.currentTarget as HTMLElement).style.transform = 'scaleY(1.005) scaleX(1.01)';
         (e.currentTarget as HTMLElement).style.zIndex = '10';
@@ -883,6 +946,15 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
     }
   }, [activeDay]);
 
+  const [announcement, setAnnouncement] = useState('');
+  useEffect(() => {
+    setAnnouncement('');
+    const t = setTimeout(() => {
+      setAnnouncement(`Showing ${filtered.length} class${filtered.length !== 1 ? 'es' : ''}`);
+    }, 150);
+    return () => clearTimeout(t);
+  }, [activeLocation, activeDiscipline, activeDay, filterDiscipline, filtered.length]);
+
   function isCurrentDay(day: Day) { return day === getTodayDay(); }
 
   // Day navigation helpers
@@ -953,6 +1025,9 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
       }}
     >
 
+      {/* Screen-reader live region for filter announcements */}
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">{announcement}</div>
+
       {/* ── Controls ── */}
       {showControls && (
         <div
@@ -964,6 +1039,7 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
             options={locationOptions}
             value={activeLocation}
             onChange={v => setActiveLocation(v as 'all' | '1256' | '1133')}
+            label="Location"
           />
 
           {/* Discipline dropdown */}
@@ -972,6 +1048,7 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
               options={disciplineOptions}
               value={activeDiscipline}
               onChange={v => setActiveDiscipline(v)}
+              label="Discipline"
             />
           )}
 
@@ -979,6 +1056,8 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
           <button
             onClick={() => setViewMode(v => v === 'week' ? 'day' : 'week')}
             className="hidden lg:flex shrink-0 items-center gap-2 transition-all"
+            aria-pressed={viewMode === 'week'}
+            aria-label={viewMode === 'week' ? 'Switch to day view' : 'Switch to week view'}
             title={viewMode === 'week' ? 'Switch to day view' : 'Switch to week view'}
             style={{
               padding:         '9px 14px',
@@ -1038,6 +1117,8 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
                 <button
                   key={day}
                   data-active={isActive ? 'true' : 'false'}
+                  aria-label={`${DAY_LABELS[day]}, ${dateNum}${isActive ? ' (selected)' : ''}`}
+                  aria-pressed={isActive}
                   onClick={() => setActiveDay(day)}
                   className="shrink-0 flex flex-col items-center gap-1"
                   style={{
@@ -1103,6 +1184,7 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
               {(['prev', 'next'] as const).map(dir => (
                 <button
                   key={dir}
+                  aria-label={dir === 'prev' ? 'Previous day' : 'Next day'}
                   onClick={dir === 'prev' ? prevDay : nextDay}
                   disabled={dir === 'prev' ? DAYS_ORDER.indexOf(activeDay) === 0 : DAYS_ORDER.indexOf(activeDay) === DAYS_ORDER.length - 1}
                   style={{
@@ -1152,6 +1234,8 @@ export default function Schedule({ filterDiscipline, compact = false }: Schedule
                 <button
                   key={day}
                   data-active={isActive ? 'true' : 'false'}
+                  aria-label={`${DAY_LABELS[day]}, ${dateNum}${isActive ? ' (selected)' : ''}`}
+                  aria-pressed={isActive}
                   onClick={() => { setActiveDay(day); setViewMode('day'); }}
                   className="flex-1 shrink-0 flex flex-col items-center justify-center gap-1 py-3 transition-colors"
                   style={{
