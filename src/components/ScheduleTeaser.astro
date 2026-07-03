@@ -5,15 +5,17 @@ import { locations } from '../data/locations';
 
 const locationMap = Object.fromEntries(locations.map((l) => [l.id, l]));
 
-// Determine today's day key
+// Determine today's day key using Vancouver (Pacific) timezone,
+// so the schedule flips at midnight local time, not UTC midnight.
 const now = new Date();
-const jsDay = now.getDay(); // 0=Sun, 1=Mon, ...
+const vanNow = new Date(now.toLocaleString('en-US', { timeZone: 'America/Vancouver' }));
+const jsDay = vanNow.getDay(); // 0=Sun, 1=Mon, ...
 const dayMap: Day[] = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 const todayKey: Day = dayMap[jsDay];
 const todayLabel = DAY_LABELS[todayKey];
 
-// Current time in minutes since midnight
-const nowMinutes = now.getHours() * 60 + now.getMinutes();
+// Current time in minutes since midnight (Vancouver time)
+const nowMinutes = vanNow.getHours() * 60 + vanNow.getMinutes();
 
 function toMin(t: string): number {
   const [h, m] = t.split(':').map(Number);
